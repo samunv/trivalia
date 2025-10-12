@@ -28,7 +28,7 @@ form{
   align-items: stretch;
   gap: 20px;
   margin-top: 20px;
-margin-bottom: 60px;
+margin-bottom: 20px;
 }
 
 form .campo-form input{
@@ -49,7 +49,7 @@ form .campo-form input::placeholder {
   opacity: 1;      /* opcional, por defecto los placeholders son un poco transparentes */
 }
 
-form button{
+button{
   background-color: white;
   color: var(--color-principal);
   font-family: 'Inter-bold', sans-serif;
@@ -61,8 +61,18 @@ form button{
 
 
 }
-form button:hover{
+button:hover{
   opacity: 0.8;
+}
+
+.btn-provider{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 20px;
+  width: 330px;
+  margin-bottom: 10px;
 }
 
 .link-registro{

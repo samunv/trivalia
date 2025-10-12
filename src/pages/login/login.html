@@ -3,12 +3,23 @@
   <h1>Si tienes una cuenta, inicia sesión.</h1>
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <div class="campo-form">
-      <input type="text" id="correo" name="correo" placeholder="Correo" formControlName="correo"/>
+      <input type="text" id="correo" name="correo" placeholder="Correo" formControlName="correo" />
     </div>
     <div class="campo-form">
-      <input type="password" id="contrasena" name="contrasena" placeholder="Contraseña" formControlName="contrasena"/>
+      <input
+        type="password"
+        id="contrasena"
+        name="contrasena"
+        placeholder="Contraseña"
+        formControlName="contrasena"
+      />
     </div>
     <a routerLink="/registro" class="link-registro">¿No tienes cuenta? Regístrate aquí</a>
+
     <button>Iniciar Sesión</button>
   </form>
+  <button class="btn-provider" (click)="loginConGoogle()">
+    Continuar con Google
+    <img src="/img/google-logo.webp" alt="" width="30px" />
+  </button>
 </section>

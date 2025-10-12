@@ -1,7 +1,71 @@
-.foto-perfil{
-  width: 200px;
-  height: 200px;
+.foto-perfil {
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   object-fit: contain;
   margin-bottom: 10px;
+  border: 2px solid var(--color-secundario);
+}
+
+.info-usuario {
+  display: flex;
+  align-items: stretch;
+  margin-top: 20px;
+  gap: 50px;
+}
+
+.columna-1 {
+  flex: 1;
+  background-color: var(--color-principal);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 30px;
+  border-radius: 20px;
+  border: 1px solid var(--color-bordes);
+}
+
+.columna-2 {
+  background-color: var(--color-principal);
+  border: 1px solid var(--color-bordes);
+  padding: 30px;
+  border-radius: 20px;
+  min-height: max-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+}
+
+.columna-2 ul{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.columna-2 ul li {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-family: 'Inter-extrabold', sans-serif;
+}
+
+.columna-2 ul li img{
+  width: 40px;
+  height: 40px;
+}
+.columna-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.columna-texto h2 {
+  font-size: 40px;
+}
+
+.columna-texto p {
+  font-size: 18px;
 }

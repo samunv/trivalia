@@ -4,10 +4,11 @@ import { MainLayout } from '../../app/layout/main-layout/main-layout';
 import { AuthService } from '../../app/services/AuthService/auth-service';
 import { Router } from '@angular/router';
 import { UsuarioService } from '../../app/services/UsuarioService/usuario-service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-perfil',
-  imports: [NavLateral, MainLayout],
+  imports: [NavLateral, MainLayout, CommonModule],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css'
 })
@@ -21,6 +22,7 @@ export class Perfil {
     this.usuarioService.usuario$.subscribe(user => {
       this.usuario = user;
     });
+    console.log("Perfil >> Foto del usuario: "+this.usuario.fotoURL);
   }
 
   cerrarSesion() {

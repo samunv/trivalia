@@ -39,10 +39,11 @@ export class Login {
 
   login() {
     this.authService.login(this.loginForm.value.correo as string, this.loginForm.value.contrasena as string).subscribe({
-      next: (usuario) => {
-        console.log('Login exitoso:', usuario);
+      next: (res) => {
+        console.log('Login exitoso:' + res.usuario + ", token: " + res.token);
         this.router.navigate(['/aprender']);
-        this.usuarioService.setUsuario(usuario);
+        this.usuarioService.setUsuario(res.usuario);
+        this.usuarioService.setToken(res.token);
       }
       ,
       error: (err) => {
@@ -54,10 +55,11 @@ export class Login {
 
   loginConGoogle() {
     this.authService.loginConGoogle().subscribe({
-      next: (usuario) => {
-        console.log('Login con Google exitoso:', usuario);
+      next: (res) => {
+        console.log('Login con Google exitoso:', res.usuario);
         this.router.navigate(['/aprender']);
-        this.usuarioService.setUsuario(usuario);
+        this.usuarioService.setUsuario(res.usuario);
+        this.usuarioService.setToken(res.token);
       },
       error: (err) => {
         console.error('Error durante el login con Google:', err);

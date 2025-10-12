@@ -1,12 +1,40 @@
 <app-main-layout>
   <h1>Mi Perfil</h1>
   <div class="perfil-main">
-    <img src={{usuario.fotoURL}} alt="" class="foto-perfil">
-    <p>{{usuario.nombre}}</p>
-    <p>{{usuario.email}}</p>
-    <p>Contenido del perfil de usuario.</p>
-    <button (click)="cerrarSesion()">
-      Cerrar Sesión
-    </button>
+    <div class="info-usuario">
+      <div class="columna-1">
+        <img
+          [src]="
+            usuario?.fotoURL ||
+            'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg'
+          "
+          class="foto-perfil"
+        />
+        <div class="columna-texto">
+          <div>
+            <p>{{ usuario.proveedor }}</p>
+          </div>
+          <h2>{{ usuario.nombre }}</h2>
+          <p>{{ usuario.email }}</p>
+        </div>
+      </div>
+
+      <div class="columna-2">
+        <ul>
+          <li class="cerebros" style="color: var(--color-rosa)">
+            <img src="/img/brain-svgrepo-com.png" alt="" />
+            {{ usuario?.cerebros }}
+          </li>
+          <li class="monedas" style="color: var(--color-amarillo)">
+            <img src="/img/coin-svgrepo-com.png" alt="" /> {{ usuario?.monedas }}
+          </li>
+          <li class="vidas" style="color: var(--color-rojo);">
+            <img src="/img/heart-suit-svgrepo-com.png" alt="" />{{ usuario?.vidas }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <button (click)="cerrarSesion()">Cerrar Sesión</button>
   </div>
 </app-main-layout>

@@ -1,0 +1,72 @@
+.login{
+  height: 100vh;
+  background-image: url('/img/bg-big-trivalia.png');
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.logo{
+  width: 300px;
+  cursor: pointer;
+}
+
+
+h1{
+  width: 330px;
+  color: var(--color-secundario);
+  text-align: center;
+}
+
+form{
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 20px;
+  margin-top: 20px;
+margin-bottom: 60px;
+}
+
+form .campo-form input{
+  width: 300px;
+  padding: 15px;
+  border-radius: 10px;
+  border: 2px solid var(--color-secundario);
+  outline: none;
+  font-family: 'Inter-bold', sans-serif;
+  font-size: 16px;
+  color: white;
+  background-color: transparent;
+
+}
+
+form .campo-form input::placeholder {
+  color: var(--color-secundario); /* el color que quieras */
+  opacity: 1;      /* opcional, por defecto los placeholders son un poco transparentes */
+}
+
+form button{
+  background-color: white;
+  color: var(--color-principal);
+  font-family: 'Inter-bold', sans-serif;
+  font-size: 16px;
+  padding: 15px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+
+
+}
+form button:hover{
+  opacity: 0.8;
+}
+
+.link-registro{
+  color: white;
+  font-family: 'Inter-bold';
+  text-align: center;
+}

@@ -1,1 +1,55 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --azul-claro: #00c8ff;
+  --color-principal: #113270;
+  --color-secundario: #dde9ff;
+  --color-texto: white;
+  --color-texto-juego:black;
+  --azul-oscuro:#0f2c63;
+  --color-bordes: #728fc4;
+}
+
+@font-face {
+  font-family: 'Inter-regular';
+  src: url('assets/fonts/static/Inter_18pt-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter-bold';
+  src: url('assets/fonts/static/Inter_18pt-Bold.ttf') format('truetype');
+  font-style: normal;
+  font-weight: bold;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter-extrabold';
+  src: url('assets/fonts/static/Inter_18pt-ExtraBold.ttf') format('truetype');
+  font-style: normal;
+  font-weight: bolder;
+  font-display: swap;
+}
+
+body {
+  font-family: 'Inter-regular', sans-serif;
+}
+
+h1, h2 {
+  font-family: 'Inter-extrabold', sans-serif;
+}
+
+
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+
+.mensaje-error{
+  color: red;
+  font-family: 'Inter-bold', sans-serif;
+}

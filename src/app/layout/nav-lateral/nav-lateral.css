@@ -1,0 +1,67 @@
+.logo {
+  width: 150px;
+  cursor: pointer;
+}
+
+.contenedor-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-lateral {
+  padding: 20px;
+  background-color: var(--color-principal);
+  border-right: 1px solid var(--color-bordes);
+  height: calc(100vh - 40px);
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.nav-lateral nav ul {
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+}
+
+.nav-lateral nav ul li {
+  list-style: none;
+  cursor: pointer;
+}
+
+.nav-lateral nav ul li:hover a {
+  background-color: var(--azul-oscuro);
+}
+
+.nav-lateral nav ul li svg {
+  fill: var(--color-secundario);
+}
+
+.nav-lateral nav ul li svg {
+  width: 45px;
+  height: 45px;
+}
+
+.nav-lateral nav ul li a {
+  text-decoration: none;
+  color: var(--color-secundario);
+  font-size: 18px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+  padding: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-radius: 10px;
+
+  border: 2px solid transparent;
+}
+
+.nav-lateral nav ul li a.activo {
+  font-family: 'Inter-bold';
+  background-color: var(--azul-oscuro);
+  border: 2px dashed var(--color-secundario);
+}

@@ -1,0 +1,30 @@
+
+
+.campo-buscador{
+  border: 1px solid var(--color-bordes);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 15px;
+  border-radius: 15px;
+  gap: 15px;
+  margin-top: 15px;
+}
+.campo-buscador input{
+  border: none;
+  width: 100%;
+  color: white;
+  font-size: 18px;
+  outline: none;
+  background-color: transparent;
+}
+
+
+.campo-buscador input::placeholder{
+  color: var(--color-bordes);
+}
+
+
+.campo-buscador.activo{
+  border: 2px solid white;
+}

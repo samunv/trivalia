@@ -1,0 +1,126 @@
+.main {
+  background-image: url('/img/bg-big-trivalia.png');
+  width: 100%;
+  height: 70vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-bottom-left-radius: 50px;
+  border-bottom-right-radius: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-landing {
+  position: fixed;
+  top: 0;
+  width: calc(100% - 60px);
+  padding: 30px;
+  color: var(--color-texto);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--color-principal);
+}
+
+.logo-landing {
+  width: 120px;
+}
+
+.header-landing nav ul {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.header-landing nav ul li {
+  list-style: none;
+  font-family: 'Inter-bold';
+  cursor: pointer;
+}
+
+.header-landing nav ul li a {
+  text-decoration: none;
+  color: var(--color-texto);
+}
+
+.header-landing nav ul li:last-child a {
+  background-color: white;
+  color: var(--color-principal);
+  padding: 15px;
+  border-radius: 30px;
+}
+
+.header-landing nav ul li a:hover {
+  opacity: 0.8;
+}
+
+.eslogan {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.eslogan p {
+  font-size: 3.5rem;
+  width: 75%;
+  font-family: 'Inter-extrabold';
+  font-weight: 600;
+  text-align: center;
+  color: var(--color-texto);
+}
+
+.btn-aprender {
+  background-color: white;
+  color: var(--color-principal);
+  border: none;
+  padding: 15px 30px;
+  border-radius: 30px;
+  font-family: 'Inter-bold';
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.btn-aprender:hover {
+  opacity: 0.8;
+}
+
+.info {
+  margin-top: 20px;
+  padding: 30px;
+}
+
+.info h1 {
+  text-align: center;
+  font-size: 40px;
+  color: var(--color-principal);
+}
+
+.columna-info {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+}
+
+.caja-info {
+  border: 3px var(--color-principal) dashed;
+  background-color: var(--color-secundario);
+  border-radius: 20px;
+  padding: 30px;
+  width: 30%;
+  text-align: center;
+  color: var(--color-principal);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap:5px;
+}
+
+
+.caja-info img{
+  margin-top: auto;
+}

@@ -4,6 +4,7 @@ import { doc, Firestore, getDoc, serverTimestamp, setDoc } from '@angular/fire/f
 import { nanoid } from 'nanoid';
 
 import { from, Observable, of, switchMap } from 'rxjs';
+import { Usuario } from '../../interfaces/Usuario';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class AuthService {
 
 
   // Obtiene el usuario de Firestore por UID
-  private obtenerUsuario(proveedor: string, uid: string, user?: User): Observable<any> {
+  private obtenerUsuario(proveedor: string, uid: string, user?: User): Observable<Usuario> {
     const userRef = doc(this.firestore, `usuarios/${uid}`);
     return from(getDoc(userRef)).pipe(
       switchMap(docSnap => {
@@ -23,7 +24,7 @@ export class AuthService {
           // Si no existe, creamos usando datos del proveedor opcional
           const nuevoUsuario = {
             nombre: user?.displayName || 'usuario_' + nanoid(5),
-            correo: user?.email || '',
+            email: user?.email || '',
             fotoURL: user?.photoURL || "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg",
             creadoEn: serverTimestamp(),
             codigo_usuario: nanoid(25),
@@ -41,7 +42,7 @@ export class AuthService {
     );
   }
 
-  loginConGoogle(): Observable<{ usuario: any, token: string }> {
+  loginConGoogle(): Observable<{ usuario: Usuario, token: string }> {
     const provider = new GoogleAuthProvider();
     return from(signInWithPopup(this.auth, provider)).pipe(
       switchMap(result =>
@@ -63,7 +64,7 @@ export class AuthService {
     );
   }
 
-  login(email: string, password: string): Observable<{ usuario: any, token: string }> {
+  login(email: string, password: string): Observable<{ usuario: Usuario, token: string }> {
     return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
       switchMap(result =>
         this.obtenerUsuario("Trivalia", result.user.uid, result.user).pipe(

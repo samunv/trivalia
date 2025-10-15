@@ -14,11 +14,16 @@
           <!-- <div>
             <p>{{ usuario.proveedor }}</p>
           </div> -->
-          <h2>
-            {{
-              usuario.nombre.length > 9 ? usuario.nombre.substring(0, 10) + '...' : usuario.nombre
-            }}
-          </h2>
+          <form>
+            <input
+              type="text"
+              class="rounded-[10px] border-1 border-[var(--color-bordes)] focus: outline-white focus:outline-1 !p-[10px] text-2xl"
+              value=""
+              [formControl]="nombre"
+              maxlength="15"
+            />
+            <div *ngIf="nombre.invalid" class="text-red-500 font-bold">Mínimo 4 y máximo 15 caracteres</div>
+          </form>
           <p>{{ usuario.email }}</p>
         </div>
       </div>
@@ -39,9 +44,11 @@
       </div>
     </div>
 
-    <div class="flex flex-row align-middle gap-4">
+    <div class="flex flex-row align-middle gap-4 !mb-10">
       <app-boton-general [texto]="'Cerrar Sesión'" (click)="abrirModal()"></app-boton-general>
-      <app-boton-general [texto]="'Editar Perfil'" (click)="abrirModal()"></app-boton-general>
+      <div *ngIf="nombre.dirty">
+        <app-boton-general [texto]="'Guardar'" (click)="guardarClick()"></app-boton-general>
+      </div>
     </div>
   </div>
 
@@ -52,7 +59,7 @@
       [btn2]="'Cerrar Sesión'"
       (click1)="cerrarModal()"
       (click2)="cerrarSesion()"
-
     ></app-modal>
   </div>
+  <app-texto-h1 [texto]="'Estadísticas'"></app-texto-h1>
 </app-main-layout>

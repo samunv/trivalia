@@ -17,3 +17,10 @@ h1{
   color: black;
   font-family: 'Inter-bold', sans-serif;
 }
+
+@media (max-width:800px) {
+  .ng-content{
+    padding: 15px 25px;
+  }
+
+}

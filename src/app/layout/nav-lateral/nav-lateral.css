@@ -65,3 +65,10 @@
   background-color: var(--azul-oscuro);
   border: 2px dashed var(--color-secundario);
 }
+
+
+@media (max-width:800px) {
+.nav-lateral{
+  display: none;
+}
+}

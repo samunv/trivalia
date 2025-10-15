@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { Usuario } from '../../interfaces/Usuario';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class UsuarioService {
   usuario$ = this.usuarioSubject.asObservable();
   token$ = this.tokenSubject.asObservable();
 
-  setUsuario(usuario: any) {
+  setUsuario(usuario: Usuario) {
     localStorage.setItem('usuario', JSON.stringify(usuario));
     this.usuarioSubject.next(usuario);
   }

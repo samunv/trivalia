@@ -1,7 +1,7 @@
 <section class="login">
   <img src="/img/Trivalia-logo.png" alt="" class="logo" (click)="irHaciaLanding()" />
-  <h1>Si tienes una cuenta, inicia sesión.</h1>
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <h1 class="text-4xl w-3xl">¡Inicia sesión para comenzar tu aventura!</h1>
+  <!-- <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <div class="campo-form">
       <input type="text" id="correo" name="correo" placeholder="Correo" formControlName="correo" />
     </div>
@@ -17,9 +17,16 @@
     <a routerLink="/registro" class="link-registro">¿No tienes cuenta? Regístrate aquí</a>
 
     <button>Iniciar Sesión</button>
-  </form>
+  </form> -->
+  <span style="margin-top: 20px;"></span>
   <button class="btn-provider" (click)="loginConGoogle()">
     Continuar con Google
     <img src="/img/google-logo.webp" alt="" width="30px" />
   </button>
+  <!-- <button class="btn-provider" (click)="loginConApple()">
+    Continuar con Apple
+    <img src="/img/apple-logo.png" alt="" width="30px" />
+  </button> -->
+
+  <!--https://trivalia-app.firebaseapp.com/__/auth/handler-->
 </section>

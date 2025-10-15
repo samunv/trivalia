@@ -15,7 +15,7 @@
 .header-landing {
   position: fixed;
   top: 0;
-  width: calc(100% - 60px);
+  width: 100%;
   padding: 30px;
   color: var(--color-texto);
   display: flex;
@@ -37,7 +37,7 @@
 
 .header-landing nav ul li {
   list-style: none;
-  font-family: 'Inter-bold';
+  font-family: 'Inter-bold' !important;
   cursor: pointer;
 }
 
@@ -95,7 +95,7 @@
 
 .info h1 {
   text-align: center;
-  font-size: 40px;
+  font-size: 40px !important;
   color: var(--color-principal);
 }
 
@@ -111,7 +111,7 @@
   background-color: var(--color-secundario);
   border-radius: 20px;
   padding: 30px;
-  width: 30%;
+  flex: 1;
   text-align: center;
   color: var(--color-principal);
   display: flex;
@@ -123,4 +123,8 @@
 
 .caja-info img{
   margin-top: auto;
+}
+
+.caja-info h2{
+  font-size: 20px;
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut, User } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword, GoogleAuthProvider, OAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut, User } from '@angular/fire/auth';
 import { doc, Firestore, getDoc, serverTimestamp, setDoc } from '@angular/fire/firestore';
 import { nanoid } from 'nanoid';
 
@@ -25,7 +25,7 @@ export class AuthService {
           const nuevoUsuario = {
             nombre: user?.displayName || 'usuario_' + nanoid(5),
             email: user?.email || '',
-            fotoURL: user?.photoURL || "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg",
+            fotoURL: "https://avatar.iran.liara.run/username?username="+user?.displayName?.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]/g, '') + "&bold=true",
             creadoEn: serverTimestamp(),
             codigo_usuario: nanoid(25),
             cerebros: 0,
@@ -56,6 +56,17 @@ export class AuthService {
       )
     );
   }
+
+  loginConApple(): Observable<{ usuario: any, token: string }> {
+    const provider = new OAuthProvider("apple.com");
+    return from(signInWithPopup(this.auth, provider)).pipe(
+      switchMap(result => this.obtenerUsuario("Apple", result.user.uid, result.user).pipe(
+        usuario => from(result.user.getIdToken()).pipe(
+          switchMap(token => of({ usuario, token }))
+        ))
+      ))
+  }
+
 
 
   register(correo: string, contrasena: string): Observable<any> {

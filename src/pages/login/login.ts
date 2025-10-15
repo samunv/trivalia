@@ -4,6 +4,7 @@ import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angu
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../app/services/AuthService/auth-service';
 import { UsuarioService } from '../../app/services/UsuarioService/usuario-service';
+import { Usuario } from '../../app/interfaces/Usuario';
 @Component({
   selector: 'app-login',
   imports: [RouterLink, ReactiveFormsModule, CommonModule],
@@ -53,19 +54,36 @@ export class Login {
     })
   }
 
+  loginConApple() {
+    this.authService.loginConApple().subscribe({
+      next: (res) => {
+        console.log('Login con Apple exitoso:', res.usuario);
+        this.iniciarSesion(res.usuario, res.token);
+      },
+      error: (err) => {
+        console.error('Error durante el login con Apple:', err);
+        alert('Error durante el login con Apple. Por favor, intenta de nuevo.');
+      }
+    })
+  }
+
   loginConGoogle() {
     this.authService.loginConGoogle().subscribe({
       next: (res) => {
         console.log('Login con Google exitoso:', res.usuario);
-        this.router.navigate(['/aprender']);
-        this.usuarioService.setUsuario(res.usuario);
-        this.usuarioService.setToken(res.token);
+        this.iniciarSesion(res.usuario, res.token);
       },
       error: (err) => {
         console.error('Error durante el login con Google:', err);
         alert('Error durante el login con Google. Por favor, intenta de nuevo.');
       }
     });
+  }
+
+  iniciarSesion(usuario: Usuario, token: string) {
+    this.router.navigate(['/aprender']);
+    this.usuarioService.setUsuario(usuario);
+    this.usuarioService.setToken(token);
   }
 
 

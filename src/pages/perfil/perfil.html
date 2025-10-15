@@ -1,5 +1,5 @@
 <app-main-layout>
-  <h1>Mi Perfil</h1>
+  <app-texto-h1 [texto]="'Mi Perfil'"></app-texto-h1>
   <div class="perfil-main">
     <div class="info-usuario">
       <div class="columna-1">
@@ -11,10 +11,14 @@
           class="foto-perfil"
         />
         <div class="columna-texto">
-          <div>
+          <!-- <div>
             <p>{{ usuario.proveedor }}</p>
-          </div>
-          <h2>{{ usuario.nombre }}</h2>
+          </div> -->
+          <h2>
+            {{
+              usuario.nombre.length > 9 ? usuario.nombre.substring(0, 10) + '...' : usuario.nombre
+            }}
+          </h2>
           <p>{{ usuario.email }}</p>
         </div>
       </div>
@@ -28,13 +32,27 @@
           <li class="monedas" style="color: var(--color-amarillo)">
             <img src="/img/coin-svgrepo-com.png" alt="" /> {{ usuario?.monedas }}
           </li>
-          <li class="vidas" style="color: var(--color-rojo);">
+          <li class="vidas" style="color: var(--color-rojo)">
             <img src="/img/heart-suit-svgrepo-com.png" alt="" />{{ usuario?.vidas }}
           </li>
         </ul>
       </div>
     </div>
 
-    <button (click)="cerrarSesion()">Cerrar Sesión</button>
+    <div class="flex flex-row align-middle gap-4">
+      <app-boton-general [texto]="'Cerrar Sesión'" (click)="abrirModal()"></app-boton-general>
+      <app-boton-general [texto]="'Editar Perfil'" (click)="abrirModal()"></app-boton-general>
+    </div>
+  </div>
+
+  <div *ngIf="modalAbierto">
+    <app-modal
+      [titulo]="'¿Estás seguro de que quieres cerrar sesión?'"
+      [btn1]="'Cancelar'"
+      [btn2]="'Cerrar Sesión'"
+      (click1)="cerrarModal()"
+      (click2)="cerrarSesion()"
+
+    ></app-modal>
   </div>
 </app-main-layout>

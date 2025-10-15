@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { NavLateral } from '../../app/layout/nav-lateral/nav-lateral';
-import { MainLayout } from '../../app/layout/main-layout/main-layout';
-import { TextoH1 } from '../../app/components/texto-h1/texto-h1';
+import { NavLateral } from '../../layout/nav-lateral/nav-lateral';
+import { MainLayout } from '../../layout/main-layout/main-layout';
+import { TextoH1 } from '../../components/texto-h1/texto-h1';
 
 @Component({
   selector: 'app-aprender',

@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { Landing } from '../pages/landing/landing';
-import { Login } from '../pages/login/login';
-import { Registro } from '../pages/registro/registro';
-import { Aprender } from '../pages/aprender/aprender';
-import { Perfil } from '../pages/perfil/perfil';
-import { UnionPartida } from '../pages/union-partida/union-partida';
+import { Landing } from './pages/landing/landing';
+import { Login } from './pages/login/login';
+import { Registro } from './pages/registro/registro';
+import { Aprender } from './pages/aprender/aprender';
+import { Perfil } from './pages/perfil/perfil';
+import { UnionPartida } from './pages/union-partida/union-partida';
 
 import { noAuthGuard } from './Guards/no-auth-guard';
 import { AuthGuard, redirectUnauthorizedTo } from '@angular/fire/auth-guard';

@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../app/services/AuthService/auth-service';
-import { UsuarioService } from '../../app/services/UsuarioService/usuario-service';
-import { Usuario } from '../../app/interfaces/Usuario';
+import { AuthService } from '../../services/AuthService/auth-service';
+import { UsuarioService } from '../../services/UsuarioService/usuario-service';
+import { Usuario } from '../../interfaces/Usuario';
 @Component({
   selector: 'app-login',
   imports: [RouterLink, ReactiveFormsModule, CommonModule],

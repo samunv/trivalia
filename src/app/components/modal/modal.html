@@ -3,6 +3,7 @@
     class="flex flex-col justify-center items-center bg-[var(--color-principal)] rounded-2xl border border-[var(--color-bordes)] p-8! m-2"
   >
     <h2 class="text-2xl mb-4 text-center">{{titulo}}</h2>
+    <ng-content></ng-content>
     <div class="flex flex-row gap-4">
       <app-boton-general [texto]="btn1" (click)="onClick1()"></app-boton-general>
       <app-boton-general [texto]="btn2" (click)="onClick2()"></app-boton-general>

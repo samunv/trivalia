@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { MainLayout } from '../../app/layout/main-layout/main-layout';
-import { TextoH1 } from '../../app/components/texto-h1/texto-h1';
+import { MainLayout } from '../../layout/main-layout/main-layout';
+import { TextoH1 } from '../../components/texto-h1/texto-h1';
 
 @Component({
   selector: 'app-union-partida',

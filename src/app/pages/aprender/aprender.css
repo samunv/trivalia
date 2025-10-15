@@ -8,8 +8,10 @@
   padding: 15px;
   border-radius: 15px;
   gap: 15px;
-  margin-top: 15px;
+  margin-top: 20px;
 }
+
+
 .campo-buscador input{
   border: none;
   width: 100%;

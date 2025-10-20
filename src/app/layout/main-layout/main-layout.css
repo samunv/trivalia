@@ -1,26 +1,26 @@
 .main-layout {
   display: flex;
   flex-direction: row;
-  height: 100vh;
   width: 100vw;
   color: var(--color-texto);
-
 }
 
-.ng-content{
+.ng-content {
   background-color: var(--azul-oscuro);
   width: 100%;
+  min-height: 100vh;
   padding: 30px 60px;
+  padding-left: 360px;
+  overflow-x: hidden;
 }
 
-h1{
+h1 {
   color: black;
   font-family: 'Inter-bold', sans-serif;
 }
 
-@media (max-width:800px) {
-  .ng-content{
+@media (max-width: 800px) {
+  .ng-content {
     padding: 15px 25px;
   }
-
 }

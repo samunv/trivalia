@@ -38,34 +38,34 @@ export class Login {
     console.log(this.loginForm);
   }
 
-  login() {
-    this.authService.login(this.loginForm.value.correo as string, this.loginForm.value.contrasena as string).subscribe({
-      next: (res) => {
-        console.log('Login exitoso:' + res.usuario + ", token: " + res.token);
-        this.router.navigate(['/aprender']);
-        this.usuarioService.setUsuario(res.usuario);
-        this.usuarioService.setToken(res.token);
-      }
-      ,
-      error: (err) => {
-        console.error('Error durante el login:', err);
-        alert('Error durante el login. Por favor, verifica tus credenciales e intenta de nuevo.');
-      }
-    })
-  }
+  // login() {
+  //   this.authService.login(this.loginForm.value.correo as string, this.loginForm.value.contrasena as string).subscribe({
+  //     next: (res) => {
+  //       console.log('Login exitoso:' + res.usuario + ", token: " + res.token);
+  //       this.router.navigate(['/aprender']);
+  //       this.usuarioService.setUsuario(res.usuario);
+  //       this.usuarioService.setToken(res.token);
+  //     }
+  //     ,
+  //     error: (err) => {
+  //       console.error('Error durante el login:', err);
+  //       alert('Error durante el login. Por favor, verifica tus credenciales e intenta de nuevo.');
+  //     }
+  //   })
+  // }
 
-  loginConApple() {
-    this.authService.loginConApple().subscribe({
-      next: (res) => {
-        console.log('Login con Apple exitoso:', res.usuario);
-        this.iniciarSesion(res.usuario, res.token);
-      },
-      error: (err) => {
-        console.error('Error durante el login con Apple:', err);
-        alert('Error durante el login con Apple. Por favor, intenta de nuevo.');
-      }
-    })
-  }
+  // loginConApple() {
+  //   this.authService.loginConApple().subscribe({
+  //     next: (res) => {
+  //       console.log('Login con Apple exitoso:', res.usuario);
+  //       this.iniciarSesion(res.usuario, res.token);
+  //     },
+  //     error: (err) => {
+  //       console.error('Error durante el login con Apple:', err);
+  //       alert('Error durante el login con Apple. Por favor, intenta de nuevo.');
+  //     }
+  //   })
+  // }
 
   loginConGoogle() {
     this.authService.loginConGoogle().subscribe({
@@ -81,9 +81,10 @@ export class Login {
   }
 
   iniciarSesion(usuario: Usuario, token: string) {
-    this.router.navigate(['/aprender']);
+    this.router.navigate(['/dummy'], { skipLocationChange: true }).then(() => {
+      this.router.navigate(['/jugar']);
+    });
     this.usuarioService.setUsuario(usuario);
-    this.usuarioService.setToken(token);
   }
 
 

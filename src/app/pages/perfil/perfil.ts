@@ -8,39 +8,48 @@ import { CommonModule } from '@angular/common';
 import { TextoH1 } from '../../components/texto-h1/texto-h1';
 import { BotonGeneral } from '../../components/boton-general/boton-general';
 import { Modal } from '../../components/modal/modal';
-import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { addDoc, collection, doc, Firestore, updateDoc } from '@angular/fire/firestore';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { doc, Firestore, updateDoc } from '@angular/fire/firestore';
 import { from, Observable } from 'rxjs';
 import { Auth, authState } from '@angular/fire/auth';
 import { MensajeAlerta } from '../../components/mensaje-alerta/mensaje-alerta';
 import { ImagenesService } from '../../services/ImagenesService/imagenes-service';
+import { Espacio } from '../../components/espacio/espacio';
+import { Item } from '../../components/item/item';
+import { Header } from '../../layout/header/header';
+import { Usuario } from '../../interfaces/Usuario';
 
 @Component({
   selector: 'app-perfil',
-  imports: [NavLateral, MainLayout, CommonModule, TextoH1, BotonGeneral, Modal, ReactiveFormsModule, MensajeAlerta],
+  imports: [NavLateral, MainLayout, CommonModule, TextoH1,
+  BotonGeneral, Modal, ReactiveFormsModule, MensajeAlerta, Espacio, Header],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css'
 })
 export class Perfil {
 
 
-  constructor(private authService: AuthService, private router: Router, private usuarioService: UsuarioService, private firestore: Firestore, private auth: Auth, private imagenService: ImagenesService) { }
+  constructor(private authService: AuthService, private router: Router,
+    private usuarioService: UsuarioService, private firestore: Firestore,
+    private auth: Auth, private imagenService: ImagenesService,
+    ) { }
 
   modalAbierto: boolean = false;
-  usuario: any;
   nombre: any;
   foto?: string;
   uid?: any;
   guardado: boolean = false;
   imagenSeleccionada: File | null = null;
   editarFotoActivo: boolean = false;
+  fotoPreview: string = ""
+  usuario?: Usuario | any;
 
   ngOnInit() {
     this.usuarioService.usuario$.subscribe(user => {
       this.usuario = user;
       this.nombre = new FormControl(user.nombre, [Validators.required, Validators.minLength(4), Validators.maxLength(15)]);
     });
-    console.log("Perfil >> Foto del usuario: " + this.usuario.fotoURL);
+    console.log("Perfil >> Foto del usuario: " + this.usuario?.fotoURL);
     authState(this.auth).subscribe(user => {
       if (user) {
         this.uid = user.uid;
@@ -51,23 +60,33 @@ export class Perfil {
     });
   }
 
-  activarEditarFoto(){
+  activarEditarFoto() {
     this.editarFotoActivo = true;
   }
 
   onImagenSeleccionada(event: any) {
     const file: File = event.target.files[0];
+
     if (file) {
       this.imagenSeleccionada = file;
       console.log('Archivo seleccionado:', file.name);
+      this.obtenerFotoPreview(file)
     }
+  }
+
+  obtenerFotoPreview(file: File) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.fotoPreview = reader.result as string;
+    };
+    reader.readAsDataURL(file);
   }
 
   cerrarSesion() {
     this.authService.logout().subscribe({
       next: () => {
         console.log('Sesión cerrada exitosamente');
-        this.router.navigate(['/login']);
+        this.router.navigate(['/']);
         this.usuarioService.clearUsuario();
 
       },
@@ -86,18 +105,11 @@ export class Perfil {
     this.modalAbierto = false;
   }
 
-  guardar(uid: string, nombre: string, foto: string): Observable<any> {
-    const usuarioDocRef = doc(this.firestore, 'usuarios', uid);
-    return from(updateDoc(usuarioDocRef, {
-      nombre: nombre.trim(),
-      fotoURL: foto,
-      actualizado: new Date()
-    }))
-
+  recargar() {
+    window.location.reload();
   }
 
-
-  guardarClick() {
+  actualizarUsuarioClick() {
     if (!this.uid || this.nombre.invalid) {
       alert('Error');
       return;
@@ -108,7 +120,7 @@ export class Perfil {
       this.enviarImagen(this.imagenSeleccionada).subscribe({
         next: (data) => {
           const nuevaURL = data.data.url; // URL de la nueva imagen
-          this.guardar(this.uid, this.nombre?.value ?? '', nuevaURL).subscribe({
+          this.usuarioService.actualizarUsuario(this.uid, this.nombre?.value ?? '', nuevaURL).subscribe({
             next: () => this.finalizarGuardado(nuevaURL),
             error: (err) => console.error('Error al guardar con nueva imagen:', err)
           });
@@ -117,8 +129,8 @@ export class Perfil {
       });
     } else {
       // Si no hay imagen nueva
-      this.guardar(this.uid, this.nombre?.value ?? '', this.usuario.fotoURL).subscribe({
-        next: () => this.finalizarGuardado(this.usuario.fotoURL),
+      this.usuarioService.actualizarUsuario(this.uid, this.nombre?.value ?? '', this.usuario.fotoURL ? this.usuario.fotoURL : "").subscribe({
+        next: () => this.finalizarGuardado(this.usuario.fotoURL ? this.usuario.fotoURL : ""),
         error: (err) => console.error('Error al guardar sin imagen nueva:', err)
       });
     }
@@ -126,7 +138,7 @@ export class Perfil {
 
   finalizarGuardado(fotoURL: string) {
     this.guardado = true;
-    setTimeout(() => (this.guardado = false), 3000);
+    setTimeout(() => (this.guardado = false), 2000);
 
     this.usuarioService.setUsuario({
       ...this.usuario,

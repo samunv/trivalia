@@ -15,26 +15,29 @@ export class AuthService {
 
   // Obtiene el usuario de Firestore por UID
   private obtenerUsuario(proveedor: string, uid: string, user?: User): Observable<Usuario> {
-    const userRef = doc(this.firestore, `usuarios/${uid}`);
-    return from(getDoc(userRef)).pipe(
+
+    // Referencia de la colección usuarios
+    const usuariosRef = doc(this.firestore, `usuarios/${uid}`);
+
+    return from(getDoc(usuariosRef)).pipe(
       switchMap(docSnap => {
         if (docSnap.exists()) {
           return of(docSnap.data());
         } else {
           // Si no existe, creamos usando datos del proveedor opcional
           const nuevoUsuario = {
-            nombre: user?.displayName || 'usuario_' + nanoid(5),
+            nombre: user?.displayName?.substring(0, 15) || 'usuario_' + nanoid(5),
             email: user?.email || '',
             fotoURL: "https://avatar.iran.liara.run/username?username="+user?.displayName?.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]/g, '') + "&bold=true",
             creadoEn: serverTimestamp(),
             codigo_usuario: nanoid(25),
-            cerebros: 0,
-            monedas: 0,
+            estrellas: 0,
+            monedas: 100,
             vidas: 7,
             logros: [],
             proveedor: proveedor
           };
-          return from(setDoc(userRef, nuevoUsuario)).pipe(
+          return from(setDoc(usuariosRef, nuevoUsuario)).pipe(
             switchMap(() => of(nuevoUsuario))
           );
         }

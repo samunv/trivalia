@@ -1,75 +1,84 @@
 <app-main-layout>
-  <app-texto-h1 [texto]="'Mi Perfil'"></app-texto-h1>
+  <app-header [titulo]="'Mi Perfil'" [usuarioData]="usuario"></app-header>
   <div class="perfil-main">
     <div class="info-usuario">
       <div class="columna-1">
         <img
-          [src]="
-            usuario?.fotoURL ||
-            'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg'
-          "
+          [src]="fotoPreview != '' ? fotoPreview : usuario?.fotoURL"
           class="foto-perfil"
-          (click)="activarEditarFoto()"
+          (click)="fileInput.click()"
         />
         <div class="columna-texto">
           <!-- <div>
             <p>{{ usuario.proveedor }}</p>
           </div> -->
-          <form class="flex flex-row gap-5 items-center flex-wrap">
-            <div class="flex flex-col" *ngIf="editarFotoActivo">
-              <label for="foto" class="text-[var(--color-bordes)]">Subir foto</label>
-              <input
-                type="file"
-                id="foto"
-                (change)="onImagenSeleccionada($event)"
-                accept=".jpg, .jpeg, .png"
-                class="rounded-[10px] border-1 border-[var(--color-bordes)] focus: outline-white focus:outline-1 !p-[10px] w-[250px]"
-              />
-            </div>
+          <form class="flex flex-row gap-5 items-center flex-wrap flex-1">
+            <input
+              type="file"
+              id="foto"
+              (change)="onImagenSeleccionada($event)"
+              accept=".jpg, .jpeg, .png"
+              class="hidden"
+              #fileInput
+            />
 
             <div class="flex flex-col">
-              <label for="nombre" class="text-[var(--color-bordes)]">Nombre</label>
               <input
                 type="text"
-                class="rounded-[10px] border-1 border-[var(--color-bordes)] focus: outline-white focus:outline-1 !p-[10px] w-[250px]"
+                class="rounded-[10px] border-1 border-[var(--color-bordes)] focus: outline-white focus:outline-1 !p-[10px]"
                 value=""
                 id="nombre"
                 [formControl]="nombre"
                 maxlength="15"
                 minlength="4"
               />
-            </div>
 
-            <div *ngIf="nombre.invalid" class="text-red-500 font-bold">
-              El nombre debe tener al menos 4 caracteres
+              <div *ngIf="nombre.invalid" class="text-red-500 text-[14px]">
+                El nombre debe tener al menos 4 caracteres
+              </div>
             </div>
           </form>
-          <p>Correo: {{ usuario.email }}</p>
+        </div>
+        <div class="flex flex-row align-middle gap-4">
+          <app-boton-general
+            [texto]="'Guardar Cambios'"
+            [tipo]="'general'"
+            (click)="actualizarUsuarioClick()"
+          ></app-boton-general>
         </div>
       </div>
 
-      <div class="columna-2">
+      <!-- <div class="columna-2">
         <ul>
-          <li class="cerebros" style="color: var(--color-rosa)">
-            <img src="/img/brain-svgrepo-com.png" alt="" />
-            {{ usuario?.cerebros }}
+          <li class="cerebros">
+            <item [item]="'cerebro'" [cantidad]="usuario?.estrellas"></item>
           </li>
-          <li class="monedas" style="color: var(--color-amarillo)">
-            <img src="/img/coin-svgrepo-com.png" alt="" /> {{ usuario?.monedas }}
+          <li class="monedas">
+            <item [item]="'moneda'" [cantidad]="usuario?.monedas"></item>
           </li>
-          <li class="vidas" style="color: var(--color-rojo)">
-            <img src="/img/heart-suit-svgrepo-com.png" alt="" />{{ usuario?.vidas }}
+          <li class="vidas">
+            <item [item]="'vida'" [cantidad]="usuario?.vidas"></item>
           </li>
         </ul>
-      </div>
+      </div> -->
     </div>
+  </div>
+  <espacio [altura]="20"></espacio>
 
-    <div class="flex flex-row align-middle gap-4 !mb-10">
-      <app-boton-general [texto]="'Cerrar Sesión'" (click)="abrirModal()"></app-boton-general>
-      <div *ngIf="(nombre.dirty || imagenSeleccionada != null) && nombre.valid">
-        <app-boton-general [texto]="'Guardar Cambios'" [tipo]="'destacado'" (click)="guardarClick()"></app-boton-general>
-      </div>
-    </div>
+  <div>
+    <app-boton-general [texto]="'Cerrar Sesión'" [tipo]="'destacado'" (click)="abrirModal()"
+      ><svg
+        xmlns="http://www.w3.org/2000/svg"
+        height="24px"
+        viewBox="0 -960 960 960"
+        width="24px"
+        fill="var(--color-principal)"
+      >
+        <path
+          d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"
+        />
+      </svg>
+    </app-boton-general>
   </div>
 
   <app-mensaje-alerta
@@ -85,7 +94,10 @@
       [btn2]="'Cerrar Sesión'"
       (click1)="cerrarModal()"
       (click2)="cerrarSesion()"
-    ></app-modal>
+    >
+      <espacio [altura]="20"></espacio>
+    </app-modal>
   </div>
-  <app-texto-h1 [texto]="'Estadísticas'"></app-texto-h1>
+  <espacio [altura]="40"></espacio>
+  <!-- <app-texto-h1 [texto]="'Estadísticas'"></app-texto-h1> -->
 </app-main-layout>

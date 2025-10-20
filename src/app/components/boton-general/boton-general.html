@@ -4,7 +4,8 @@
     'border-1 bg-[var(--color-bordes)] text-white border-[var(--color-bordes)]': tipo === 'general',
     'border-1 bg-red-600 text-white border-red-600': tipo === 'rojo'
   }"
-  class="text-[16px] !p-4 rounded-4xl hover:cursor-pointer hover:opacity-80 flex flex-row items-center gap-1 font-bold !mt-7"
+  class="text-[16px] !p-4 rounded-4xl hover:cursor-pointer hover:opacity-80 flex flex-row items-center gap-1 font-bold"
 >
   {{ texto }}
+  <ng-content></ng-content>
 </button>

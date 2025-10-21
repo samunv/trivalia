@@ -6,6 +6,7 @@ import { UnionPartida } from './pages/union-partida/union-partida';
 
 import { noAuthGuard } from './Guards/no-auth-guard';
 import { AuthGuard, redirectUnauthorizedTo } from '@angular/fire/auth-guard';
+import { PreJuego } from './pages/pre-juego/pre-juego';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['/']);
 
@@ -15,6 +16,7 @@ export const routes: Routes = [
   { path: 'jugar', component: Aprender, canActivate: [AuthGuard], data: { authGuardPipe: redirectUnauthorizedToLogin } },
   { path: 'perfil', component: Perfil, canActivate: [AuthGuard], data: { authGuardPipe: redirectUnauthorizedToLogin } },
   { path: 'union-partida', component: UnionPartida, canActivate: [AuthGuard], data: { authGuardPipe: redirectUnauthorizedToLogin } },
+  { path: 'categoria/:idCategoria', component: PreJuego, canActivate: [AuthGuard], data: { authGuardPipe: redirectUnauthorizedToLogin } },
   // Siempre debe ir al final
   { path: '**', redirectTo: '/jugar', pathMatch: 'full' },
 

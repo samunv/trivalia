@@ -19,7 +19,7 @@ export class ImagenesService {
         const headers = new HttpHeaders({
           'Authorization': `Bearer ${token}`
         });
-        return this.http.get<{ api_key: string }>(url_servidor + "/imagenes/img-api-key", { headers })
+        return this.http.get<{ api_key: string }>(url_servidor + "/api/imagenes/img-api-key", { headers })
           .pipe(
             map(response => response.api_key)
           )

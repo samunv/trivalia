@@ -9,21 +9,9 @@ import { getAuth, onAuthStateChanged, onIdTokenChanged } from '@angular/fire/aut
 })
 export class UsuarioService {
   private usuarioSubject = new BehaviorSubject<any>(JSON.parse(localStorage.getItem('usuario') || 'null'));
-  private tokenSubject = new BehaviorSubject<string | null>(localStorage.getItem('token'));
+  private tokenSubject = new BehaviorSubject<string | null>(localStorage.getItem('tokenJWT'));
 
   constructor(private firestore: Firestore) {
-    const auth = getAuth();
-    onIdTokenChanged(auth, (user) => {
-      if (user) {
-        user.getIdToken().then(token => {
-          localStorage.setItem('token', token);
-          this.tokenSubject.next(token);
-        });
-      } else {
-        localStorage.removeItem('token');
-        this.tokenSubject.next(null);
-      }
-    });
   }
 
   usuario$ = this.usuarioSubject.asObservable();
@@ -34,9 +22,15 @@ export class UsuarioService {
     this.usuarioSubject.next(usuario);
   }
 
+   setToken(token: string) {
+    localStorage.setItem('tokenJWT', token);
+    this.tokenSubject.next(token);
+  }
+
   clearUsuario() {
     localStorage.removeItem('usuario');
-    localStorage.removeItem('token');
+    localStorage.removeItem('tokenJWT');
+    localStorage.removeItem("token")
     this.usuarioSubject.next(null);
     this.tokenSubject.next(null);
   }

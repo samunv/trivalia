@@ -38,49 +38,57 @@ export class Login {
     console.log(this.loginForm);
   }
 
-  // login() {
-  //   this.authService.login(this.loginForm.value.correo as string, this.loginForm.value.contrasena as string).subscribe({
-  //     next: (res) => {
-  //       console.log('Login exitoso:' + res.usuario + ", token: " + res.token);
-  //       this.router.navigate(['/aprender']);
-  //       this.usuarioService.setUsuario(res.usuario);
-  //       this.usuarioService.setToken(res.token);
-  //     }
-  //     ,
-  //     error: (err) => {
-  //       console.error('Error durante el login:', err);
-  //       alert('Error durante el login. Por favor, verifica tus credenciales e intenta de nuevo.');
-  //     }
-  //   })
-  // }
-
-  // loginConApple() {
-  //   this.authService.loginConApple().subscribe({
-  //     next: (res) => {
-  //       console.log('Login con Apple exitoso:', res.usuario);
-  //       this.iniciarSesion(res.usuario, res.token);
-  //     },
-  //     error: (err) => {
-  //       console.error('Error durante el login con Apple:', err);
-  //       alert('Error durante el login con Apple. Por favor, intenta de nuevo.');
-  //     }
-  //   })
-  // }
-
   loginConGoogle() {
     this.authService.loginConGoogle().subscribe({
       next: (res) => {
-        console.log('Login con Google exitoso:', res.usuario);
-        this.iniciarSesion(res.usuario, res.token);
+        console.log('✅ Login con Google exitoso:', res.usuario);
+        console.log('🔹 Token de Firebase:', res.token);
+
+        // 🔹 Llamar a tu backend para obtener el JWT
+        this.authService.autenticar(res.token).subscribe({
+          next: (authRes) => {
+            if ('token' in authRes) {
+              console.log("🪙 JWT recibido del backend:", authRes.token);
+
+              // Guardamos el usuario y el JWT
+              this.usuarioService.setUsuario(res.usuario);
+              this.usuarioService.setToken(authRes.token);
+
+              // Redirigimos después de guardar todo
+              this.router.navigate(['/dummy'], { skipLocationChange: true }).then(() => {
+                this.router.navigate(['/jugar']);
+              });
+            } else if ('error' in authRes) {
+              console.error("❌ Error al autenticar:", authRes.error);
+              alert("Error al autenticar con el servidor.");
+            }
+          },
+          error: (err) => {
+            console.error("❌ Error HTTP al autenticar:", err);
+            alert("No se pudo autenticar con el backend.");
+          }
+        });
       },
       error: (err) => {
-        console.error('Error durante el login con Google:', err);
+        console.error('🚨 Error durante el login con Google:', err);
         alert('Error durante el login con Google. Por favor, intenta de nuevo.');
       }
     });
   }
 
-  iniciarSesion(usuario: Usuario, token: string) {
+
+  autenticarToken(fbToken: string) {
+    this.authService.autenticar(fbToken).subscribe(res => {
+      if ('token' in res) {
+        console.log("JWT recibido:", res.token);
+        this.usuarioService.setToken(res.token);
+      } else if ('error' in res) {
+        console.error("Error al autenticar:", res.error);
+      }
+    });
+  }
+
+  iniciarSesion(usuario: Usuario) {
     this.router.navigate(['/dummy'], { skipLocationChange: true }).then(() => {
       this.router.navigate(['/jugar']);
     });

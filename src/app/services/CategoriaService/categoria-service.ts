@@ -9,21 +9,37 @@ import { Categoria } from '../../interfaces/Categoria';
   providedIn: 'root'
 })
 export class CategoriaService {
-  constructor(private usuarioService: UsuarioService, private http: HttpClient) {
-  }
+
+  constructor(private usuarioService: UsuarioService, private http: HttpClient) {}
 
   obtenerCategorias(): Observable<Categoria[] | any> {
     return this.usuarioService.token$.pipe(
-      switchMap((token: string | any) => {
+      switchMap((token: string | null) => {
+        if (!token) {
+          throw new Error("No hay token disponible");
+        }
         const headers = new HttpHeaders({
           'Authorization': `Bearer ${token}`
         });
-        return this.http.get<Categoria[] | any>(url_servidor + "/categorias/todo", { headers });
+        return this.http.get<Categoria[] | any>(url_servidor + "/api/categorias/todo", { headers });
       })
     );
   }
 
+  obtenerCategoriaPorId(idCategoria: number): Observable<Categoria | any> {
+    return this.usuarioService.token$.pipe(
+      switchMap((token: string | null) => {
+        if (!token) {
+          throw new Error("No hay token disponible");
+        }
+        const headers = new HttpHeaders({
+          'Authorization': `Bearer ${token}`
+        });
 
-
-
+        return this.http.get<Categoria | any>(url_servidor + "/api/categorias/obtener/" + idCategoria, { headers });
+      })
+    );
+  }
 }
+
+

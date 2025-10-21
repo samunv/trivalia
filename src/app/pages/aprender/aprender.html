@@ -1,5 +1,6 @@
 <app-main-layout>
-  <app-header [titulo]="'Jugar'" [usuarioData]="usuario"></app-header>
+
+  <app-header [titulo]="'Jugar'"></app-header>
 
   <div class="aprender-main">
     <div class="campo-buscador" [class.activo]="inputBuscadorActivo">
@@ -24,12 +25,10 @@
     <div
       class="relative h-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center hover:border-[white]"
     >
-      <p
-        class="absolute top-4 left-4 w-[80%] z-10 text-left text-2x1 !font-[inter-extrabold] text-3xl"
-      >
+      <p class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[inter-extrabold]">
         Preguntas aleatorias
       </p>
-       <div
+      <div
         class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl"
       ></div>
       <svg
@@ -42,7 +41,6 @@
         xmlns:xlink="http://www.w3.org/1999/xlink"
         fill="#000000"
         width="80%"
-
       >
         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
         <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -57,6 +55,7 @@
     <div
       *ngFor="let categoria of categorias"
       class="relative h-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] rounded-2xl overflow-hidden hover:border-[white]"
+      (click)="navegarHaciaCategoria(categoria.id_categoria)"
     >
       <img
         [src]="categoria.imagenURL"
@@ -67,9 +66,7 @@
       <div
         class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl"
       ></div>
-      <p
-        class="absolute top-4 left-4 w-[80%] z-10 text-left text-2x1 !font-[inter-extrabold] text-3xl"
-      >
+      <p class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[inter-extrabold]">
         {{ categoria.titulo }}
       </p>
     </div>
@@ -90,9 +87,7 @@
         <div
           class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl"
         ></div>
-        <p
-          class="absolute top-4 left-4 w-[80%] z-10 text-left text-2x1 !font-[inter-extrabold] text-3xl"
-        >
+        <p class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[inter-extrabold]">
           {{ categoria.titulo }}
         </p>
       </div>

@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterModule } from '@angular/router';
 import { UsuarioService } from '../../services/UsuarioService/usuario-service';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-nav-lateral',
@@ -10,11 +11,12 @@ import { UsuarioService } from '../../services/UsuarioService/usuario-service';
   styleUrl: './nav-lateral.css'
 })
 export class NavLateral {
+  urlActual?: string;
   constructor(public router: Router, private usuarioService: UsuarioService) { }
 
   fotoUsuario: string = ""
 
-  ngOnInit(){
+  ngOnInit() {
     this.usuarioService.usuario$.subscribe(user => {
       this.fotoUsuario = user?.fotoURL;
     })

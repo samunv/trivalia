@@ -10,10 +10,11 @@ import { CategoriaService } from '../../services/CategoriaService/categoria-serv
 import { CommonModule } from '@angular/common';
 import { Categoria } from '../../interfaces/Categoria';
 import { FormsModule, NgModel } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-aprender',
-  imports: [NavLateral, MainLayout, TextoH1, Item, Header, CommonModule, FormsModule],
+  imports: [NavLateral, MainLayout, TextoH1, Item, Header, CommonModule, FormsModule, RouterLink],
   templateUrl: './aprender.html',
   styleUrl: './aprender.css'
 })
@@ -24,7 +25,7 @@ export class Aprender {
   valorBusqueda?: string | any;
 
 
-  constructor(private usuarioService: UsuarioService, private categoriaService: CategoriaService) { }
+  constructor(private usuarioService: UsuarioService, private categoriaService: CategoriaService, private router: Router) { }
 
   ngOnInit() {
     this.usuarioService.usuario$.subscribe(usuario => {
@@ -38,6 +39,10 @@ export class Aprender {
 
   filtrarCategorias(valorBusqueda: string): Categoria[] | any {
     return this.categorias?.filter((c) => c.titulo?.toLowerCase().includes(valorBusqueda?.toLowerCase()))
+  }
+
+  navegarHaciaCategoria(idCategoria: number | any) {
+    this.router.navigate(['/categoria', idCategoria])
   }
 
 }

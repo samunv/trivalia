@@ -1,0 +1,80 @@
+<app-main-layout>
+  <app-header [titulo]="'Categoría'"></app-header>
+
+  <a routerLink="/jugar" class="flex flex-rox items-center hover:underline"
+    ><svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="20px"
+      viewBox="0 -960 960 960"
+      width="20px"
+      fill="white"
+    >
+      <path d="M400-93.85 13.85-480 400-866.15l56.77 56.77L127.38-480l329.39 329.38L400-93.85Z" />
+    </svg>
+    Volver atrás
+  </a>
+
+  <div
+    class="rounded-[20px] !mt-10 flex flex-row gap-5 bg-[var(--color-principal)] border border-[var(--color-bordes)] !p-[30px]"
+  >
+    <img
+      [src]="categoria.imagenURL"
+      alt=""
+      class="rounded-[10px] border border-[var(--color-bordes)]"
+      style="object-fit: cover; width: 150px; height: 150px"
+    />
+    <div class="flex flex-row justify-between items-center !w-full">
+      <div>
+        <h2 class="text-[25px]">{{ categoria?.titulo }}</h2>
+        <p>{{ categoria.cantidad_preguntas }} preguntas</p>
+      </div>
+
+      <app-boton-general [tipo]="'destacado'" [texto]="'Jugar'"
+        ><svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="30px"
+          viewBox="0 -960 960 960"
+          width="30px"
+          fill="var(--color-principal)"
+        >
+          <path d="M340-236.16v-487.68L723.07-480 340-236.16Z" />
+        </svg>
+      </app-boton-general>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-5 !mt-[30px]">
+    <app-texto-h1 [texto]="'Vista Previa'"></app-texto-h1>
+    <div
+      *ngFor="let pregunta of preguntas"
+      class="flex flex-row items-center justify-between bg-[var(--color-principal)] border border-[var(--color-bordes)] rounded-[20px] !p-[15px]"
+    >
+      <div class="flex flex-row items-center gap-5">
+        <img
+          [src]="pregunta.imagenURL"
+          alt=""
+          style="width: 70px; height: 70px; object-fit: contain"
+        />
+        <h2>{{ pregunta.pregunta }}</h2>
+      </div>
+
+      <div class="flex flex-row items-center gap-5">
+        <p>
+          {{ pregunta.tipo_pregunta === "VF" ? "V o F" : pregunta.tipo_pregunta }}
+        </p>
+        <p
+          [ngStyle]="{
+            color:
+              pregunta.dificultad === 'DIFICIL'
+                ? 'red'
+                : pregunta.dificultad === 'MEDIO'
+                ? 'yellow'
+                : 'lightgreen'
+          }"
+        >
+          {{ pregunta.dificultad === "FACIL" ? "Fácil" : pregunta.dificultad === "DIFICIL" ? "Difícil": "Medio"}}
+        </p>
+      </div>
+    </div>
+  </div>
+</app-main-layout>

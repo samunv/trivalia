@@ -6,7 +6,7 @@
   <nav>
     <ul>
       <li>
-        <a routerLink="/jugar" routerLinkActive="activo">
+        <a routerLink="/jugar" routerLinkActive="activo" [ngClass]="router.url === '/categoria/**' ? 'activo' : ''">
           <svg
             *ngIf="router.url !== '/jugar'"
             xmlns="http://www.w3.org/2000/svg"

@@ -26,19 +26,12 @@
     <div class="flex flex-row justify-between items-center !w-full">
       <div>
         <h2 class="text-[25px]">{{ categoria?.titulo }}</h2>
-        <p>{{ categoria.cantidad_preguntas }} preguntas</p>
+        <p>{{ cantidadPreguntas }} preguntas</p>
       </div>
 
-      <app-boton-general [tipo]="'destacado'" [texto]="'Jugar'"
-        ><svg
-          xmlns="http://www.w3.org/2000/svg"
-          height="30px"
-          viewBox="0 -960 960 960"
-          width="30px"
-          fill="var(--color-principal)"
-        >
-          <path d="M340-236.16v-487.68L723.07-480 340-236.16Z" />
-        </svg>
+      <app-boton-general [tipo]="'destacado'" [texto]="'Jugar'">
+        <espacio></espacio>
+        <img src="/img/punta-de-flecha-del-boton-de-reproduccion.png" alt="" width="20px" />
       </app-boton-general>
     </div>
   </div>
@@ -47,7 +40,7 @@
     <app-texto-h1 [texto]="'Vista Previa'"></app-texto-h1>
     <div
       *ngFor="let pregunta of preguntas"
-      class="flex flex-row items-center justify-between bg-[var(--color-principal)] border border-[var(--color-bordes)] rounded-[20px] !p-[15px]"
+      class="flex flex-row items-center justify-between bg-[var(--color-principal)] border-2 border-dashed border-[var(--color-bordes)] rounded-[20px] !p-[15px]"
     >
       <div class="flex flex-row items-center gap-5">
         <img
@@ -55,24 +48,33 @@
           alt=""
           style="width: 70px; height: 70px; object-fit: contain"
         />
-        <h2>{{ pregunta.pregunta }}</h2>
+        <h2>
+          {{
+            pregunta.pregunta.length > 25
+              ? pregunta.pregunta.slice(0, 25).trim() + '...'
+              : pregunta.pregunta
+          }}
+        </h2>
       </div>
 
       <div class="flex flex-row items-center gap-5">
-        <p>
-          {{ pregunta.tipo_pregunta === "VF" ? "V o F" : pregunta.tipo_pregunta }}
-        </p>
         <p
-          [ngStyle]="{
-            color:
-              pregunta.dificultad === 'DIFICIL'
-                ? 'red'
-                : pregunta.dificultad === 'MEDIO'
-                ? 'yellow'
-                : 'lightgreen'
-          }"
+          [style.background-color]="
+            pregunta.dificultad === 'DIFICIL'
+              ? 'red'
+              : pregunta.dificultad === 'MEDIO'
+              ? 'orange'
+              : 'green'
+          "
+          class="!w-[60px] text-center rounded-3xl !pl-1 !pr-1 !font-[inter-bold] text-[14px]"
         >
-          {{ pregunta.dificultad === "FACIL" ? "Fácil" : pregunta.dificultad === "DIFICIL" ? "Difícil": "Medio"}}
+          {{
+            pregunta.dificultad === 'FACIL'
+              ? 'Fácil'
+              : pregunta.dificultad === 'DIFICIL'
+              ? 'Difícil'
+              : 'Medio'
+          }}
         </p>
       </div>
     </div>

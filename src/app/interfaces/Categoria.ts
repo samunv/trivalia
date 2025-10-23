@@ -1,6 +1,5 @@
 export interface Categoria {
-  id_categoria?: number,
+  idCategoria?: number,
   titulo?: string,
   imagenURL?: string,
-  cantidad_preguntas?: number
 }

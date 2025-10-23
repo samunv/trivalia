@@ -1,5 +1,4 @@
 <app-main-layout>
-
   <app-header [titulo]="'Jugar'"></app-header>
 
   <div class="aprender-main">
@@ -53,9 +52,20 @@
       </svg>
     </div>
     <div
+      class="relative h-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center hover:border-[white]"
+    >
+      <p class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[inter-extrabold]">
+        Responde a la IA✨
+      </p>
+      <div
+        class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl"
+      ></div>
+     <img [src]="'https://previews.123rf.com/images/bsd555/bsd5551809/bsd555180900481/107531013-artificial-intelligence-glyph-icon-silhouette-symbol-digital-brain-neurotechnology-ai-negative.jpg'" alt="" style="heigth:100%; width:100%; object-fit:cover">
+    </div>
+    <div
       *ngFor="let categoria of categorias"
       class="relative h-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] rounded-2xl overflow-hidden hover:border-[white]"
-      (click)="navegarHaciaCategoria(categoria.id_categoria)"
+      (click)="navegarHaciaCategoria(categoria.idCategoria)"
     >
       <img
         [src]="categoria.imagenURL"
@@ -77,6 +87,7 @@
       <div
         *ngFor="let categoria of filtrarCategorias(valorBusqueda)"
         class="relative h-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] rounded-2xl overflow-hidden hover:border-[white]"
+        (click)="navegarHaciaCategoria(categoria.idCategoria)"
       >
         <img
           [src]="categoria.imagenURL"

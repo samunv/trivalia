@@ -11,17 +11,17 @@ import { PreguntaService } from '../../services/PreguntaService/pregunta-service
 import { Observable } from 'rxjs';
 import { Pregunta } from '../../interfaces/Pregunta';
 import { CommonModule } from '@angular/common';
-
 @Component({
   selector: 'app-pre-juego',
-  imports: [MainLayout, Header, TextoH1, BotonGeneral, RouterLink, CommonModule],
-  templateUrl: './pre-juego.html',
+  imports: [MainLayout, Header, TextoH1, BotonGeneral, RouterLink, CommonModule, Espacio],
+templateUrl: './pre-juego.html',
   styleUrl: './pre-juego.css'
 })
 export class PreJuego {
 
   categoria?: Categoria | any;
   preguntas?: Pregunta[] | any;
+  cantidadPreguntas: number = 0;
 
   constructor(private categoriaService: CategoriaService, private rutaActiva: ActivatedRoute, private preguntaService: PreguntaService) { }
 
@@ -32,10 +32,11 @@ export class PreJuego {
           this.categoria = categoria;
 
           // Suscribirse al observable de preguntas
-          this.preguntaService.obtenerVistaPreviaPreguntas(categoria?.id_categoria)
+          this.preguntaService.obtenerVistaPreviaPreguntas(categoria?.idCategoria)
             .subscribe({
               next: (preguntas: Pregunta[]) => {
-                this.preguntas = preguntas;
+                this.preguntas = preguntas
+                this.cantidadPreguntas = preguntas.length
               },
               error: (err) => {
                 console.error('Error al cargar preguntas', err);

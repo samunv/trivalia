@@ -19,7 +19,7 @@ h1 {
   font-family: 'Inter-bold', sans-serif;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1000px) {
   .ng-content {
     padding: 15px 25px;
   }

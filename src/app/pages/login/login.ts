@@ -48,7 +48,6 @@ export class Login {
         this.authService.autenticar(res.token).subscribe({
           next: (authRes) => {
             if ('token' in authRes) {
-              console.log("🪙 JWT recibido del backend:", authRes.token);
 
               // Guardamos el usuario y el JWT
               this.usuarioService.setUsuario(res.usuario);
@@ -70,7 +69,7 @@ export class Login {
         });
       },
       error: (err) => {
-        console.error('🚨 Error durante el login con Google:', err);
+        console.error(' Error durante el login con Google:', err);
         alert('Error durante el login con Google. Por favor, intenta de nuevo.');
       }
     });
@@ -80,7 +79,6 @@ export class Login {
   autenticarToken(fbToken: string) {
     this.authService.autenticar(fbToken).subscribe(res => {
       if ('token' in res) {
-        console.log("JWT recibido:", res.token);
         this.usuarioService.setToken(res.token);
       } else if ('error' in res) {
         console.error("Error al autenticar:", res.error);

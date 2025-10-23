@@ -27,7 +27,7 @@ export class AuthService {
           return of(docSnap.data());
         } else {
           // Si no existe, creamos usando datos del proveedor opcional
-          const nuevoUsuario = {
+          const nuevoUsuario: Usuario = {
             nombre: user?.displayName?.substring(0, 15) || 'usuario_' + nanoid(5),
             email: user?.email || '',
             fotoURL: "https://avatar.iran.liara.run/username?username=" + user?.displayName?.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]/g, '') + "&bold=true",
@@ -37,7 +37,6 @@ export class AuthService {
             monedas: 100,
             vidas: 7,
             logros: [],
-            proveedor: proveedor
           };
           return from(setDoc(usuariosRef, nuevoUsuario)).pipe(
             switchMap(() => of(nuevoUsuario))
@@ -63,6 +62,7 @@ export class AuthService {
   }
 
   autenticar(firebaseToken: string | any): Observable<{ token: string } | { error: string }> {
+
     return this.http.post<{ token: string } | { error: string }>(url_servidor + "/auth/login", { firebaseToken: firebaseToken })
   }
 

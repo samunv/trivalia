@@ -1,6 +1,6 @@
 export interface Pregunta {
-  id_pregunta?: number,
-  id_categoria?: number,
+  idPregunta?: number,
+  idCategoria?: number,
   pregunta?: string,
   tipo_pregunta?: "OPCIONES" | "ESCRIBIR" | "VF",
   dificultad?: "FACIL" | "MEDIO" | "DIFICIL",

@@ -14,7 +14,7 @@ export class NavLateral {
   urlActual?: string;
   constructor(public router: Router, private usuarioService: UsuarioService) { }
 
-  fotoUsuario: string = ""
+  fotoUsuario?: string | any;
 
   ngOnInit() {
     this.usuarioService.usuario$.subscribe(user => {

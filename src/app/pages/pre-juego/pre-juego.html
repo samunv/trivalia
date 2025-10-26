@@ -1,82 +1,97 @@
 <app-main-layout>
   <app-header [titulo]="'Categoría'"></app-header>
 
-  <a routerLink="/jugar" class="flex flex-rox items-center hover:underline"
-    ><svg
-      xmlns="http://www.w3.org/2000/svg"
-      height="20px"
-      viewBox="0 -960 960 960"
-      width="20px"
-      fill="white"
-    >
-      <path d="M400-93.85 13.85-480 400-866.15l56.77 56.77L127.38-480l329.39 329.38L400-93.85Z" />
-    </svg>
-    Volver atrás
-  </a>
+  @if (categoria) {
+  <div>
+    <a
+      routerLink="/jugar"
+      class="flex flex-rox items-center hover:underline gap-0 font-[inter-bold]"
+      ><svg
+        xmlns="http://www.w3.org/2000/svg"
+        height="20px"
+        viewBox="0 -960 960 960"
+        width="20px"
+        fill="white"
+      >
+        <path d="M400-93.85 13.85-480 400-866.15l56.77 56.77L127.38-480l329.39 329.38L400-93.85Z" />
+      </svg>
+      Volver atrás
+    </a>
 
-  <div
-    class="rounded-[20px] !mt-10 flex flex-row gap-5 bg-[var(--color-principal)] border border-[var(--color-bordes)] !p-[30px]"
-  >
-    <img
-      [src]="categoria.imagenURL"
-      alt=""
-      class="rounded-[10px] border border-[var(--color-bordes)]"
-      style="object-fit: cover; width: 150px; height: 150px"
-    />
-    <div class="flex flex-row justify-between items-center !w-full">
-      <div>
-        <h2 class="text-[25px]">{{ categoria?.titulo }}</h2>
-        <p>{{ cantidadPreguntas }} preguntas</p>
-      </div>
-
-      <app-boton-general [tipo]="'destacado'" [texto]="'Jugar'">
-        <espacio></espacio>
-        <img src="/img/punta-de-flecha-del-boton-de-reproduccion.png" alt="" width="20px" />
-      </app-boton-general>
-    </div>
-  </div>
-
-  <div class="flex flex-col gap-5 !mt-[30px]">
-    <app-texto-h1 [texto]="'Vista Previa'"></app-texto-h1>
     <div
-      *ngFor="let pregunta of preguntas"
-      class="flex flex-row items-center justify-between bg-[var(--color-principal)] border-2 border-dashed border-[var(--color-bordes)] rounded-[20px] !p-[15px]"
+      class="rounded-[20px] !mt-10 flex flex-row gap-5 bg-[var(--color-principal)] border border-[var(--color-bordes)] !p-[30px]"
     >
-      <div class="flex flex-row items-center gap-5">
-        <img
-          [src]="pregunta.imagenURL"
-          alt=""
-          style="width: 70px; height: 70px; object-fit: contain"
-        />
-        <h2>
-          {{
-            pregunta.pregunta.length > 25
-              ? pregunta.pregunta.slice(0, 25).trim() + '...'
-              : pregunta.pregunta
-          }}
-        </h2>
-      </div>
+      <img
+        [src]="categoria.imagenURL"
+        alt=""
+        class="rounded-[10px] border border-[var(--color-bordes)]"
+        style="object-fit: cover; width: 150px; height: 150px"
+      />
+      <div class="flex flex-row justify-between items-center !w-full">
+        <div>
+          <h2 class="text-[25px]">{{ categoria?.titulo }}</h2>
+          <p>{{ cantidadPreguntas }} preguntas</p>
+        </div>
 
-      <div class="flex flex-row items-center gap-5">
-        <p
-          [style.background-color]="
-            pregunta.dificultad === 'DIFICIL'
-              ? 'red'
-              : pregunta.dificultad === 'MEDIO'
-              ? 'orange'
-              : 'green'
-          "
-          class="!w-[60px] text-center rounded-3xl !pl-1 !pr-1 !font-[inter-bold] text-[14px]"
-        >
-          {{
-            pregunta.dificultad === 'FACIL'
-              ? 'Fácil'
-              : pregunta.dificultad === 'DIFICIL'
-              ? 'Difícil'
-              : 'Medio'
-          }}
-        </p>
+        <app-boton-general [tipo]="'destacado'" [texto]="'Jugar'" (click)="onJugar()">
+          <espacio></espacio>
+          <img src="/img/punta-de-flecha-del-boton-de-reproduccion.png" alt="" width="20px" />
+        </app-boton-general>
       </div>
     </div>
+
+    <div class="flex flex-col gap-5 !mt-[30px]">
+      <app-texto-h1 [texto]="'Vista Previa'"></app-texto-h1>
+      @for (pregunta of preguntas; track $index) {
+      <div
+        class="flex flex-row items-center justify-between bg-[var(--color-principal)] border-2 border-dashed border-[var(--color-bordes)] rounded-[20px] !p-[15px]"
+      >
+        <div class="flex flex-row items-center gap-5">
+          <img
+            [src]="pregunta.imagenURL"
+            alt=""
+            style="width: 70px; height: 70px; object-fit: contain"
+          />
+          <p class="!text-[18px] !font-[inter-bold]">
+            {{
+              pregunta.pregunta.length > 25
+                ? pregunta.pregunta.slice(0, 25).trim() + '...'
+                : pregunta.pregunta
+            }}
+          </p>
+        </div>
+
+        <div class="flex flex-row items-center gap-5">
+          <p>
+            {{ usuario?.arrayIdPreguntasGanadas?.includes(pregunta?.idPregunta) ? 'Ganado' : '' }}
+          </p>
+          <p
+            [style.background-color]="
+              pregunta.dificultad === 'DIFICIL'
+                ? 'red'
+                : pregunta.dificultad === 'MEDIO'
+                ? 'orange'
+                : 'green'
+            "
+            class="!w-[60px] text-center rounded-3xl !pl-1 !pr-1 !font-[inter-bold] text-[14px]"
+          >
+            {{
+              pregunta.dificultad === 'FACIL'
+                ? 'Fácil'
+                : pregunta.dificultad === 'DIFICIL'
+                ? 'Difícil'
+                : 'Medio'
+            }}
+          </p>
+        </div>
+      </div>
+      }
+    </div>
   </div>
+  } @if (alerta) {
+  <app-mensaje-alerta
+    [mensaje]="'Debes recargar tus vidas para poder jugar'"
+    [tipo]="'error'"
+  ></app-mensaje-alerta>
+  }
 </app-main-layout>

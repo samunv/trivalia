@@ -25,4 +25,24 @@ export class PreguntaService {
       })
     )
   }
+
+  obtenerPreguntas(idCategoria: number | any): Observable<Pregunta[] | any> {
+    return this.usuarioService.token$.pipe(
+      switchMap((token: string) => {
+        const headers = new HttpHeaders({
+          "Authorization": `Bearer ${token}`
+        })
+        return this.http.get<Pregunta[] | any>(url_servidor + "/api/preguntas/obtener/" + idCategoria + "/" + 15, {headers})
+      })
+    )
+  }
+
+  obtenerRespuestaCorrecta(idPregunta: number): Observable<string | any>{
+    return this.usuarioService.token$.pipe(switchMap((token: string)=>{
+      const headers = new HttpHeaders({
+        "Authorization": `Bearer ${token}`
+      })
+      return this.http.get<{[clave: string]: string}>(url_servidor + "/api/preguntas/obtener-respuesta-correcta/"+idPregunta, {headers})
+    }))
+  }
 }

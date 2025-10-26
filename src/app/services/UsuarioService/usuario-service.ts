@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { Usuario } from '../../interfaces/Usuario';
-import { doc, Firestore, updateDoc } from '@angular/fire/firestore';
+import { doc, Firestore, increment, updateDoc } from '@angular/fire/firestore';
 import { getAuth, onAuthStateChanged, onIdTokenChanged } from '@angular/fire/auth';
 
 @Injectable({
@@ -11,18 +11,17 @@ export class UsuarioService {
   private usuarioSubject = new BehaviorSubject<any>(JSON.parse(localStorage.getItem('usuario') || 'null'));
   private tokenSubject = new BehaviorSubject<string | null>(localStorage.getItem('tokenJWT'));
 
-  constructor(private firestore: Firestore) {
-  }
+  constructor(private firestore: Firestore) { }
 
-  usuario$ = this.usuarioSubject.asObservable();
-  token$ = this.tokenSubject.asObservable();
+  usuario$: Observable<Usuario> = this.usuarioSubject.asObservable();
+  token$: Observable<string | any> = this.tokenSubject.asObservable();
 
   setUsuario(usuario: Usuario) {
     localStorage.setItem('usuario', JSON.stringify(usuario));
     this.usuarioSubject.next(usuario);
   }
 
-   setToken(token: string) {
+  setToken(token: string) {
     localStorage.setItem('tokenJWT', token);
     this.tokenSubject.next(token);
   }
@@ -42,6 +41,21 @@ export class UsuarioService {
       fotoURL: foto,
       actualizado: new Date()
     }));
+
+  }
+
+  actualizarItemsUsuario(uid: string, monedas?: number, vidas?: number, estrellas?: number): Observable<any> {
+    const usuarioDocRef = doc(this.firestore, 'usuarios', uid);
+
+    const datosParaActualizar: any = {
+      actualizado: new Date()
+    };
+
+    if (monedas !== undefined) datosParaActualizar.monedas = monedas;
+    if (vidas !== undefined) datosParaActualizar.vidas = vidas;
+    if (estrellas !== undefined) datosParaActualizar.estrellas =increment(estrellas);
+
+    return from(updateDoc(usuarioDocRef, datosParaActualizar));
   }
 
 }

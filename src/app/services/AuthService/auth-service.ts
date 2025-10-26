@@ -24,10 +24,11 @@ export class AuthService {
     return from(getDoc(usuariosRef)).pipe(
       switchMap(docSnap => {
         if (docSnap.exists()) {
-          return of(docSnap.data());
+          return of({...docSnap.data(), uid} as Usuario);
         } else {
           // Si no existe, creamos usando datos del proveedor opcional
           const nuevoUsuario: Usuario = {
+            uid,
             nombre: user?.displayName?.substring(0, 15) || 'usuario_' + nanoid(5),
             email: user?.email || '',
             fotoURL: "https://avatar.iran.liara.run/username?username=" + user?.displayName?.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]/g, '') + "&bold=true",
@@ -37,6 +38,7 @@ export class AuthService {
             monedas: 100,
             vidas: 7,
             logros: [],
+            arrayIdPreguntasGanadas: []
           };
           return from(setDoc(usuariosRef, nuevoUsuario)).pipe(
             switchMap(() => of(nuevoUsuario))

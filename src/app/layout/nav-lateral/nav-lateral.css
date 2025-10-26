@@ -37,7 +37,7 @@
 }
 
 .nav-lateral nav ul li svg {
-  fill: var(--color-secundario);
+  fill: white;
 }
 
 .nav-lateral nav ul li svg {
@@ -47,7 +47,7 @@
 
 .nav-lateral nav ul li a {
   text-decoration: none;
-  color: var(--color-secundario);
+  color: white;
   font-size: 18px;
   display: flex;
   flex-direction: row;

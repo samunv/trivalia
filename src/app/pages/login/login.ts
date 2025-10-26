@@ -44,7 +44,6 @@ export class Login {
         console.log('✅ Login con Google exitoso:', res.usuario);
         console.log('🔹 Token de Firebase:', res.token);
 
-        // 🔹 Llamar a tu backend para obtener el JWT
         this.authService.autenticar(res.token).subscribe({
           next: (authRes) => {
             if ('token' in authRes) {

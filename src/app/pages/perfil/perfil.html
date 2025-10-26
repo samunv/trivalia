@@ -33,9 +33,9 @@
                 minlength="4"
               />
 
-              <div *ngIf="nombre.invalid" class="text-red-500 text-[14px]">
-                El nombre debe tener al menos 4 caracteres
-              </div>
+              @if (nombre.invalid) {
+              <div class="text-red-500 text-[14px]">El nombre debe tener al menos 4 caracteres</div>
+              }
             </div>
           </form>
         </div>
@@ -81,23 +81,23 @@
     </app-boton-general>
   </div>
 
+  @if (guardado) {
   <app-mensaje-alerta
-    *ngIf="guardado"
     [mensaje]="'Perfil actualizado con éxito'"
     [tipo]="'exito'"
   ></app-mensaje-alerta>
+  } @if (modalAbierto) {
+  <app-modal
+    [titulo]="'¿Estás seguro de que quieres cerrar sesión?'"
+    [btn1]="'Cancelar'"
+    [btn2]="'Cerrar Sesión'"
+    (click1)="cerrarModal()"
+    (click2)="cerrarSesion()"
+  >
+    <espacio [altura]="20"></espacio>
+  </app-modal>
 
-  <div *ngIf="modalAbierto">
-    <app-modal
-      [titulo]="'¿Estás seguro de que quieres cerrar sesión?'"
-      [btn1]="'Cancelar'"
-      [btn2]="'Cerrar Sesión'"
-      (click1)="cerrarModal()"
-      (click2)="cerrarSesion()"
-    >
-      <espacio [altura]="20"></espacio>
-    </app-modal>
-  </div>
+  }
   <espacio [altura]="40"></espacio>
   <!-- <app-texto-h1 [texto]="'Estadísticas'"></app-texto-h1> -->
 </app-main-layout>

@@ -20,13 +20,14 @@
     </div>
   </div>
 
-  <div class="grid grid-cols-3 gap-10 !mt-[30px]" *ngIf="!valorBusqueda">
+  @if (!valorBusqueda) {
+  <div class="grid grid-cols-3 gap-10 !mt-[30px]">
     <div
-      class="relative h-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center hover:border-[white]"
+      class="relative h-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center hover:border-[white] bg-yellow-500"
     >
-      <p class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[inter-extrabold]">
-        Preguntas aleatorias
-      </p>
+      <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[nunito]">
+        5 Preguntas aleatorias
+      </h2>
       <div
         class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl"
       ></div>
@@ -52,18 +53,17 @@
       </svg>
     </div>
     <div
-      class="relative h-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center hover:border-[white]"
+      class="relative h-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center hover:border-[white] bg-green-500"
     >
-      <p class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[inter-extrabold]">
-        Responde a la IA✨
-      </p>
+      <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[nunito]">Responde a la IA✨</h2>
       <div
         class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl"
       ></div>
-     <img [src]="'https://previews.123rf.com/images/bsd555/bsd5551809/bsd555180900481/107531013-artificial-intelligence-glyph-icon-silhouette-symbol-digital-brain-neurotechnology-ai-negative.jpg'" alt="" style="heigth:100%; width:100%; object-fit:cover">
+      <img [src]="'/img/ai (1).png'" alt="" style="heigth: 100%; width: 100%; object-fit: cover" />
     </div>
+
+    @for (categoria of categorias; track $index) {
     <div
-      *ngFor="let categoria of categorias"
       class="relative h-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] rounded-2xl overflow-hidden hover:border-[white]"
       (click)="navegarHaciaCategoria(categoria.idCategoria)"
     >
@@ -76,16 +76,18 @@
       <div
         class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl"
       ></div>
-      <p class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[inter-extrabold]">
+      <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[nunito]">
         {{ categoria.titulo }}
-      </p>
+      </h2>
     </div>
+    }
   </div>
-  <div class="!mt-[30px]" *ngIf="valorBusqueda">
+  } @if (valorBusqueda) {
+  <div class="!mt-[30px]">
     <p>Resultados para {{ valorBusqueda }}</p>
     <div class="grid grid-cols-3 gap-10 !mt-[30px]">
+      @for (categoria of filtrarCategorias(valorBusqueda); track $index) {
       <div
-        *ngFor="let categoria of filtrarCategorias(valorBusqueda)"
         class="relative h-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] rounded-2xl overflow-hidden hover:border-[white]"
         (click)="navegarHaciaCategoria(categoria.idCategoria)"
       >
@@ -98,10 +100,12 @@
         <div
           class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl"
         ></div>
-        <p class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[inter-extrabold]">
+        <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[nunito]">
           {{ categoria.titulo }}
-        </p>
+        </h2>
       </div>
+      }
     </div>
   </div>
+  }
 </app-main-layout>

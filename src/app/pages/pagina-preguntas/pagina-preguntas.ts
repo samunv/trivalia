@@ -15,7 +15,7 @@ import { Modal } from '../../components/modal/modal';
 import { Espacio } from "../../components/espacio/espacio";
 import { UsuarioService } from '../../services/UsuarioService/usuario-service';
 import { Usuario } from '../../interfaces/Usuario';
-import { doc, Firestore, updateDoc } from '@angular/fire/firestore';
+import { arrayUnion, doc, Firestore, updateDoc } from '@angular/fire/firestore';
 import { random } from 'nanoid';
 
 @Component({
@@ -127,16 +127,43 @@ export class PaginaPreguntas {
         }))
   }
 
+  actualizarPreguntasGanadasDelUsuario(idPregunta: number) {
+    this.usuarioService.actualizarArrayPreguntasJugadas(String(this.usuario?.uid), idPregunta).subscribe({
+      next: () => {
+        this.usuarioService.setUsuario({
+          ...this.usuario,
+          arrayIdPreguntasGanadas: [
+            ...(this.usuario?.arrayIdPreguntasGanadas || []),
+            idPregunta
+          ]
+        })
+      },
+      error: (err) => {
+        console.log(err)
+      }
+    })
+
+  }
+
   acertarPregunta() {
     this.esCorrecta = true;
     this.mensaje = "¡Correcto! " + this.respuestaCorrecta.charAt(0).toLocaleUpperCase() + this.respuestaCorrecta.slice(1)
-    this.ganarEstrellas()
+
+    if (!this.usuario?.arrayIdPreguntasGanadas?.includes(Number(this.preguntaActual?.idPregunta))) {
+      // Ganar estrellas únicamente si el usuario no ha ganado la pregunta anteriormente
+      this.ganarEstrellas()
+
+      // Añadir el idPregunta de la pregunta  si el usuario no ha ganado antes la pregunta
+      this.actualizarPreguntasGanadasDelUsuario(Number(this.preguntaActual?.idPregunta))
+    }
+
   }
 
   fallarPregunta() {
     this.esCorrecta = false;
     this.mensaje = "¡Incorrecto! Respuesta correcta: " + this.respuestaCorrecta.charAt(0).toLocaleUpperCase() + this.respuestaCorrecta.slice(1)
     this.perderVida()
+    this.actualizarPreguntasFalladas();
     setTimeout(() => this.turnoPerdido = true, 1500)
   }
 
@@ -236,6 +263,14 @@ export class PaginaPreguntas {
       case "FACIL": return 10;
       default: return 0;
     }
+  }
+
+  actualizarPreguntasFalladas() {
+    this.usuarioService.actualizarPreguntasFalladas(String(this.usuario?.uid))
+    this.usuarioService.setUsuario({
+      ...this.usuario,
+      preguntasFalladas: (Number(this.usuario?.preguntasFalladas) + 1)
+    })
   }
 
   ngOnDestroy() {

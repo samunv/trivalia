@@ -44,7 +44,12 @@
       <app-texto-h1 [texto]="'Vista Previa'"></app-texto-h1>
       @for (pregunta of preguntas; track $index) {
       <div
-        class="flex flex-row items-center justify-between bg-[var(--color-principal)] border-2 border-dashed border-[var(--color-bordes)] rounded-[20px] !p-[15px]"
+        class="flex flex-row items-center justify-between bg-[var(--color-principal)] rounded-[20px] !p-[15px]"
+        [ngStyle]="{
+          border: usuario?.arrayIdPreguntasGanadas?.includes(pregunta.idPregunta)
+            ? '1px white solid'
+            : '2px var(--color-bordes) dashed'
+        }"
       >
         <div class="flex flex-row items-center gap-5">
           <img
@@ -62,9 +67,24 @@
         </div>
 
         <div class="flex flex-row items-center gap-5">
-          <p>
-            {{ usuario?.arrayIdPreguntasGanadas?.includes(pregunta?.idPregunta) ? 'Ganado' : '' }}
-          </p>
+          @if(usuario?.arrayIdPreguntasGanadas?.includes(pregunta?.idPregunta)){
+          <svg
+            fill="#ffffff"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            stroke="#ffffff"
+            width="25px"
+          >
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path
+                d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm5.676,8.237-6,5.5a1,1,0,0,1-1.383-.03l-3-3a1,1,0,1,1,1.414-1.414l2.323,2.323,5.294-4.853a1,1,0,1,1,1.352,1.474Z"
+              ></path>
+            </g>
+          </svg>
+          }
+
           <p
             [style.background-color]="
               pregunta.dificultad === 'DIFICIL'

@@ -11,8 +11,11 @@ import { Categoria } from '../../interfaces/Categoria';
 export class CategoriaService {
 
   private categoriaSubject = new BehaviorSubject<string | any>(sessionStorage.getItem("categoriaSeleccionada") || null)
+  private token$: Observable<string>
 
-  constructor(private usuarioService: UsuarioService, private http: HttpClient) { }
+  constructor(private usuarioService: UsuarioService, private http: HttpClient) {
+    this.token$ = this.usuarioService.token;
+  }
 
   categoriaSeleccionada$: Observable<Categoria | any> = this.categoriaSubject.asObservable()
 
@@ -26,7 +29,7 @@ export class CategoriaService {
   }
 
   obtenerCategorias(): Observable<Categoria[] | any> {
-    return this.usuarioService.token$.pipe(
+    return this.token$.pipe(
       switchMap((token: string | null) => {
         if (!token) {
           throw new Error("No hay token disponible");
@@ -40,7 +43,7 @@ export class CategoriaService {
   }
 
   obtenerCategoriaPorId(idCategoria: number): Observable<Categoria | any> {
-    return this.usuarioService.token$.pipe(
+    return this.token$.pipe(
       switchMap((token: string | null) => {
         if (!token) {
           throw new Error("No hay token disponible");

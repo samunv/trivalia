@@ -17,7 +17,7 @@
             class="!w-[250px] !h-[250px] object-contain rounded-[10px] !p-[15px] overflow-hidden"
           />
           <div class="flex flex-col items-center gap-2 !w-full">
-            <h2 class="text-[18px]">{{ preguntaActual.pregunta }}</h2>
+            <h2 class="text-[18px] text-center">{{ preguntaActual.pregunta }}</h2>
             <div class="flex flex-col items-center gap-2 !w-full">
               @if (preguntaActual.tipo_pregunta == 'OPCIONES') { @for (opcion of opcionesPregunta;
               track $index) {
@@ -66,20 +66,16 @@
   </div>
   } @if(turnoPerdido){
   <app-modal
-    titulo="Has perdido el turno...😢"
+    titulo="Has perdido la partida...😢"
     btn1="Salir"
     btn2="Continuar con 100 monedas"
     (click1)="navegar('/jugar')"
     (click2)="continuarConMonedas(100)"
     ><espacio [altura]="20"></espacio>
     <img src="/img/heartbreak_4001557.png" alt="" width="150" class="animate-tada">
-    <p class="text-[#D23F34] !font-[inter-bold]">Has perdido 1 vida. Te quedan {{ usuario?.vidas }}</p>
+    <p class="text-[#D23F34] !font-[inter-bold]">Tienes una vida menos. Te quedan {{ usuario?.vidas }}</p>
     <espacio [altura]="20"></espacio
   ></app-modal>
   }
 </app-main-layout>
 
-<audio #musica loop autoplay>
-  <source src="assets/audio/musica.mp3" type="audio/mpeg" />
-  Tu navegador no soporta audio
-</audio>

@@ -8,11 +8,11 @@
           class="foto-perfil"
           (click)="fileInput.click()"
         />
-        <div class="columna-texto">
+        <div class="columna-texto !w-full">
           <!-- <div>
             <p>{{ usuario.proveedor }}</p>
           </div> -->
-          <form class="flex flex-row gap-5 items-center flex-wrap flex-1">
+          <form class="flex flex-row gap-5 items-center flex-wrap flex-1 !w-full">
             <input
               type="file"
               id="foto"
@@ -22,7 +22,7 @@
               #fileInput
             />
 
-            <div class="flex flex-col">
+            <div class="flex flex-col w-full">
               <input
                 type="text"
                 class="rounded-[10px] border-1 border-[var(--color-bordes)] focus: outline-white focus:outline-1 !p-[10px]"
@@ -47,20 +47,6 @@
           ></app-boton-general>
         </div>
       </div>
-
-      <!-- <div class="columna-2">
-        <ul>
-          <li class="cerebros">
-            <item [item]="'cerebro'" [cantidad]="usuario?.estrellas"></item>
-          </li>
-          <li class="monedas">
-            <item [item]="'moneda'" [cantidad]="usuario?.monedas"></item>
-          </li>
-          <li class="vidas">
-            <item [item]="'vida'" [cantidad]="usuario?.vidas"></item>
-          </li>
-        </ul>
-      </div> -->
     </div>
   </div>
   <espacio [altura]="20"></espacio>
@@ -99,5 +85,27 @@
 
   }
   <espacio [altura]="40"></espacio>
-  <!-- <app-texto-h1 [texto]="'Estadísticas'"></app-texto-h1> -->
+  <app-texto-h1 [texto]="'Estadísticas'"></app-texto-h1>
+  <espacio [altura]="20"></espacio>
+  @if(preguntasDificilesGanadas){
+  <div class="flex flex-row flex-wrap items-center gap-5 justify-between animate-fade-in-up">
+    <div
+      class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2"
+    >
+      <strong>Preguntas Ganadas</strong
+      ><strong class="text-4xl">{{ usuario?.arrayIdPreguntasGanadas.length }}</strong>
+    </div>
+    <div
+      class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2"
+    >
+      <strong>Fallos</strong><strong class="text-4xl">{{ usuario?.preguntasFalladas }}</strong>
+    </div>
+    <div
+      class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2"
+    >
+      <strong>Difíciles Ganadas</strong
+      ><strong class="text-4xl">{{ preguntasDificilesGanadas }}</strong>
+    </div>
+  </div>
+  }
 </app-main-layout>

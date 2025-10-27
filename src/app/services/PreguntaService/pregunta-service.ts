@@ -11,11 +11,14 @@ import { url_servidor } from '../../urlServidor';
 })
 export class PreguntaService {
   preguntas?: Pregunta[]
+  private token$: Observable<string>;
 
-  constructor(private http: HttpClient, private usuarioService: UsuarioService) { }
+  constructor(private http: HttpClient, private usuarioService: UsuarioService) {
+    this.token$ = this.usuarioService.token
+  }
 
   obtenerVistaPreviaPreguntas(idCategoria: number | any): Observable<Pregunta[] | any> {
-    return this.usuarioService.token$.pipe(
+    return this.token$.pipe(
       switchMap((token: string | any) => {
         const headers = new HttpHeaders({
           'Authorization': `Bearer ${token}`
@@ -27,22 +30,39 @@ export class PreguntaService {
   }
 
   obtenerPreguntas(idCategoria: number | any): Observable<Pregunta[] | any> {
-    return this.usuarioService.token$.pipe(
+    return this.token$.pipe(
       switchMap((token: string) => {
         const headers = new HttpHeaders({
           "Authorization": `Bearer ${token}`
         })
-        return this.http.get<Pregunta[] | any>(url_servidor + "/api/preguntas/obtener/" + idCategoria + "/" + 15, {headers})
+        return this.http.get<Pregunta[] | any>(url_servidor + "/api/preguntas/obtener/" + idCategoria + "/" + 15, { headers })
       })
     )
   }
 
-  obtenerRespuestaCorrecta(idPregunta: number): Observable<string | any>{
-    return this.usuarioService.token$.pipe(switchMap((token: string)=>{
+  obtenerRespuestaCorrecta(idPregunta: number): Observable<string | any> {
+    return this.token$.pipe(switchMap((token: string) => {
       const headers = new HttpHeaders({
         "Authorization": `Bearer ${token}`
       })
-      return this.http.get<{[clave: string]: string}>(url_servidor + "/api/preguntas/obtener-respuesta-correcta/"+idPregunta, {headers})
+      return this.http.get<{ [clave: string]: string }>(url_servidor + "/api/preguntas/obtener-respuesta-correcta/" + idPregunta, { headers })
     }))
   }
+
+  obtenerPreguntasDificiles(arrayIdPreguntas: number[] | any[]): Observable<Pregunta[] | any> {
+    return this.token$.pipe(
+      switchMap((token: string) => {
+        const headers = new HttpHeaders({
+          "Authorization": `Bearer ${token}`
+        })
+        return this.http.post<Pregunta[] | any[]>(
+          url_servidor + "/api/preguntas/obtener-dificiles",
+          arrayIdPreguntas,
+          { headers }
+        )
+      }
+      )
+    )
+  }
+
 }

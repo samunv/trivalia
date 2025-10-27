@@ -38,7 +38,8 @@ export class AuthService {
             monedas: 100,
             vidas: 7,
             logros: [],
-            arrayIdPreguntasGanadas: []
+            arrayIdPreguntasGanadas: [],
+            preguntasFalladas: 0
           };
           return from(setDoc(usuariosRef, nuevoUsuario)).pipe(
             switchMap(() => of(nuevoUsuario))

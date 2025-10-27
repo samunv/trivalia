@@ -18,11 +18,13 @@ import { Espacio } from '../../components/espacio/espacio';
 import { Item } from '../../components/item/item';
 import { Header } from '../../layout/header/header';
 import { Usuario } from '../../interfaces/Usuario';
+import { PreguntaService } from '../../services/PreguntaService/pregunta-service';
+import { Pregunta } from '../../interfaces/Pregunta';
 
 @Component({
   selector: 'app-perfil',
   imports: [NavLateral, MainLayout, CommonModule, TextoH1,
-  BotonGeneral, Modal, ReactiveFormsModule, MensajeAlerta, Espacio, Header],
+    BotonGeneral, Modal, ReactiveFormsModule, MensajeAlerta, Espacio, Header],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css'
 })
@@ -30,9 +32,10 @@ export class Perfil {
 
 
   constructor(private authService: AuthService, private router: Router,
-    private usuarioService: UsuarioService, private firestore: Firestore,
+    private usuarioService: UsuarioService,
     private auth: Auth, private imagenService: ImagenesService,
-    ) { }
+    private preguntasService: PreguntaService
+  ) { }
 
   modalAbierto: boolean = false;
   nombre: any;
@@ -43,13 +46,14 @@ export class Perfil {
   editarFotoActivo: boolean = false;
   fotoPreview: string = ""
   usuario?: Usuario | any;
+  preguntasDificilesGanadas?: number;
 
   ngOnInit() {
-    this.usuarioService.usuario$.subscribe(user => {
+    this.usuarioService.usuario$.subscribe((user: Usuario) => {
       this.usuario = user;
       this.nombre = new FormControl(user.nombre, [Validators.required, Validators.minLength(4), Validators.maxLength(15)]);
     });
-    console.log("Perfil >> Foto del usuario: " + this.usuario?.fotoURL);
+
     authState(this.auth).subscribe(user => {
       if (user) {
         this.uid = user.uid;
@@ -58,6 +62,9 @@ export class Perfil {
         console.log('No hay usuario logueado');
       }
     });
+
+    this.obtenerPreguntasDificilesGanadas(this.usuario.arrayIdPreguntasGanadas);
+
   }
 
   activarEditarFoto() {
@@ -147,6 +154,12 @@ export class Perfil {
     });
 
     this.nombre.markAsPristine();
+  }
+
+  obtenerPreguntasDificilesGanadas(arrayIdPreguntas: number [] | any[]) {
+    this.preguntasService.obtenerPreguntasDificiles(arrayIdPreguntas).subscribe((preguntasDificiles: Pregunta[]) => {
+      this.preguntasDificilesGanadas = preguntasDificiles.length;
+    })
   }
 
 

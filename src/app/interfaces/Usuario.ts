@@ -9,5 +9,6 @@ export interface Usuario {
   monedas?: number;
   vidas?: number;
   logros?: string[];
-  arrayIdPreguntasGanadas?: number[]
+  arrayIdPreguntasGanadas?: number[],
+  preguntasFalladas?: number
 }

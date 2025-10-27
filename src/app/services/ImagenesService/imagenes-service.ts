@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
 import { map, Observable, switchMap } from 'rxjs';
 import { UsuarioService } from '../UsuarioService/usuario-service';
 import { url_servidor } from '../../urlServidor';
@@ -9,23 +9,21 @@ import { url_servidor } from '../../urlServidor';
 })
 export class ImagenesService {
 
-  token?: string;
+  private usuarioService = inject(UsuarioService);
 
-  constructor(private http: HttpClient, private usuarioService: UsuarioService) { }
+  constructor(private http: HttpClient) { }
+
+  token = computed(() => this.usuarioService.token())
 
   obtenerImgApiKey(): Observable<string> {
-    return this.usuarioService.token$.pipe(
-      switchMap(token => {
-        const headers = new HttpHeaders({
-          'Authorization': `Bearer ${token}`
-        });
-        return this.http.get<{ api_key: string }>(url_servidor + "/api/imagenes/img-api-key", { headers })
-          .pipe(
-            map(response => response.api_key)
-          )
-      }),
 
-    );
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.token()}`
+    });
+    return this.http.get<{ api_key: string }>(url_servidor + "/api/imagenes/img-api-key", { headers })
+      .pipe(
+        map(response => response.api_key)
+      )
   }
 
 

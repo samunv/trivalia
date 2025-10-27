@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { Usuario } from '../../interfaces/Usuario';
 import { arrayUnion, doc, DocumentReference, Firestore, increment, updateDoc } from '@angular/fire/firestore';
@@ -8,42 +8,36 @@ import { getAuth, onAuthStateChanged, onIdTokenChanged } from '@angular/fire/aut
   providedIn: 'root'
 })
 export class UsuarioService {
-  private usuarioSubject = new BehaviorSubject<Usuario | any>(JSON.parse(localStorage.getItem('usuario') || 'null'));
-  private tokenSubject = new BehaviorSubject<string | any>(localStorage.getItem('tokenJWT'));
+  //private usuarioSubject = new BehaviorSubject<Usuario | any>(JSON.parse(localStorage.getItem('usuario') || 'null'));
+  //private tokenSubject = new BehaviorSubject<string | any>(localStorage.getItem('tokenJWT'));
 
+  private tokenSignal = signal<string | any>(localStorage.getItem('tokenJWT'))
+  public readonly token = this.tokenSignal.asReadonly();
 
-  constructor(private firestore: Firestore) {
+  private usuarioSignal = signal<Usuario | any>(JSON.parse(localStorage.getItem('usuario') || 'null'))
+  public readonly usuario = this.usuarioSignal.asReadonly();
 
+  constructor(private firestore: Firestore) { }
 
-  }
-
-  usuario$: Observable<Usuario> = this.usuarioSubject.asObservable();
-  token$: Observable<string | any> = this.tokenSubject.asObservable();
+  //usuario$: Observable<Usuario> = this.usuarioSubject.asObservable();
+  //token$: Observable<string | any> = this.tokenSubject.asObservable();
 
   setUsuario(usuario: Usuario) {
     localStorage.setItem('usuario', JSON.stringify(usuario));
-    this.usuarioSubject.next(usuario);
-  }
-
-  get usuario(): Observable<Usuario> {
-    return this.usuarioSubject.asObservable()
-  }
-
-  get token(): Observable<string | any> {
-    return this.tokenSubject.asObservable()
+    this.usuarioSignal.set(usuario);
   }
 
   setToken(token: string) {
     localStorage.setItem('tokenJWT', token);
-    this.tokenSubject.next(token);
+    this.tokenSignal.set(token);
   }
 
   clearUsuario() {
     localStorage.removeItem('usuario');
     localStorage.removeItem('tokenJWT');
     localStorage.removeItem("token")
-    this.usuarioSubject.next(null);
-    this.tokenSubject.next(null);
+    this.usuarioSignal.set(null);
+    this.tokenSignal.set(null);
   }
 
   actualizarUsuario(uid: string, nombre: string, foto: string): Observable<any> {

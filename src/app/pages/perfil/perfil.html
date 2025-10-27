@@ -4,7 +4,7 @@
     <div class="info-usuario">
       <div class="columna-1">
         <img
-          [src]="fotoPreview != '' ? fotoPreview : usuario?.fotoURL"
+          [src]="fotoPreview() != '' ? fotoPreview : usuario().fotoURL"
           class="foto-perfil"
           (click)="fileInput.click()"
         />
@@ -28,12 +28,12 @@
                 class="rounded-[10px] border-1 border-[var(--color-bordes)] focus: outline-white focus:outline-1 !p-[10px]"
                 value=""
                 id="nombre"
-                [formControl]="nombre"
+                [formControl]="nombre()"
                 maxlength="15"
                 minlength="4"
               />
 
-              @if (nombre.invalid) {
+              @if (nombre().invalid) {
               <div class="text-red-500 text-[14px]">El nombre debe tener al menos 4 caracteres</div>
               }
             </div>
@@ -67,12 +67,12 @@
     </app-boton-general>
   </div>
 
-  @if (guardado) {
+  @if (guardado()) {
   <app-mensaje-alerta
     [mensaje]="'Perfil actualizado con éxito'"
     [tipo]="'exito'"
   ></app-mensaje-alerta>
-  } @if (modalAbierto) {
+  } @if (modalAbierto()) {
   <app-modal
     [titulo]="'¿Estás seguro de que quieres cerrar sesión?'"
     [btn1]="'Cancelar'"
@@ -87,24 +87,24 @@
   <espacio [altura]="40"></espacio>
   <app-texto-h1 [texto]="'Estadísticas'"></app-texto-h1>
   <espacio [altura]="20"></espacio>
-  @if(preguntasDificilesGanadas){
+  @if(preguntasDificilesGanadas()){
   <div class="flex flex-row flex-wrap items-center gap-5 justify-between animate-fade-in-up">
     <div
       class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2"
     >
       <strong>Preguntas Ganadas</strong
-      ><strong class="text-4xl">{{ usuario?.arrayIdPreguntasGanadas.length }}</strong>
+      ><strong class="text-4xl">{{ usuario().arrayIdPreguntasGanadas?.length }}</strong>
     </div>
     <div
       class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2"
     >
-      <strong>Fallos</strong><strong class="text-4xl">{{ usuario?.preguntasFalladas }}</strong>
+      <strong>Fallos</strong><strong class="text-4xl">{{ usuario().preguntasFalladas }}</strong>
     </div>
     <div
       class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2"
     >
       <strong>Difíciles Ganadas</strong
-      ><strong class="text-4xl">{{ preguntasDificilesGanadas }}</strong>
+      ><strong class="text-4xl">{{ preguntasDificilesGanadas() }}</strong>
     </div>
   </div>
   }

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, computed, inject, Input, signal } from '@angular/core';
 import { Item } from '../../components/item/item';
 import { TextoH1 } from '../../components/texto-h1/texto-h1';
 import { Usuario } from '../../interfaces/Usuario';
@@ -12,17 +12,11 @@ import { UsuarioService } from '../../services/UsuarioService/usuario-service';
   styleUrl: './header.css'
 })
 export class Header {
+  private usuarioService = inject(UsuarioService);
+  usuarioData = computed(() => this.usuarioService.usuario());
 
-  usuarioData?: Usuario;
-
-  constructor(private usuarioService: UsuarioService) { }
+  constructor() { }
 
   @Input() titulo: string = "";
-
-  ngOnInit() {
-    this.usuarioService.usuario$.subscribe((usuario) => {
-      this.usuarioData = usuario;
-    })
-  }
 
 }

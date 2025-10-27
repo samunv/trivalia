@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, effect, inject, signal, WritableSignal } from '@angular/core';
 import { NavLateral } from '../../layout/nav-lateral/nav-lateral';
 import { MainLayout } from '../../layout/main-layout/main-layout';
 import { AuthService } from '../../services/AuthService/auth-service';
@@ -23,70 +23,61 @@ import { Pregunta } from '../../interfaces/Pregunta';
 
 @Component({
   selector: 'app-perfil',
-  imports: [NavLateral, MainLayout, CommonModule, TextoH1,
+  imports: [MainLayout, CommonModule, TextoH1,
     BotonGeneral, Modal, ReactiveFormsModule, MensajeAlerta, Espacio, Header],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css'
 })
 export class Perfil {
+  private usuarioService = inject(UsuarioService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private imagenService = inject(ImagenesService);
+  private preguntaService = inject(PreguntaService);
 
+  modalAbierto = signal<boolean>(false);
+  nombre: WritableSignal<FormControl | any> = signal<FormControl | any>(null);
+  foto = signal<string>("");
+  uid = signal<string>("");
+  guardado = signal<boolean>(false)
+  imagenSeleccionada = signal<File | null>(null)
+  editarFotoActivo = signal<boolean>(false)
+  fotoPreview = signal<string>("")
+  usuario = computed(() => this.usuarioService.usuario());
+  preguntasDificilesGanadas = signal<number>(0);
 
-  constructor(private authService: AuthService, private router: Router,
-    private usuarioService: UsuarioService,
-    private auth: Auth, private imagenService: ImagenesService,
-    private preguntasService: PreguntaService
-  ) { }
-
-  modalAbierto: boolean = false;
-  nombre: any;
-  foto?: string;
-  uid?: any;
-  guardado: boolean = false;
-  imagenSeleccionada: File | null = null;
-  editarFotoActivo: boolean = false;
-  fotoPreview: string = ""
-  usuario?: Usuario | any;
-  preguntasDificilesGanadas?: number;
+  constructor() {
+  }
 
   ngOnInit() {
-    this.usuarioService.usuario$.subscribe((user: Usuario) => {
-      this.usuario = user;
-      this.nombre = new FormControl(user.nombre, [Validators.required, Validators.minLength(4), Validators.maxLength(15)]);
-    });
+    const usuario = this.usuario();
+    if (usuario) {
+      this.nombre.set(new FormControl(usuario.nombre, [Validators.required, Validators.minLength(4), Validators.maxLength(15)]));
+    }
 
-    authState(this.auth).subscribe(user => {
-      if (user) {
-        this.uid = user.uid;
-        console.log('UID:', user.uid);
-      } else {
-        console.log('No hay usuario logueado');
-      }
-    });
-
-    this.obtenerPreguntasDificilesGanadas(this.usuario.arrayIdPreguntasGanadas);
-
+    this.obtenerPreguntasDificilesGanadas(this.usuario().arrayIdPreguntasGanadas);
   }
 
   activarEditarFoto() {
-    this.editarFotoActivo = true;
+    this.editarFotoActivo.set(true);
   }
 
   onImagenSeleccionada(event: any) {
     const file: File = event.target.files[0];
 
     if (file) {
-      this.imagenSeleccionada = file;
+      this.imagenSeleccionada.set(file);
       console.log('Archivo seleccionado:', file.name);
       this.obtenerFotoPreview(file)
     }
   }
 
   obtenerFotoPreview(file: File) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.fotoPreview = reader.result as string;
+    const lector = new FileReader();
+    lector.onload = () => {
+      this.fotoPreview.set(lector.result as string);
     };
-    reader.readAsDataURL(file);
+    lector.readAsDataURL(file);
   }
 
   cerrarSesion() {
@@ -105,29 +96,25 @@ export class Perfil {
   }
 
   abrirModal() {
-    this.modalAbierto = true;
+    this.modalAbierto.set(true);
   }
 
   cerrarModal() {
-    this.modalAbierto = false;
-  }
-
-  recargar() {
-    window.location.reload();
+    this.modalAbierto.set(false);
   }
 
   actualizarUsuarioClick() {
-    if (!this.uid || this.nombre.invalid) {
+    if (this.nombre().invalid) {
       alert('Error');
       return;
     }
 
     // Si hay una imagen nueva, primero la subimos
-    if (this.imagenSeleccionada != null) {
-      this.enviarImagen(this.imagenSeleccionada).subscribe({
+    if (this.imagenSeleccionada() != null) {
+      this.enviarImagen(this.imagenSeleccionada() as File).subscribe({
         next: (data) => {
           const nuevaURL = data.data.url; // URL de la nueva imagen
-          this.usuarioService.actualizarUsuario(this.uid, this.nombre?.value ?? '', nuevaURL).subscribe({
+          this.usuarioService.actualizarUsuario(String(this.usuario().uid), this.nombre() ?? '', nuevaURL).subscribe({
             next: () => this.finalizarGuardado(nuevaURL),
             error: (err) => console.error('Error al guardar con nueva imagen:', err)
           });
@@ -136,29 +123,27 @@ export class Perfil {
       });
     } else {
       // Si no hay imagen nueva
-      this.usuarioService.actualizarUsuario(this.uid, this.nombre?.value ?? '', this.usuario.fotoURL ? this.usuario.fotoURL : "").subscribe({
-        next: () => this.finalizarGuardado(this.usuario.fotoURL ? this.usuario.fotoURL : ""),
+      this.usuarioService.actualizarUsuario(String(this.usuario().uid), this.nombre()?.value ?? '', this.usuario().fotoURL ? String(this.usuario().fotoURL) : "").subscribe({
+        next: () => this.finalizarGuardado(this.usuario().fotoURL ? String(this.usuario().fotoURL) : ""),
         error: (err) => console.error('Error al guardar sin imagen nueva:', err)
       });
     }
   }
 
   finalizarGuardado(fotoURL: string) {
-    this.guardado = true;
-    setTimeout(() => (this.guardado = false), 2000);
+    this.guardado.set(true);
+    setTimeout(() => (this.guardado.set(false)), 2000);
 
     this.usuarioService.setUsuario({
-      ...this.usuario,
-      nombre: this.nombre?.value,
+      ...this.usuario(),
+      nombre: this.nombre().value,
       fotoURL: fotoURL
     });
-
-    this.nombre.markAsPristine();
   }
 
-  obtenerPreguntasDificilesGanadas(arrayIdPreguntas: number [] | any[]) {
-    this.preguntasService.obtenerPreguntasDificiles(arrayIdPreguntas).subscribe((preguntasDificiles: Pregunta[]) => {
-      this.preguntasDificilesGanadas = preguntasDificiles.length;
+  obtenerPreguntasDificilesGanadas(arrayIdPreguntas: number[] | any[]) {
+    this.preguntaService.obtenerPreguntasDificiles(arrayIdPreguntas).subscribe((preguntasDificiles: Pregunta[]) => {
+      this.preguntasDificilesGanadas.set(preguntasDificiles.length)
     })
   }
 

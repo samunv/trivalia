@@ -1,11 +1,11 @@
-import { Component, ElementRef, ViewChild, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, effect } from '@angular/core';
 import { MainLayout } from '../../layout/main-layout/main-layout';
 import { Header } from '../../layout/header/header';
 import { TextoH1 } from './../../components/texto-h1/texto-h1';
 import { CategoriaService } from './../../services/CategoriaService/categoria-service';
 import { Pregunta } from '../../interfaces/Pregunta';
 import { PreguntaService } from './../../services/PreguntaService/pregunta-service';
-import { Observable, of, switchMap } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Categoria } from '../../interfaces/Categoria';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -15,182 +15,328 @@ import { Modal } from '../../components/modal/modal';
 import { Espacio } from "../../components/espacio/espacio";
 import { UsuarioService } from '../../services/UsuarioService/usuario-service';
 import { Usuario } from '../../interfaces/Usuario';
-import { arrayUnion, doc, Firestore, updateDoc } from '@angular/fire/firestore';
-import { random } from 'nanoid';
+import { AudioComponent } from '../../components/audio-component/audio-component';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-pagina-preguntas',
-  imports: [MainLayout, Header, TextoH1, CommonModule, BotonGeneral, ReactiveFormsModule, FormsModule, Modal, Espacio],
+  imports: [
+    MainLayout,
+    Header,
+    CommonModule,
+    BotonGeneral,
+    ReactiveFormsModule,
+    FormsModule,
+    Modal,
+    Espacio,
+    AudioComponent
+  ],
   templateUrl: './pagina-preguntas.html'
 })
+export class PaginaPreguntas implements OnInit {
+  private categoriaService = inject(CategoriaService);
+  private preguntaService = inject(PreguntaService);
+  private router = inject(Router);
+  private usuarioService = inject(UsuarioService);
 
-export class PaginaPreguntas {
+  // Signals - Estado reactivo de Angular nativo
+  usuario = computed(() => this.usuarioService.usuario());
+  preguntas = signal<Pregunta[]>([]);
+  preguntaIndex = signal(0);
+  categoriaTitulo = signal<string>('');
+  categoria = computed(() => this.categoriaService.categoria())
 
-  usuario?: Usuario;
-  preguntas: Pregunta[] = [];
-  idCategoria?: number;
-  categoriaTitulo?: string | any;
-  preguntaIndex: number = 0;
-  preguntaRespondida: boolean = false;
-  preguntaActual?: Pregunta;
-  finPartida: boolean = false;
-  mensaje: string = "";
-  opcionesPregunta: string[] = [];
-  respuestaCorrecta: string | any = "";
-  respuestaSeleccionada: string = "";
-  esCorrecta?: boolean;
-  respuestaInput?: string = "";
-  turnoPerdido?: boolean = false;
+  // Estado de la pregunta actual
+  respuestaSeleccionada = signal<string>('');
+  respuestaCorrecta = signal<string>('');
+  respuestaInput = signal<string>('');
+  esCorrecta = signal<boolean | undefined>(undefined);
+  mensaje = signal<string>('');
 
-  constructor(private categoriaService: CategoriaService, private preguntaService: PreguntaService, private router: Router, private usuarioService: UsuarioService, private firestore: Firestore) { }
+  // Estado del juego
+  finPartida = signal(false);
+  turnoPerdido = signal(false);
+
+  // Computed signals - valores derivados automáticamente
+  preguntaActual = computed(() => {
+    const preguntas = this.preguntas();
+    const index = this.preguntaIndex();
+    return preguntas[index];
+  });
+
+  opcionesPregunta = computed(() => {
+    const pregunta = this.preguntaActual();
+    if (!pregunta) return [];
+
+    if (pregunta.tipo_pregunta === "OPCIONES" || pregunta.tipo_pregunta === "VF") {
+      return [pregunta.opcion_a, pregunta.opcion_b, pregunta.opcion_c]
+        .filter(opt => opt)
+        .map(opt => String(opt));
+    }
+    return [];
+  });
+
+  vidasRestantes = computed(() => Number(this.usuario()?.vidas) || 0);
+  monedasDisponibles = computed(() => Number(this.usuario()?.monedas) || 0);
+
+  puedeJugar = computed(() => this.vidasRestantes() > 0);
+
+  // Effect - Reaccionar a cambios automáticamente
+  constructor() {
+    // Validar vidas automáticamente
+    effect(() => {
+      if (this.usuario() && this.vidasRestantes() <= 0) {
+        this.mensaje.set("¡Te has quedado sin vidas!");
+        setTimeout(() => this.navegar("/jugar"), 2000);
+      }
+    });
+  }
 
   ngOnInit() {
-    this.comprobarCategoriaSeleccionada(this.categoriaService.categoriaSeleccionadaValue);
+    this.inicializarJuego();
+  }
+
+  // ==================== INICIALIZACIÓN ====================
+
+  private inicializarJuego() {
+    const categoriaActual = this.categoriaService.categoria();
+
+    if (!categoriaActual) {
+      console.log("No hay categoría seleccionada");
+      this.navegar("/jugar");
+      return;
+    }
+
+    if (!this.puedeJugar()) {
+      this.mensaje.set("No tienes vidas suficientes");
+      setTimeout(() => this.navegar("/jugar"), 2000);
+      return;
+    }
+
     this.obtenerCategoria();
-    this.obtenerUsuario()
   }
 
-  obtenerUsuario() {
-    this.usuarioService.usuario$.subscribe((usuario: Usuario) => {
-      this.usuario = usuario;
-    })
+  private obtenerCategoria() {
+    this.categoriaTitulo.set(String(this.categoria().titulo));
+    this.obtenerPreguntas(Number(this.categoria().idCategoria));
   }
 
-  obtenerCategoria() {
-    this.categoriaService.categoriaSeleccionada$.subscribe(
-      {
-        next: (categoria: Categoria) => {
-          this.categoriaTitulo = categoria.titulo;
-          this.obtenerPreguntas(categoria.idCategoria);
-        },
-        error: (err) => {
-          console.log("Error: " + err)
-        }
-      }
-    )
+  private obtenerPreguntas(idCategoria: number) {
+    this.preguntaService.obtenerPreguntas(idCategoria).subscribe({
+      next: (preguntas: Pregunta[]) => {
+        this.preguntas.set(preguntas);
+      },
+      error: (err) => console.error("Error al cargar preguntas:", err)
+    });
   }
 
-  comprobarCategoriaSeleccionada(categoriaSeleccionadaValue: Categoria | any) {
-    // Cuando no haya categoria seleccionada sacar de la partida
-    if (!categoriaSeleccionadaValue) {
-      console.log("No hay partida activa");
-      this.navegar("/jugar")
-    }
-  }
+  // ==================== VERIFICACIÓN DE RESPUESTA ====================
 
+  verificarRespuesta(respuesta: string) {
+    const pregunta = this.preguntaActual();
+    if (!pregunta) return;
 
-  obtenerPreguntas(idCategoria: number | any) {
-    this.preguntaService.obtenerPreguntas(idCategoria).subscribe((preguntas: Pregunta[]) => {
-      this.preguntas = preguntas;
-      this.setPreguntaActual();
-    })
-  }
+    this.respuestaSeleccionada.set(respuesta.toLowerCase().trim());
 
+    this.obtenerRespuestaCorrecta(Number(pregunta.idPregunta)).subscribe({
+      next: (respuestaCorrecta) => {
+        this.respuestaCorrecta.set(respuestaCorrecta);
+        const esCorrecta = respuestaCorrecta.toLowerCase().trim() === this.respuestaSeleccionada();
 
-  setPreguntaActual() {
-    this.preguntaActual = this.preguntas[this.preguntaIndex];
-    console.log("Pregunta actual:", this.preguntaActual);
-    this.obtenerOpciones(this.preguntaActual);
-
-  }
-
-  obtenerOpciones(preguntaActual: Pregunta) {
-    if (preguntaActual) {
-      if (preguntaActual.tipo_pregunta === "OPCIONES" || preguntaActual.tipo_pregunta === "VF") {
-        this.opcionesPregunta = [preguntaActual.opcion_a, preguntaActual.opcion_b, preguntaActual.opcion_c]
-          .filter(opt => opt)
-          .map(opt => String(opt));
-      }
-    }
-  }
-
-  verificarRespuesta(respuesta: string | any) {
-    if (!this.preguntaActual) return;
-    this.respuestaSeleccionada = respuesta.toLowerCase().trim();
-    this.obtenerRespuestaCorrecta(Number(this.preguntaActual?.idPregunta)).subscribe(
-      (respuestaCorrecta) => {
-        this.respuestaCorrecta = respuestaCorrecta;
-        if (respuestaCorrecta.toLowerCase().trim() == this.respuestaSeleccionada) {
-          this.acertarPregunta()
+        if (esCorrecta) {
+          this.acertarPregunta();
         } else {
-          this.fallarPregunta()
+          this.fallarPregunta();
         }
-        this.resetear()
+
+        this.resetear();
+      },
+      error: (err) => console.error("Error al verificar respuesta:", err)
+    });
+  }
+
+  private obtenerRespuestaCorrecta(idPregunta: number): Observable<string> {
+    return new Observable(subscriber => {
+      this.preguntaService.obtenerRespuestaCorrecta(idPregunta).subscribe({
+        next: (mapaRespuesta: { [clave: string]: string }) => {
+          subscriber.next(mapaRespuesta["respuesta_correcta"] || "");
+          subscriber.complete();
+        },
+        error: (err) => subscriber.error(err)
       });
+    });
   }
 
-  obtenerRespuestaCorrecta(idPregunta: number): Observable<string | any> {
-    return this.preguntaService.obtenerRespuestaCorrecta(idPregunta).pipe(
-      switchMap(
-        (mapaRespuestaCorrecta: { [clave: string]: string }) => {
-          return of(mapaRespuestaCorrecta["respuesta_correcta"]);
-        }))
+  // ==================== LÓGICA DE ACIERTO/FALLO ====================
+
+  private acertarPregunta() {
+    this.esCorrecta.set(true);
+    this.mensaje.set(`¡Correcto! ${this.capitalizarPrimeraLetra(this.respuestaCorrecta())}`);
+
+    const usuario = this.usuario();
+    const pregunta = this.preguntaActual();
+
+    if (!usuario || !pregunta) return;
+
+    const yaGanada = usuario.arrayIdPreguntasGanadas?.includes(Number(pregunta.idPregunta));
+
+    if (!yaGanada) {
+      this.ganarEstrellas();
+      this.actualizarPreguntasGanadasDelUsuario(Number(pregunta.idPregunta));
+    }
   }
 
-  actualizarPreguntasGanadasDelUsuario(idPregunta: number) {
-    this.usuarioService.actualizarArrayPreguntasJugadas(String(this.usuario?.uid), idPregunta).subscribe({
+  private fallarPregunta() {
+    this.esCorrecta.set(false);
+    this.mensaje.set(`¡Incorrecto! Respuesta correcta: ${this.capitalizarPrimeraLetra(this.respuestaCorrecta())}`);
+
+    this.perderVida();
+    this.actualizarPreguntasFalladas();
+
+    setTimeout(() => {
+      this.turnoPerdido.set(true);
+    }, 1500);
+  }
+
+  // ==================== ACTUALIZACIÓN DE USUARIO ====================
+
+  private actualizarPreguntasGanadasDelUsuario(idPregunta: number) {
+    const usuario = this.usuario();
+    if (!usuario?.uid) return;
+
+    this.usuarioService.actualizarArrayPreguntasJugadas(String(usuario.uid), idPregunta).subscribe({
       next: () => {
         this.usuarioService.setUsuario({
-          ...this.usuario,
+          ...usuario,
           arrayIdPreguntasGanadas: [
-            ...(this.usuario?.arrayIdPreguntasGanadas || []),
+            ...(usuario.arrayIdPreguntasGanadas || []),
             idPregunta
           ]
-        })
-      },
-      error: (err) => {
-        console.log(err)
-      }
-    })
-
-  }
-
-  acertarPregunta() {
-    this.esCorrecta = true;
-    this.mensaje = "¡Correcto! " + this.respuestaCorrecta.charAt(0).toLocaleUpperCase() + this.respuestaCorrecta.slice(1)
-
-    if (!this.usuario?.arrayIdPreguntasGanadas?.includes(Number(this.preguntaActual?.idPregunta))) {
-      // Ganar estrellas únicamente si el usuario no ha ganado la pregunta anteriormente
-      this.ganarEstrellas()
-
-      // Añadir el idPregunta de la pregunta  si el usuario no ha ganado antes la pregunta
-      this.actualizarPreguntasGanadasDelUsuario(Number(this.preguntaActual?.idPregunta))
-    }
-
-  }
-
-  fallarPregunta() {
-    this.esCorrecta = false;
-    this.mensaje = "¡Incorrecto! Respuesta correcta: " + this.respuestaCorrecta.charAt(0).toLocaleUpperCase() + this.respuestaCorrecta.slice(1)
-    this.perderVida()
-    this.actualizarPreguntasFalladas();
-    setTimeout(() => this.turnoPerdido = true, 1500)
-  }
-
-  perderVida() {
-    const vidasRestantes: number = Number(this.usuario?.vidas) - 1;
-    this.usuarioService.actualizarItemsUsuario(String(this.usuario?.uid), undefined, vidasRestantes, undefined).subscribe({
-      next: () => {
-        this.usuarioService.setUsuario({
-          ...this.usuario,
-          vidas: vidasRestantes
         });
       },
-      error: (err) => console.error("Error al actualizar:", err)
-    })
+      error: (err) => console.error("Error al actualizar preguntas ganadas:", err)
+    });
   }
 
+  private perderVida() {
+    const usuario = this.usuario();
+    if (!usuario?.uid) return;
 
-  resetear() {
+    const vidasRestantes = this.vidasRestantes() - 1;
+
+    this.usuarioService.actualizarItemsUsuario(
+      String(usuario.uid),
+      undefined,
+      vidasRestantes,
+      undefined
+    ).subscribe({
+      next: () => {
+        this.usuarioService.setUsuario({
+          ...usuario,
+          vidas: vidasRestantes
+        });
+
+        if (vidasRestantes <= 0) {
+          this.mensaje.set("¡Game Over! Te quedaste sin vidas");
+          this.finPartida.set(true);
+          setTimeout(() => this.navegar("/jugar"), 2000);
+        }
+      },
+      error: (err) => console.error("Error al perder vida:", err)
+    });
+  }
+
+  private ganarEstrellas() {
+    const usuario = this.usuario();
+    const pregunta = this.preguntaActual();
+
+    if (!usuario?.uid || !pregunta) return;
+
+    const estrellasGanadas = this.estrellasSegunDificultad(pregunta.dificultad);
+    const estrellasTotales = Number(usuario.estrellas) + estrellasGanadas;
+
+    this.usuarioService.actualizarItemsUsuario(
+      String(usuario.uid),
+      undefined,
+      undefined,
+      estrellasGanadas
+    ).subscribe({
+      next: () => {
+        this.usuarioService.setUsuario({
+          ...usuario,
+          estrellas: estrellasTotales
+        });
+      },
+      error: (err) => console.error("Error al ganar estrellas:", err)
+    });
+  }
+
+  private actualizarPreguntasFalladas() {
+    const usuario = this.usuario();
+    if (!usuario?.uid) return;
+
+    this.usuarioService.actualizarPreguntasFalladas(String(usuario.uid));
+    this.usuarioService.setUsuario({
+      ...usuario,
+      preguntasFalladas: (Number(usuario.preguntasFalladas) + 1)
+    });
+  }
+
+  // ==================== CONTINUAR CON MONEDAS ====================
+
+  continuarConMonedas(cantidadMonedas: number) {
+    const usuario = this.usuario();
+    if (!usuario?.uid) return;
+
+    if (this.monedasDisponibles() >= cantidadMonedas) {
+      const monedasRestantes = this.monedasDisponibles() - cantidadMonedas;
+
+      this.usuarioService.actualizarItemsUsuario(
+        String(usuario.uid),
+        monedasRestantes,
+        undefined,
+        undefined
+      ).subscribe({
+        next: () => {
+          this.usuarioService.setUsuario({
+            ...usuario,
+            monedas: monedasRestantes
+          });
+          this.turnoPerdido.set(false);
+          this.aumentarIndexPregunta();
+        },
+        error: (err) => console.error("Error al continuar con monedas:", err)
+      });
+    } else {
+      this.mensaje.set("No tienes monedas suficientes");
+      setTimeout(() => this.navegar("/jugar"), 1500);
+    }
+  }
+
+  // ==================== NAVEGACIÓN Y UTILIDADES ====================
+
+  private aumentarIndexPregunta() {
+    const totalPreguntas = this.preguntas().length;
+    const indexActual = this.preguntaIndex();
+
+    if (indexActual < totalPreguntas - 1) {
+      this.preguntaIndex.update(i => i + 1);
+    } else {
+      this.finPartida.set(true);
+      this.mensaje.set("¡Has finalizado la partida!");
+    }
+  }
+
+  private resetear() {
     setTimeout(() => {
-      if (!this.turnoPerdido) {
+      if (!this.turnoPerdido()) {
         this.aumentarIndexPregunta();
       }
-      this.respuestaSeleccionada = ""; // reset
-      this.respuestaCorrecta = ""; // reset
-      this.mensaje = ""
-      this.respuestaInput = ""
 
+      this.respuestaSeleccionada.set("");
+      this.respuestaCorrecta.set("");
+      this.mensaje.set("");
+      this.respuestaInput.set("");
     }, 1500);
   }
 
@@ -198,83 +344,26 @@ export class PaginaPreguntas {
     this.router.navigate([ruta]);
   }
 
-  continuarConMonedas(cantidadMonedas: number) {
+  // ==================== HELPERS ====================
 
-    if (Number(this.usuario?.monedas) >= cantidadMonedas) {
-      const monedasRestantes: number = Number(this.usuario?.monedas) - cantidadMonedas;
-      this.usuarioService.actualizarItemsUsuario(String(this.usuario?.uid), monedasRestantes, undefined, undefined).subscribe({
-        next: () => {
-          this.usuarioService.setUsuario({
-            ...this.usuario,
-            monedas: monedasRestantes,
-          });
-        },
-        error: (err) => console.error("Error al actualizar:", err)
-      }
-      )
-
-      this.turnoPerdido = false;
-      this.aumentarIndexPregunta()
-    } else {
-      this.mensaje = "Vaya... no tienes monedas suficientes"
-      setTimeout(() => this.navegar("/jugar"), 1000)
-    }
-
-  }
-
-
-
-  aumentarIndexPregunta() {
-    if (this.preguntaIndex < this.preguntas.length - 1) {
-      this.preguntaIndex++;
-      this.setPreguntaActual()
-    } else {
-      this.finPartida = true;
-      this.mensaje = "Has finalizado la partida!"
-    }
-  }
-
-
-
-  ganarEstrellas() {
-    const estrellasUsuarioActuales: number = Number(this.usuario?.estrellas)
-    const cantidadEstrellasTotales: number = this.estrellasSegunDificultad(this.preguntaActual?.dificultad) + estrellasUsuarioActuales;
-    this.usuarioService.actualizarItemsUsuario(String(this.usuario?.uid), undefined, undefined, this.estrellasSegunDificultad(this.preguntaActual?.dificultad)).subscribe(
-      {
-        next: () => {
-          console.log("Usuario actualizado");
-          this.usuarioService.setUsuario({
-            ...this.usuario,
-            estrellas: cantidadEstrellasTotales
-          })
-        },
-        error: (err) => console.error("Error al actualizar:", err)
-      }
-    )
-
-  }
-
-  estrellasSegunDificultad(
+  private estrellasSegunDificultad(
     dificultad: "DIFICIL" | "FACIL" | "MEDIO" | undefined
   ): number {
-    switch (dificultad) {
-      case "DIFICIL": return 30;
-      case "MEDIO": return 20;
-      case "FACIL": return 10;
-      default: return 0;
-    }
+    const ESTRELLAS: Record<string, number> = {
+      DIFICIL: 30,
+      MEDIO: 20,
+      FACIL: 10
+    };
+
+    return ESTRELLAS[dificultad || "FACIL"] || 0;
   }
 
-  actualizarPreguntasFalladas() {
-    this.usuarioService.actualizarPreguntasFalladas(String(this.usuario?.uid))
-    this.usuarioService.setUsuario({
-      ...this.usuario,
-      preguntasFalladas: (Number(this.usuario?.preguntasFalladas) + 1)
-    })
+  private capitalizarPrimeraLetra(texto: string): string {
+    if (!texto) return "";
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
   }
 
   ngOnDestroy() {
     this.categoriaService.setCategoria(null);
   }
-
 }

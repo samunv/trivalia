@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { CategoriaService } from '../../services/CategoriaService/categoria-service';
 import { Categoria } from '../../interfaces/Categoria';
 import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
@@ -22,26 +22,30 @@ import { MensajeAlerta } from '../../components/mensaje-alerta/mensaje-alerta';
 })
 export class PreJuego {
 
-  categoria?: Categoria | any;
-  preguntas?: Pregunta[] | any;
-  cantidadPreguntas: number = 0;
-  usuario?: Usuario;
-  alerta: boolean = false;
+  constructor(
+    private categoriaService: CategoriaService, private rutaActiva: ActivatedRoute,
+    private preguntaService: PreguntaService, private usuarioService: UsuarioService,
+    private router: Router
+  ) { }
 
-  constructor(private categoriaService: CategoriaService, private rutaActiva: ActivatedRoute, private preguntaService: PreguntaService, private usuarioService: UsuarioService, private router: Router) { }
+  categoria = signal<Categoria | any>(null);
+  preguntas = signal<Pregunta[] | any>([]);
+  cantidadPreguntas = signal<number>(0);
+  usuario = computed(() => this.usuarioService.usuario());
+  alerta = signal<boolean>(false);
 
   ngOnInit() {
     this.rutaActiva.params.subscribe(params => {
       this.categoriaService.obtenerCategoriaPorId(params['idCategoria'])
         .subscribe((categoria: Categoria) => {
-          this.categoria = categoria;
+          this.categoria.set(categoria)
 
           // Suscribirse al observable de preguntas
           this.preguntaService.obtenerVistaPreviaPreguntas(categoria?.idCategoria)
             .subscribe({
               next: (preguntas: Pregunta[]) => {
-                this.preguntas = preguntas
-                this.cantidadPreguntas = preguntas.length
+                this.preguntas.set(preguntas)
+                this.cantidadPreguntas.set(preguntas.length)
               },
               error: (err) => {
                 console.error('Error al cargar preguntas', err);
@@ -49,19 +53,15 @@ export class PreJuego {
             });
         });
     });
-
-    this.usuarioService.usuario$.subscribe((usuario: Usuario) => {
-      this.usuario = usuario;
-    })
   }
 
   onJugar(): void {
-    this.categoriaService.setCategoria(this.categoria);
-    if (this.verificarVidas(this.usuario?.vidas)) {
+    this.categoriaService.setCategoria(this.categoria());
+    if (this.verificarVidas(this.usuario()?.vidas)) {
       this.router.navigate(["/partida"])
     } else {
-      this.alerta = true;
-      setTimeout(() => { this.alerta = false }, 2000)
+      this.alerta.set(true);
+      setTimeout(() => { this.alerta.set(false) }, 2000)
     }
 
   }

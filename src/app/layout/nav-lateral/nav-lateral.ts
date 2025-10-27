@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterLink, RouterModule } from '@angular/router';
 import { UsuarioService } from '../../services/UsuarioService/usuario-service';
@@ -11,15 +11,12 @@ import { filter } from 'rxjs';
   styleUrl: './nav-lateral.css'
 })
 export class NavLateral {
-  urlActual?: string;
-  constructor(public router: Router, private usuarioService: UsuarioService) { }
+  private usuarioService = inject(UsuarioService)
+  private router = inject(Router);
 
-  fotoUsuario?: string | any;
+  fotoUsuario = computed(()=>this.usuarioService.usuario()?.fotoURL);
 
-  ngOnInit() {
-    this.usuarioService.usuario$.subscribe(user => {
-      this.fotoUsuario = user?.fotoURL;
-    })
+  constructor() {
   }
 
   irHaciaAprender() {

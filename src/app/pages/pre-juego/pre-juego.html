@@ -1,7 +1,7 @@
 <app-main-layout>
   <app-header [titulo]="'Categoría'"></app-header>
 
-  @if (categoria) {
+  @if (categoria()) {
   <div>
     <a
       routerLink="/jugar"
@@ -22,15 +22,15 @@
       class="rounded-[20px] !mt-10 flex flex-row gap-5 bg-[var(--color-principal)] border border-[var(--color-bordes)] !p-[30px]"
     >
       <img
-        [src]="categoria.imagenURL"
+        [src]="categoria().imagenURL"
         alt=""
         class="rounded-[10px] border border-[var(--color-bordes)]"
         style="object-fit: cover; width: 150px; height: 150px"
       />
       <div class="flex flex-row justify-between items-center !w-full">
         <div>
-          <h2 class="text-[25px]">{{ categoria?.titulo }}</h2>
-          <p>{{ cantidadPreguntas }} preguntas</p>
+          <h2 class="text-[25px]">{{ categoria()?.titulo }}</h2>
+          <p>{{ cantidadPreguntas() }} preguntas</p>
         </div>
 
         <app-boton-general [tipo]="'destacado'" [texto]="'Jugar'" (click)="onJugar()">
@@ -42,11 +42,11 @@
 
     <div class="flex flex-col gap-5 !mt-[30px]">
       <app-texto-h1 [texto]="'Vista Previa'"></app-texto-h1>
-      @for (pregunta of preguntas; track $index) {
+      @for (pregunta of preguntas(); track $index) {
       <div
         class="flex flex-row items-center justify-between bg-[var(--color-principal)] rounded-[20px] !p-[15px]"
         [ngStyle]="{
-          border: usuario?.arrayIdPreguntasGanadas?.includes(pregunta.idPregunta)
+          border: usuario().arrayIdPreguntasGanadas?.includes(pregunta.idPregunta)
             ? '1px white solid'
             : '2px var(--color-bordes) dashed'
         }"
@@ -67,7 +67,7 @@
         </div>
 
         <div class="flex flex-row items-center gap-5">
-          @if(usuario?.arrayIdPreguntasGanadas?.includes(pregunta?.idPregunta)){
+          @if(usuario().arrayIdPreguntasGanadas?.includes(pregunta?.idPregunta)){
           <svg
             fill="#ffffff"
             viewBox="0 0 24 24"
@@ -108,7 +108,7 @@
       }
     </div>
   </div>
-  } @if (alerta) {
+  } @if (alerta()) {
   <app-mensaje-alerta
     [mensaje]="'Debes recargar tus vidas para poder jugar'"
     [tipo]="'error'"

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Audio } from './audio';
+import { AudioComponent } from './audio-component';
 
-describe('Audio', () => {
-  let component: Audio;
-  let fixture: ComponentFixture<Audio>;
+describe('AudioComponent', () => {
+  let component: AudioComponent;
+  let fixture: ComponentFixture<AudioComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Audio]
+      imports: [AudioComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Audio);
+    fixture = TestBed.createComponent(AudioComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { UsuarioService } from './../UsuarioService/usuario-service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, switchMap } from 'rxjs';
@@ -10,51 +10,41 @@ import { Categoria } from '../../interfaces/Categoria';
 })
 export class CategoriaService {
 
-  private categoriaSubject = new BehaviorSubject<string | any>(sessionStorage.getItem("categoriaSeleccionada") || null)
-  private token$: Observable<string>
+  private categoriaSignal = signal<string | any>(sessionStorage.getItem("categoriaSeleccionada") || null)
+  private usuarioService = inject(UsuarioService)
+  public readonly categoria = this.categoriaSignal.asReadonly();
 
-  constructor(private usuarioService: UsuarioService, private http: HttpClient) {
-    this.token$ = this.usuarioService.token;
-  }
 
-  categoriaSeleccionada$: Observable<Categoria | any> = this.categoriaSubject.asObservable()
+  constructor(private http: HttpClient) { }
+
+  token = computed(() => this.usuarioService.token())
+
 
   setCategoria(categoriaSeleccionada: Categoria | null) {
     localStorage.setItem('categoriaSeleccionada', JSON.stringify(categoriaSeleccionada));
-    this.categoriaSubject.next(categoriaSeleccionada);
-  }
-
-  get categoriaSeleccionadaValue(): Categoria | null {
-    return this.categoriaSubject.value; // value de BehaviorSubject
+    this.categoriaSignal.set(categoriaSeleccionada);
   }
 
   obtenerCategorias(): Observable<Categoria[] | any> {
-    return this.token$.pipe(
-      switchMap((token: string | null) => {
-        if (!token) {
-          throw new Error("No hay token disponible");
-        }
-        const headers = new HttpHeaders({
-          'Authorization': `Bearer ${token}`
-        });
-        return this.http.get<Categoria[] | any>(url_servidor + "/api/categorias/todo", { headers });
-      })
-    );
+    if (!this.token()) {
+      throw new Error("No hay token disponible");
+    }
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.token()}`
+    });
+    return this.http.get<Categoria[] | any>(url_servidor + "/api/categorias/todo", { headers });
   }
 
   obtenerCategoriaPorId(idCategoria: number): Observable<Categoria | any> {
-    return this.token$.pipe(
-      switchMap((token: string | null) => {
-        if (!token) {
-          throw new Error("No hay token disponible");
-        }
-        const headers = new HttpHeaders({
-          'Authorization': `Bearer ${token}`
-        });
 
-        return this.http.get<Categoria | any>(url_servidor + "/api/categorias/obtener/" + idCategoria, { headers });
-      })
-    );
+    if (!this.token()) {
+      throw new Error("No hay token disponible");
+    }
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.token()}`
+    });
+
+    return this.http.get<Categoria | any>(url_servidor + "/api/categorias/obtener/" + idCategoria, { headers });
   }
 }
 

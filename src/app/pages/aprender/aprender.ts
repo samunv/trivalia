@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { NavLateral } from '../../layout/nav-lateral/nav-lateral';
 import { MainLayout } from '../../layout/main-layout/main-layout';
 import { TextoH1 } from '../../components/texto-h1/texto-h1';
@@ -19,26 +19,25 @@ import { Router, RouterLink } from '@angular/router';
   styleUrl: './aprender.css'
 })
 export class Aprender {
+  private usuarioService = inject(UsuarioService);
+  private categoriaService = inject(CategoriaService);
+  private router = inject(Router);
+
   inputBuscadorActivo = false;
-  usuario?: Usuario;
-  categorias?: Categoria[] = [];
-  valorBusqueda?: string | any;
+  usuario = computed(() => this.usuarioService.usuario());
+  categorias = signal<Categoria[]>([]);
+  valorBusqueda = signal<string>("");
 
-
-  constructor(private usuarioService: UsuarioService, private categoriaService: CategoriaService, private router: Router) { }
+  constructor() { }
 
   ngOnInit() {
-    this.usuarioService.usuario$.subscribe(usuario => {
-      this.usuario = usuario;
-    })
-
-    this.categoriaService.obtenerCategorias().subscribe((data) => {
-      this.categorias = data;
+    this.categoriaService.obtenerCategorias().subscribe((categorias: Categoria[]) => {
+      this.categorias.set(categorias);
     })
   }
 
   filtrarCategorias(valorBusqueda: string): Categoria[] | any {
-    return this.categorias?.filter((c) => c.titulo?.toLowerCase().includes(valorBusqueda?.toLowerCase()))
+    return this.categorias()?.filter((c) => c.titulo?.toLowerCase().includes(valorBusqueda?.toLowerCase()))
   }
 
   navegarHaciaCategoria(idCategoria: number | any) {

@@ -20,11 +20,12 @@ import { Header } from '../../layout/header/header';
 import { Usuario } from '../../interfaces/Usuario';
 import { PreguntaService } from '../../services/PreguntaService/pregunta-service';
 import { Pregunta } from '../../interfaces/Pregunta';
+import { NgxNumberTickerComponent } from '@omnedia/ngx-number-ticker';
 
 @Component({
   selector: 'app-perfil',
   imports: [MainLayout, CommonModule, TextoH1,
-    BotonGeneral, Modal, ReactiveFormsModule, MensajeAlerta, Espacio, Header],
+    BotonGeneral, Modal, ReactiveFormsModule, MensajeAlerta, Espacio, Header, NgxNumberTickerComponent],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css'
 })
@@ -36,15 +37,16 @@ export class Perfil {
   private preguntaService = inject(PreguntaService);
 
   modalAbierto = signal<boolean>(false);
-  nombre: WritableSignal<FormControl | any> = signal<FormControl | any>(null);
+  nombreFormControl: WritableSignal<FormControl> = signal<FormControl | any>(null);
   foto = signal<string>("");
   uid = signal<string>("");
   guardado = signal<boolean>(false)
   imagenSeleccionada = signal<File | null>(null)
   editarFotoActivo = signal<boolean>(false)
-  fotoPreview = signal<string>("")
-  usuario = computed(() => this.usuarioService.usuario());
+  fotoPreview = signal<any>(null)
+  usuario = this.usuarioService.usuario;
   preguntasDificilesGanadas = signal<number>(0);
+  display = signal<number>(0)
 
   constructor() {
   }
@@ -52,7 +54,8 @@ export class Perfil {
   ngOnInit() {
     const usuario = this.usuario();
     if (usuario) {
-      this.nombre.set(new FormControl(usuario.nombre, [Validators.required, Validators.minLength(4), Validators.maxLength(15)]));
+      this.nombreFormControl.set(new FormControl(usuario.nombre, [Validators.required, Validators.minLength(4), Validators.maxLength(15)]));
+      this.foto.set(this.usuario().fotoURL)
     }
 
     this.obtenerPreguntasDificilesGanadas(this.usuario().arrayIdPreguntasGanadas);
@@ -75,7 +78,7 @@ export class Perfil {
   obtenerFotoPreview(file: File) {
     const lector = new FileReader();
     lector.onload = () => {
-      this.fotoPreview.set(lector.result as string);
+      this.fotoPreview.set(lector.result);
     };
     lector.readAsDataURL(file);
   }
@@ -104,7 +107,7 @@ export class Perfil {
   }
 
   actualizarUsuarioClick() {
-    if (this.nombre().invalid) {
+    if (this.nombreFormControl().invalid) {
       alert('Error');
       return;
     }
@@ -114,7 +117,7 @@ export class Perfil {
       this.enviarImagen(this.imagenSeleccionada() as File).subscribe({
         next: (data) => {
           const nuevaURL = data.data.url; // URL de la nueva imagen
-          this.usuarioService.actualizarUsuario(String(this.usuario().uid), this.nombre() ?? '', nuevaURL).subscribe({
+          this.usuarioService.actualizarUsuario(String(this.usuario().uid), this.nombreFormControl().value ?? '', nuevaURL).subscribe({
             next: () => this.finalizarGuardado(nuevaURL),
             error: (err) => console.error('Error al guardar con nueva imagen:', err)
           });
@@ -123,7 +126,7 @@ export class Perfil {
       });
     } else {
       // Si no hay imagen nueva
-      this.usuarioService.actualizarUsuario(String(this.usuario().uid), this.nombre()?.value ?? '', this.usuario().fotoURL ? String(this.usuario().fotoURL) : "").subscribe({
+      this.usuarioService.actualizarUsuario(String(this.usuario().uid), this.nombreFormControl()?.value ?? '', this.usuario().fotoURL ? String(this.usuario().fotoURL) : "").subscribe({
         next: () => this.finalizarGuardado(this.usuario().fotoURL ? String(this.usuario().fotoURL) : ""),
         error: (err) => console.error('Error al guardar sin imagen nueva:', err)
       });
@@ -134,11 +137,8 @@ export class Perfil {
     this.guardado.set(true);
     setTimeout(() => (this.guardado.set(false)), 2000);
 
-    this.usuarioService.setUsuario({
-      ...this.usuario(),
-      nombre: this.nombre().value,
-      fotoURL: fotoURL
-    });
+    this.usuarioService.updateUsuario("nombre", this.nombreFormControl().value)
+    this.usuarioService.updateUsuario("fotoURL", fotoURL)
   }
 
   obtenerPreguntasDificilesGanadas(arrayIdPreguntas: number[] | any[]) {
@@ -153,6 +153,7 @@ export class Perfil {
     formData.append("image", imagen)
     return this.imagenService.enviarImagen(formData)
   }
+
 
 }
 

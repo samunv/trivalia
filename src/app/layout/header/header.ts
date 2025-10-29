@@ -13,7 +13,7 @@ import { UsuarioService } from '../../services/UsuarioService/usuario-service';
 })
 export class Header {
   private usuarioService = inject(UsuarioService);
-  usuarioData = computed(() => this.usuarioService.usuario());
+  usuarioData = this.usuarioService.usuario;
 
   constructor() { }
 

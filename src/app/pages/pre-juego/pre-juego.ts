@@ -8,7 +8,7 @@ import { TextoH1 } from '../../components/texto-h1/texto-h1';
 import { BotonGeneral } from '../../components/boton-general/boton-general';
 import { Espacio } from '../../components/espacio/espacio';
 import { PreguntaService } from '../../services/PreguntaService/pregunta-service';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Pregunta } from '../../interfaces/Pregunta';
 import { CommonModule } from '@angular/common';
 import { UsuarioService } from '../../services/UsuarioService/usuario-service';
@@ -35,29 +35,43 @@ export class PreJuego {
   alerta = signal<boolean>(false);
 
   ngOnInit() {
-    this.rutaActiva.params.subscribe(params => {
-      this.categoriaService.obtenerCategoriaPorId(params['idCategoria'])
-        .subscribe((categoria: Categoria) => {
-          this.categoria.set(categoria)
-
-          // Suscribirse al observable de preguntas
-          this.preguntaService.obtenerVistaPreviaPreguntas(categoria?.idCategoria)
-            .subscribe({
-              next: (preguntas: Pregunta[]) => {
-                this.preguntas.set(preguntas)
-                this.cantidadPreguntas.set(preguntas.length)
-              },
-              error: (err) => {
-                console.error('Error al cargar preguntas', err);
-              }
-            });
-        });
+    this.obtenerParametroIdCategoriaDeRutaActiva().subscribe(idCategoria => {
+      this.obtenerCategoria(idCategoria);
+      this.obtenerVistaPreviaPreguntas(idCategoria);
     });
   }
 
+  obtenerParametroIdCategoriaDeRutaActiva(): Observable<number> {
+    return this.rutaActiva.params.pipe(map((params: Params) => {
+      return Number(params["idCategoria"]);
+    }
+    ))
+  }
+
+  obtenerCategoria(idCategoriaRuta: number) {
+    this.categoriaService.obtenerCategoriaPorId(idCategoriaRuta)
+      .subscribe((categoria: Categoria) => {
+        this.categoria.set(categoria)
+      });
+  }
+
+  obtenerVistaPreviaPreguntas(idCategoria: number) {
+    // Suscribirse al observable de preguntas
+    this.preguntaService.obtenerVistaPreviaPreguntas(idCategoria)
+      .subscribe({
+        next: (preguntas: Pregunta[]) => {
+          this.preguntas.set(preguntas)
+          this.cantidadPreguntas.set(preguntas.length)
+        },
+        error: (err) => {
+          console.error('Error al cargar preguntas', err);
+        }
+      });
+  }
+
   onJugar(): void {
-    this.categoriaService.setCategoria(this.categoria());
-    if (this.verificarVidas(this.usuario()?.vidas)) {
+    if (this.verificarVidas(Number(this.usuario().vidas))) {
+      this.establecerCategoria(this.categoria())
       this.router.navigate(["/partida"])
     } else {
       this.alerta.set(true);
@@ -66,7 +80,11 @@ export class PreJuego {
 
   }
 
-  verificarVidas(vidasUsuario: number | any): boolean {
+  establecerCategoria(categoria: Categoria) {
+    this.categoriaService.setCategoria(categoria);
+  }
+
+  verificarVidas(vidasUsuario: number): boolean {
     return vidasUsuario > 0;
   }
 

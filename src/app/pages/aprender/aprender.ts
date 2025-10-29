@@ -14,21 +14,23 @@ import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-aprender',
-  imports: [NavLateral, MainLayout, TextoH1, Item, Header, CommonModule, FormsModule, RouterLink],
+  imports: [MainLayout, Header, CommonModule, FormsModule],
   templateUrl: './aprender.html',
   styleUrl: './aprender.css'
 })
 export class Aprender {
+
   private usuarioService = inject(UsuarioService);
   private categoriaService = inject(CategoriaService);
   private router = inject(Router);
+
+  constructor() { }
 
   inputBuscadorActivo = false;
   usuario = computed(() => this.usuarioService.usuario());
   categorias = signal<Categoria[]>([]);
   valorBusqueda = signal<string>("");
 
-  constructor() { }
 
   ngOnInit() {
     this.categoriaService.obtenerCategorias().subscribe((categorias: Categoria[]) => {

@@ -12,25 +12,43 @@ export class UsuarioService {
   //private tokenSubject = new BehaviorSubject<string | any>(localStorage.getItem('tokenJWT'));
 
   private tokenSignal = signal<string | any>(localStorage.getItem('tokenJWT'))
-  public readonly token = this.tokenSignal.asReadonly();
+  public token = this.tokenSignal;
 
   private usuarioSignal = signal<Usuario | any>(JSON.parse(localStorage.getItem('usuario') || 'null'))
-  public readonly usuario = this.usuarioSignal.asReadonly();
+  public usuario = this.usuarioSignal;
 
   constructor(private firestore: Firestore) { }
 
   //usuario$: Observable<Usuario> = this.usuarioSubject.asObservable();
   //token$: Observable<string | any> = this.tokenSubject.asObservable();
 
-  setUsuario(usuario: Usuario) {
-    localStorage.setItem('usuario', JSON.stringify(usuario));
+  setUsuario(usuario: Usuario | null) {
     this.usuarioSignal.set(usuario);
+    if (usuario) {
+      localStorage.setItem('usuario', JSON.stringify(usuario));
+    } else {
+      localStorage.removeItem('usuario');
+    }
   }
 
-  setToken(token: string) {
-    localStorage.setItem('tokenJWT', token);
-    this.tokenSignal.set(token);
+  updateUsuario(claveDatoParaActualizar: string, valorDatoParaActualizar: any) {
+    this.usuarioSignal.update(usuario => {
+      if (!usuario) return usuario;
+      const actualizado = { ...usuario, [claveDatoParaActualizar]: valorDatoParaActualizar };
+      localStorage.setItem('usuario', JSON.stringify(actualizado));
+      return actualizado;
+    });
   }
+
+  setToken(token: string | null) {
+    this.tokenSignal.set(token);
+    if (token) {
+      localStorage.setItem('tokenJWT', token);
+    } else {
+      localStorage.removeItem('tokenJWT');
+    }
+  }
+
 
   clearUsuario() {
     localStorage.removeItem('usuario');
@@ -74,7 +92,6 @@ export class UsuarioService {
 
   async actualizarPreguntasFalladas(uid: string): Promise<any> {
     const usuarioDocRef = doc(this.firestore, 'usuarios', uid);
-
     try {
       await updateDoc(usuarioDocRef, { preguntasFalladas: increment(1) });
       console.log("Actualización exitosa");

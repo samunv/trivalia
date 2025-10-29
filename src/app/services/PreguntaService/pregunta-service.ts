@@ -15,7 +15,7 @@ export class PreguntaService {
 
   constructor(private http: HttpClient) { }
 
-  token = computed(()=>this.usuarioService.token())
+  token = this.usuarioService.token
 
 
   obtenerVistaPreviaPreguntas(idCategoria: number | any): Observable<Pregunta[] | any> {

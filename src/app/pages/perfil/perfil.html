@@ -4,7 +4,7 @@
     <div class="info-usuario">
       <div class="columna-1">
         <img
-          [src]="fotoPreview() != '' ? fotoPreview : usuario().fotoURL"
+          [src]="fotoPreview() ? fotoPreview() : foto()"
           class="foto-perfil"
           (click)="fileInput.click()"
         />
@@ -28,12 +28,12 @@
                 class="rounded-[10px] border-1 border-[var(--color-bordes)] focus: outline-white focus:outline-1 !p-[10px]"
                 value=""
                 id="nombre"
-                [formControl]="nombre()"
+                [formControl]="nombreFormControl()"
                 maxlength="15"
                 minlength="4"
               />
 
-              @if (nombre().invalid) {
+              @if (nombreFormControl().invalid) {
               <div class="text-red-500 text-[14px]">El nombre debe tener al menos 4 caracteres</div>
               }
             </div>
@@ -51,21 +51,19 @@
   </div>
   <espacio [altura]="20"></espacio>
 
-  <div>
-    <app-boton-general [texto]="'Cerrar Sesión'" [tipo]="'destacado'" (click)="abrirModal()"
-      ><svg
-        xmlns="http://www.w3.org/2000/svg"
-        height="24px"
-        viewBox="0 -960 960 960"
-        width="24px"
-        fill="var(--color-principal)"
-      >
-        <path
-          d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"
-        />
-      </svg>
-    </app-boton-general>
-  </div>
+  <app-boton-general [texto]="'Cerrar Sesión'" [tipo]="'destacado'" (click)="abrirModal()"
+    ><svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="24px"
+      viewBox="0 -960 960 960"
+      width="24px"
+      fill="var(--color-principal)"
+    >
+      <path
+        d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"
+      />
+    </svg>
+  </app-boton-general>
 
   @if (guardado()) {
   <app-mensaje-alerta
@@ -87,25 +85,42 @@
   <espacio [altura]="40"></espacio>
   <app-texto-h1 [texto]="'Estadísticas'"></app-texto-h1>
   <espacio [altura]="20"></espacio>
-  @if(preguntasDificilesGanadas()){
   <div class="flex flex-row flex-wrap items-center gap-5 justify-between animate-fade-in-up">
     <div
       class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2"
     >
       <strong>Preguntas Ganadas</strong
-      ><strong class="text-4xl">{{ usuario().arrayIdPreguntasGanadas?.length }}</strong>
+      ><strong class="text-4xl"
+        ><om-number-ticker
+          [countTo]="usuario().arrayIdPreguntasGanadas?.length"
+          [countDuration]="600"
+          styleClass="ticker-custom-style"
+        ></om-number-ticker
+      ></strong>
     </div>
     <div
       class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2"
     >
-      <strong>Fallos</strong><strong class="text-4xl">{{ usuario().preguntasFalladas }}</strong>
+      <strong>Fallos</strong
+      ><strong class="text-4xl"
+        ><om-number-ticker
+          [countTo]="usuario().preguntasFalladas"
+          [countDuration]="600"
+          styleClass="ticker-custom-style"
+        ></om-number-ticker
+      ></strong>
     </div>
     <div
       class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2"
     >
       <strong>Difíciles Ganadas</strong
-      ><strong class="text-4xl">{{ preguntasDificilesGanadas() }}</strong>
+      ><strong class="text-4xl"
+        ><om-number-ticker
+          [countTo]="preguntasDificilesGanadas()"
+          [countDuration]="600"
+          styleClass="ticker-custom-style"
+        ></om-number-ticker
+      ></strong>
     </div>
   </div>
-  }
 </app-main-layout>

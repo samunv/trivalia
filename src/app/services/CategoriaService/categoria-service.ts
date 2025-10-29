@@ -17,7 +17,7 @@ export class CategoriaService {
 
   constructor(private http: HttpClient) { }
 
-  token = computed(() => this.usuarioService.token())
+  token = this.usuarioService.token
 
 
   setCategoria(categoriaSeleccionada: Categoria | null) {

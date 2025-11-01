@@ -54,17 +54,16 @@ export class AuthService {
 
 
   crearNuevoUsuario(uid: string, user: User, usuariosRef: DocumentReference): Observable<Usuario> {
-    // Si no existe, creamos usando datos del proveedor opcional
     const nuevoUsuario: Usuario = {
       uid,
-      nombre: user?.displayName?.substring(0, 15) || 'usuario_' + nanoid(5),
+      nombre: user?.displayName || 'usuario_' + nanoid(5),
       email: user?.email || '',
       fotoURL: user.photoURL,
       creadoEn: serverTimestamp(),
       codigo_usuario: nanoid(25),
       estrellas: 0,
-      monedas: 100,
-      vidas: 7,
+      monedas: 300,
+      vidas: 5,
       logros: [],
       arrayIdPreguntasGanadas: [],
       preguntasFalladas: 0

@@ -67,13 +67,16 @@ h2 {
 }
 
 strong{
-  font-family: 'inter-bold', sans-serif !important;
+  font-family: 'inter-extrabold', sans-serif !important;
 }
+
+
 
 * {
   margin: 0;
   padding: 0;
 }
+
 
 .mensaje-error {
   color: red;

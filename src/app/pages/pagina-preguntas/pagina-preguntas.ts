@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed, effect } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, effect, WritableSignal } from '@angular/core';
 import { MainLayout } from '../../layout/main-layout/main-layout';
 import { Header } from '../../layout/header/header';
 import { TextoH1 } from './../../components/texto-h1/texto-h1';
@@ -13,7 +13,8 @@ import { Modal } from '../../components/modal/modal';
 import { Espacio } from "../../components/espacio/espacio";
 import { UsuarioService } from '../../services/UsuarioService/usuario-service';
 import { AudioComponent } from '../../components/audio-component/audio-component';
-import { Observable } from 'rxjs';
+import { finalize, interval, map, Observable, Subscription, take } from 'rxjs';
+import { TemporizadorComponent } from '../../components/temporizador-component/temporizador-component';
 
 @Component({
   selector: 'app-pagina-preguntas',
@@ -26,7 +27,8 @@ import { Observable } from 'rxjs';
     FormsModule,
     Modal,
     Espacio,
-    AudioComponent
+    AudioComponent,
+    TemporizadorComponent,
   ],
   templateUrl: './pagina-preguntas.html'
 })
@@ -50,6 +52,9 @@ export class PaginaPreguntas implements OnInit, OnDestroy {
   mensaje = signal('');
   finPartida = signal(false);
   turnoPerdido = signal(false);
+  reiniciarTemporizador = signal<boolean>(false);
+  temporizadorFinalizado = signal<boolean>(false);
+  temporizadorPausado = signal<boolean>(false);
 
   // ==================== COMPUTED ====================
   preguntaActual = computed(() => this.preguntas()[this.preguntaIndex()] || null);
@@ -73,6 +78,12 @@ export class PaginaPreguntas implements OnInit, OnDestroy {
     effect(() => {
       if (this.usuario() && this.vidasRestantes() <= 0) {
         this.mensaje.set("¡Te has quedado sin vidas!");
+      }
+      if (this.temporizadorFinalizado()) {
+        this.fallarPorTiempoFinalizado()
+      }
+      if (this.finPartida()) {
+
       }
     });
   }
@@ -133,6 +144,7 @@ export class PaginaPreguntas implements OnInit, OnDestroy {
 
   // ==================== LOGICA ACIERTO / FALLO ====================
   private acertarPregunta() {
+    this.temporizadorPausado.set(true)
     this.esCorrecta.set(true);
     this.mensaje.set(`¡Correcto! ${this.capitalizarPrimeraLetra(this.respuestaCorrecta()!)}`);
 
@@ -152,7 +164,18 @@ export class PaginaPreguntas implements OnInit, OnDestroy {
     this.mensaje.set(`¡Incorrecto! Respuesta correcta: ${this.capitalizarPrimeraLetra(this.respuestaCorrecta()!)}`);
     this.perderVida();
     this.actualizarPreguntasFalladas();
+    this.temporizadorPausado.set(true);
+
     setTimeout(() => this.turnoPerdido.set(true), 1500);
+
+  }
+
+  private fallarPorTiempoFinalizado() {
+    this.esCorrecta.set(false);
+    this.mensaje.set(`Has perdido el turno por tiempo...`);
+    this.perderVida();
+    this.temporizadorFinalizado.set(false)
+    setTimeout(() => { this.turnoPerdido.set(true), this.mensaje.set("") }, 1500);
   }
 
   // ==================== ACTUALIZACIÓN USUARIO ====================
@@ -220,15 +243,22 @@ export class PaginaPreguntas implements OnInit, OnDestroy {
 
   // ==================== NAVEGACIÓN ====================
   private aumentarIndexPregunta() {
-    const total = this.preguntas().length;
-    const index = this.preguntaIndex();
-
-    if (index < total - 1) {
+    if (this.preguntaIndex() < this.preguntas().length - 1) {
       this.preguntaIndex.update(i => i + 1);
+
+      // Reiniciar temporizador y volver a declararlo como false en un segundo
+      this.reiniciarTemporizador.set(true);
+      this.temporizadorPausado.set(false);
+      setInterval(() => { this.reiniciarTemporizador.set(false) }, 1000)
+
     } else {
-      this.finPartida.set(true);
-      this.mensaje.set("¡Has finalizado la partida!");
+      this.finalizarPartida();
     }
+  }
+
+  private finalizarPartida() {
+    this.finPartida.set(true);
+    this.navegar("/fin-partida");
   }
 
   private resetear() {
@@ -242,6 +272,7 @@ export class PaginaPreguntas implements OnInit, OnDestroy {
     }, 1500);
   }
 
+
   navegar(ruta: string) {
     this.router.navigate([ruta]);
   }
@@ -249,6 +280,12 @@ export class PaginaPreguntas implements OnInit, OnDestroy {
   // ==================== HELPERS ====================
   private estrellasSegunDificultad(dificultad?: 'FACIL' | 'MEDIO' | 'DIFICIL'): number {
     return { FACIL: 10, MEDIO: 20, DIFICIL: 30 }[dificultad || 'FACIL'] || 0;
+  }
+
+  onTemporizadorTerminado(terminado: boolean) {
+    if (terminado) {
+      this.temporizadorFinalizado.set(true)
+    }
   }
 
   private capitalizarPrimeraLetra(texto: string) {

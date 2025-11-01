@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UnionPartida } from './union-partida';
+import { TemporizadorComponent } from './temporizador-component';
 
-describe('UnionPartida', () => {
-  let component: UnionPartida;
-  let fixture: ComponentFixture<UnionPartida>;
+describe('TemporizadorComponent', () => {
+  let component: TemporizadorComponent;
+  let fixture: ComponentFixture<TemporizadorComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UnionPartida]
+      imports: [TemporizadorComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(UnionPartida);
+    fixture = TestBed.createComponent(TemporizadorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

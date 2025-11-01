@@ -21,8 +21,8 @@
   </div>
 
   @if (!valorBusqueda()) {
-  <div class="flex flex-row flex-wrap gap-10 !mt-[30px]">
-    <div
+  <div class="grid grid-cols-4 gap-5 !mt-[30px] animate-fade-in-up animate-fade-in">
+    <!-- <div
       class="relative h-[250px] !w-[250px] cursor-pointer border-1 border-[var(--color-bordes)] bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center hover:border-[white] bg-yellow-500"
     >
       <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[nunito]">
@@ -51,9 +51,9 @@
           ></path>
         </g>
       </svg>
-    </div>
+    </div> -->
     <div
-      class="relative h-[250px] !w-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center hover:border-[white] bg-green-500"
+      class="relative h-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center hover:border-[white] bg-green-500"
     >
       <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[nunito]">juega contra la IA✨</h2>
       <div
@@ -64,7 +64,7 @@
 
     @for (categoria of categorias(); track $index) {
     <div
-      class="relative h-[250px] !w-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] rounded-2xl overflow-hidden hover:border-[white]"
+      class="relative h-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] rounded-2xl overflow-hidden hover:border-[white]"
       (click)="navegarHaciaCategoria(categoria.idCategoria)"
     >
       <img
@@ -85,10 +85,10 @@
   } @if (valorBusqueda()) {
   <div class="!mt-[30px]">
     <p>Resultados para {{ valorBusqueda() }}</p>
-    <div class="flex flex-row flex-wrap gap-10 !mt-[30px]">
+    <div class="grid grid-cols-4 gap-5 !mt-[30px]">
       @for (categoria of filtrarCategorias(valorBusqueda()); track $index) {
       <div
-        class="relative h-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] rounded-2xl overflow-hidden hover:border-[white] !w-[250px]"
+        class="relative h-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] rounded-2xl overflow-hidden hover:border-[white]"
         (click)="navegarHaciaCategoria(categoria.idCategoria)"
       >
         <img
@@ -104,8 +104,6 @@
           {{ categoria.titulo }}
         </h2>
       </div>
-      }@empty {
-        <strong class="text-3xl !w-full">No encontramos la categoria que estás buscando...😞</strong>
       }
     </div>
   </div>

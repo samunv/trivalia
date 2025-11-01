@@ -28,8 +28,6 @@ export class Login {
   loginConGoogle() {
     this.authService.loginConGoogle().subscribe({
       next: (res) => {
-        console.log('Login con Google exitoso:', res.usuario);
-        console.log('Token de Firebase:', res.firebaseToken);
         this.obtenerJWT(res.firebaseToken).subscribe((jwt: string) => {
           this.establecerUsuarioYjwt(res.usuario, jwt);
           this.router.navigate(["/jugar"])

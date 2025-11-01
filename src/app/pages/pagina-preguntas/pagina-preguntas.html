@@ -58,7 +58,9 @@
       >
         <p class="!font-[inter-bold] text-3xl text-center">{{ mensaje() }}</p>
       </div>
-      }
+      @if(esCorrecta()){
+      <app-audio-component [loop]="false" [audioArchivo]="''"></app-audio-component>
+      } }
     </div>
     }
   </div>
@@ -84,4 +86,11 @@
   } @if(!turnoPerdido()){
   <app-audio-component [audioArchivo]="'/audio/musica.mp3'" [loop]="true"></app-audio-component>
   }
+
+  <espacio [altura]="30"> </espacio>
+  <app-temporizador-component
+    (temporizadorTerminado)="onTemporizadorTerminado($event)"
+    [reiniciar]="reiniciarTemporizador()"
+    [pausar]="temporizadorPausado()"
+  ></app-temporizador-component>
 </app-main-layout>

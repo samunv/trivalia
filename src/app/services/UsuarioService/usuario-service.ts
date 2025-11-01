@@ -12,10 +12,10 @@ export class UsuarioService {
   //private tokenSubject = new BehaviorSubject<string | any>(localStorage.getItem('tokenJWT'));
 
   private tokenSignal = signal<string | any>(localStorage.getItem('tokenJWT'))
-  public token = this.tokenSignal;
+  public readonly token = this.tokenSignal.asReadonly();
 
   private usuarioSignal = signal<Usuario | any>(JSON.parse(localStorage.getItem('usuario') || 'null'))
-  public usuario = this.usuarioSignal;
+  public readonly usuario = this.usuarioSignal.asReadonly();
 
   constructor(private firestore: Firestore) { }
 

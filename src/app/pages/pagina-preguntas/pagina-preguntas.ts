@@ -82,9 +82,6 @@ export class PaginaPreguntas implements OnInit, OnDestroy {
       if (this.temporizadorFinalizado()) {
         this.fallarPorTiempoFinalizado()
       }
-      if (this.finPartida()) {
-
-      }
     });
   }
 

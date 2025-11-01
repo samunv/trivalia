@@ -11,7 +11,7 @@
       </svg>
       <input
         type="text"
-        class="buscador"
+        class="buscador font-[inter-bold]"
         placeholder="Buscar temas..."
         (focus)="inputBuscadorActivo = true"
         (blur)="inputBuscadorActivo = false"
@@ -21,7 +21,7 @@
   </div>
 
   @if (!valorBusqueda()) {
-  <div class="grid grid-cols-4 gap-5 !mt-[30px] animate-fade-in-up animate-fade-in">
+  <div class="grid grid-cols-4 gap-5 !mt-[30px] animate-fade-in-up">
     <!-- <div
       class="relative h-[250px] !w-[250px] cursor-pointer border-1 border-[var(--color-bordes)] bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center hover:border-[white] bg-yellow-500"
     >
@@ -53,25 +53,25 @@
       </svg>
     </div> -->
     <div
-      class="relative h-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center hover:border-[white] bg-green-500"
+      class="relative col-span-2 h-[250px] cursor-pointer bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center hover:border-2 border-[var(--azul-claro)] bg-green-500"
     >
       <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[nunito]">juega contra la IA✨</h2>
       <div
         class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl"
       ></div>
-      <img [src]="'/img/ai (1).png'" alt="" style="heigth: 100%; width: 100%; object-fit: cover" />
+      <img [src]="'/img/ia-portada.png'" alt="" style="heigth: 100%; width: 100%; object-fit: cover" />
     </div>
 
     @for (categoria of categorias(); track $index) {
     <div
-      class="relative h-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] rounded-2xl overflow-hidden hover:border-[white]"
+      class="relative h-[250px] cursor-pointer rounded-2xl overflow-hidden hover:border-2 border-[var(--azul-claro)]"
       (click)="navegarHaciaCategoria(categoria.idCategoria)"
     >
       <img
         [src]="categoria.imagenURL"
         alt=""
         style="object-fit: cover; height: 100%; width: 100%"
-        class="rounded-2xl"
+        class="rounded-2xl hover:scale-0"
       />
       <div
         class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl"
@@ -88,7 +88,7 @@
     <div class="grid grid-cols-4 gap-5 !mt-[30px]">
       @for (categoria of filtrarCategorias(valorBusqueda()); track $index) {
       <div
-        class="relative h-[250px] cursor-pointer border border-1 border-[var(--color-bordes)] rounded-2xl overflow-hidden hover:border-[white]"
+       class="relative h-[250px] cursor-pointer rounded-2xl overflow-hidden  hover:border-2 border-[var(--azul-claro)]"
         (click)="navegarHaciaCategoria(categoria.idCategoria)"
       >
         <img

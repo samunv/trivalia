@@ -57,7 +57,7 @@ export class PreJuego {
 
   obtenerVistaPreviaPreguntas(idCategoria: number) {
     // Suscribirse al observable de preguntas
-    this.preguntaService.obtenerVistaPreviaPreguntas(idCategoria)
+    this.preguntaService.obtenerPreguntas(idCategoria)
       .subscribe({
         next: (preguntas: Pregunta[]) => {
           this.preguntas.set(preguntas)

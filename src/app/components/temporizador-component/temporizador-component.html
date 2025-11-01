@@ -3,7 +3,7 @@
     class="border border-[var(--color-bordes)] rounded-3xl overflow-hidden bg-[var(--color-principal)]"
   >
     <div
-      class="bg-white !p-3 rounded-3xl animacion-progreso flex flex-row items-center gap-2"
+      class="bg-[var(--azul-claro)]  !p-3 rounded-3xl animacion-progreso flex flex-row items-center gap-2"
       [style.width.%]="tiempo() * 10"
     >
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="25" >
@@ -12,17 +12,17 @@
         <g id="SVGRepo_iconCarrier">
           <path
             d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
-            [ngStyle]="{ 'fill': tiempo() <= 3 ? 'red' : 'var(--color-principal)' }"
+            [ngStyle]="{ 'fill': tiempo() <= 3 ? 'red' : 'white' }"
           ></path>
           <path
             fill-rule="evenodd"
             clip-rule="evenodd"
             d="M12 7.25C12.4142 7.25 12.75 7.58579 12.75 8V11.6893L15.0303 13.9697C15.3232 14.2626 15.3232 14.7374 15.0303 15.0303C14.7374 15.3232 14.2626 15.3232 13.9697 15.0303L11.4697 12.5303C11.329 12.3897 11.25 12.1989 11.25 12V8C11.25 7.58579 11.5858 7.25 12 7.25Z"
-            fill="white"
+            fill="var(--azul-claro)"
           ></path>
         </g>
       </svg>
-      <p class="text-[var(--color-principal)] !font-[inter-bold]" [ngStyle]="{ 'color': tiempo() <= 3 ? 'red' : '' }">{{ tiempo() }}</p>
+      <p class="text-[white] !font-[inter-bold]" [ngStyle]="{ 'color': tiempo() <= 3 ? 'red' : '' }">{{ tiempo() }}</p>
     </div>
   </div>
 </div>

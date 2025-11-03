@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { Usuario } from '../../interfaces/Usuario';
 import { arrayUnion, doc, DocumentReference, Firestore, increment, updateDoc } from '@angular/fire/firestore';
@@ -11,13 +11,16 @@ export class UsuarioService {
   //private usuarioSubject = new BehaviorSubject<Usuario | any>(JSON.parse(localStorage.getItem('usuario') || 'null'));
   //private tokenSubject = new BehaviorSubject<string | any>(localStorage.getItem('tokenJWT'));
 
+  private firestore = inject(Firestore)
   private tokenSignal = signal<string | any>(localStorage.getItem('tokenJWT'))
   public readonly token = this.tokenSignal.asReadonly();
 
   private usuarioSignal = signal<Usuario | any>(JSON.parse(localStorage.getItem('usuario') || 'null'))
   public readonly usuario = this.usuarioSignal.asReadonly();
 
-  constructor(private firestore: Firestore) { }
+  constructor() { }
+
+  private usuarioDocRef = doc(this.firestore, 'usuarios', this.usuarioSignal().uid);
 
   //usuario$: Observable<Usuario> = this.usuarioSubject.asObservable();
   //token$: Observable<string | any> = this.tokenSubject.asObservable();
@@ -58,42 +61,54 @@ export class UsuarioService {
     this.tokenSignal.set(null);
   }
 
-  actualizarUsuario(uid: string, nombre: string, foto: string): Observable<any> {
-    const usuarioDocRef = doc(this.firestore, 'usuarios', uid);
-    return from(updateDoc(usuarioDocRef, {
+  actualizarNombreYfotoUsuario(nombre: string, foto: string): Observable<any> {
+    return from(updateDoc(this.usuarioDocRef, {
       nombre: nombre.trim(),
       fotoURL: foto,
       actualizado: new Date()
     }));
 
   }
+  // actualizarItemsUsuario(uid: string, monedas?: number, vidas?: number, estrellas?: number): Observable<any> {
+  //   const usuarioDocRef = doc(this.firestore, 'usuarios', uid);
 
-  actualizarItemsUsuario(uid: string, monedas?: number, vidas?: number, estrellas?: number): Observable<any> {
-    const usuarioDocRef = doc(this.firestore, 'usuarios', uid);
+  //   const datosParaActualizar: any = {
+  //     actualizado: new Date()
+  //   };
 
-    const datosParaActualizar: any = {
-      actualizado: new Date()
-    };
+  //   if (monedas !== undefined) datosParaActualizar.monedas = monedas;
+  //   if (vidas !== undefined) datosParaActualizar.vidas = vidas;
+  //   if (estrellas !== undefined) datosParaActualizar.estrellas = increment(estrellas);
 
-    if (monedas !== undefined) datosParaActualizar.monedas = monedas;
-    if (vidas !== undefined) datosParaActualizar.vidas = vidas;
-    if (estrellas !== undefined) datosParaActualizar.estrellas = increment(estrellas);
+  //   return from(updateDoc(usuarioDocRef, datosParaActualizar));
+  // }
 
-    return from(updateDoc(usuarioDocRef, datosParaActualizar));
+  actualizarItemUsuarioConClaveValor(claveItem: string, cantidadItem: number): Observable<any> {
+    const clave =
+      claveItem === "vidas" ? "vidas" :
+        claveItem === "monedas" ? "monedas" :
+          "estrellas";
+
+    return from(updateDoc(this.usuarioDocRef, { [clave]: cantidadItem, }));
   }
 
-  actualizarArrayPreguntasJugadas(uid: string, idPregunta: number): Observable<any> {
-    const usuarioDocRef = doc(this.firestore, 'usuarios', uid);
-
-    return from(updateDoc(usuarioDocRef, {
+  actualizarArrayPreguntasJugadas(idPregunta: number): Observable<any> {
+    return from(updateDoc(this.usuarioDocRef, {
       arrayIdPreguntasGanadas: arrayUnion(idPregunta)
     }));
   }
 
-  async actualizarPreguntasFalladas(uid: string): Promise<any> {
-    const usuarioDocRef = doc(this.firestore, 'usuarios', uid);
+  actualizarFechaUltimoRegaloUsuario(ahora: Date): Observable<any> {
+    return from(updateDoc(this.usuarioDocRef, {
+      fechaUltimoRegalo: ahora
+    }));
+  }
+
+  async actualizarPreguntasFalladas(): Promise<any> {
     try {
-      await updateDoc(usuarioDocRef, { preguntasFalladas: increment(1) });
+      await updateDoc(this.usuarioDocRef, {
+        preguntasFalladas: increment(1)
+      });
       console.log("Actualización exitosa");
     } catch (err) {
       console.error("Error actualizando preguntasFalladas:", err);

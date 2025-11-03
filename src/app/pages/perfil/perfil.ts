@@ -117,7 +117,7 @@ export class Perfil {
       this.enviarImagen(this.imagenSeleccionada() as File).subscribe({
         next: (data) => {
           const nuevaURL = data.data.url; // URL de la nueva imagen
-          this.usuarioService.actualizarUsuario(String(this.usuario().uid), this.nombreFormControl().value ?? '', nuevaURL).subscribe({
+          this.usuarioService.actualizarNombreYfotoUsuario(this.nombreFormControl().value ?? '', nuevaURL).subscribe({
             next: () => this.finalizarGuardado(nuevaURL),
             error: (err) => console.error('Error al guardar con nueva imagen:', err)
           });
@@ -126,7 +126,7 @@ export class Perfil {
       });
     } else {
       // Si no hay imagen nueva
-      this.usuarioService.actualizarUsuario(String(this.usuario().uid), this.nombreFormControl()?.value ?? '', this.usuario().fotoURL ? String(this.usuario().fotoURL) : "").subscribe({
+      this.usuarioService.actualizarNombreYfotoUsuario(this.nombreFormControl()?.value ?? '', this.usuario().fotoURL ? String(this.usuario().fotoURL) : "").subscribe({
         next: () => this.finalizarGuardado(this.usuario().fotoURL ? String(this.usuario().fotoURL) : ""),
         error: (err) => console.error('Error al guardar sin imagen nueva:', err)
       });

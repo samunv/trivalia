@@ -66,7 +66,8 @@ export class AuthService {
       vidas: 5,
       logros: [],
       arrayIdPreguntasGanadas: [],
-      preguntasFalladas: 0
+      preguntasFalladas: 0,
+      fechaUltimoRegalo: new Date()
     };
     return from(setDoc(usuariosRef, nuevoUsuario)).pipe(
       switchMap(() => of(nuevoUsuario))

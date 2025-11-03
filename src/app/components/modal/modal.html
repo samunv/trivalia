@@ -2,11 +2,19 @@
   <div
     class="flex flex-col justify-center items-center bg-[var(--color-principal)] rounded-2xl border border-[var(--color-bordes)] p-8! m-2"
   >
-    <h2 class="text-2xl mb-4 text-center">{{titulo}}</h2>
+    <h2 class="text-2xl mb-4 text-center">{{ titulo }}</h2>
+    <espacio [altura]="10"></espacio>
     <ng-content></ng-content>
+    <espacio [altura]="10"></espacio>
     <div class="flex flex-row gap-4">
       <app-boton-general [texto]="btn1" (click)="onClick1()"></app-boton-general>
-      <app-boton-general [texto]="btn2" (click)="onClick2()" [tipo]="'destacado'"></app-boton-general>
+      @if(btn2Activo){
+      <app-boton-general
+        [texto]="btn2"
+        (click)="onClick2()"
+        [tipo]="'destacado'"
+      ></app-boton-general>
+      }
     </div>
   </div>
 </div>

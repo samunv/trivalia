@@ -182,8 +182,8 @@ export class PaginaPreguntas implements OnInit, OnDestroy {
 
     const estrellasGanadas = this.estrellasSegunDificultad(pregunta.dificultad);
     this.usuarioService.updateUsuario("estrellas", (this.usuario().estrellas || 0) + estrellasGanadas)
-    this.usuarioService.actualizarItemsUsuario(
-      String(this.usuario().uid), undefined, undefined, estrellasGanadas
+    this.usuarioService.actualizarItemUsuarioConClaveValor(
+      "estrellas", estrellasGanadas
     ).subscribe({ next: () => { }, error: err => console.error(err) });
   }
 
@@ -200,7 +200,7 @@ export class PaginaPreguntas implements OnInit, OnDestroy {
       setTimeout(() => this.navegar("/jugar"), 2000);
     }
 
-    this.usuarioService.actualizarItemsUsuario(uid, undefined, vidasRestantes, undefined)
+    this.usuarioService.actualizarItemUsuarioConClaveValor("vidas", vidasRestantes)
       .subscribe({ next: () => { }, error: err => console.error(err) });
   }
 
@@ -208,7 +208,7 @@ export class PaginaPreguntas implements OnInit, OnDestroy {
     const uid = this.usuario()?.uid;
     if (!uid) return;
     this.usuarioService.updateUsuario("arrayIdPreguntasGanadas", [...(this.usuario().arrayIdPreguntasGanadas || []), idPregunta]);
-    this.usuarioService.actualizarArrayPreguntasJugadas(uid, idPregunta)
+    this.usuarioService.actualizarArrayPreguntasJugadas(idPregunta)
       .subscribe({ next: () => { }, error: err => console.error(err) });
   }
 
@@ -216,7 +216,7 @@ export class PaginaPreguntas implements OnInit, OnDestroy {
     const uid = this.usuario()?.uid;
     if (!uid) return;
     this.usuarioService.updateUsuario("preguntasFalladas", Number((this.usuario().preguntasFalladas || 0) + 1))
-    this.usuarioService.actualizarPreguntasFalladas(uid)
+    this.usuarioService.actualizarPreguntasFalladas()
   }
 
   // ==================== CONTINUAR CON MONEDAS ====================
@@ -227,7 +227,7 @@ export class PaginaPreguntas implements OnInit, OnDestroy {
     if (this.monedasDisponibles() >= cantidadMonedas) {
       const monedasRestantes = this.monedasDisponibles() - cantidadMonedas;
       this.usuarioService.updateUsuario("monedas", monedasRestantes)
-      this.usuarioService.actualizarItemsUsuario(uid, monedasRestantes, undefined, undefined)
+      this.usuarioService.actualizarItemUsuarioConClaveValor("monedas", monedasRestantes)
         .subscribe({ next: () => { }, error: err => console.error(err) });
 
       this.turnoPerdido.set(false);

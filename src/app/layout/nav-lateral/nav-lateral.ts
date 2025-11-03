@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterLink, RouterModule } from '@angular/router';
 import { UsuarioService } from '../../services/UsuarioService/usuario-service';
 import { filter } from 'rxjs';
+import { Regalo } from '../../components/regalo/regalo';
+import { Usuario } from '../../interfaces/Usuario';
 
 @Component({
   selector: 'app-nav-lateral',
-  imports: [CommonModule, RouterLink, RouterModule],
+  imports: [CommonModule, RouterLink, RouterModule, Regalo],
   templateUrl: './nav-lateral.html',
   styleUrl: './nav-lateral.css'
 })
@@ -14,7 +16,10 @@ export class NavLateral {
   private usuarioService = inject(UsuarioService)
   private router = inject(Router);
 
-  fotoUsuario = computed(()=>this.usuarioService.usuario()?.fotoURL);
+  usuario = this.usuarioService.usuario
+  fotoUsuario = computed(() => this.usuario()?.fotoURL);
+  ventanaRegaloAbierta: boolean = false;
+
 
   constructor() {
   }
@@ -22,4 +27,13 @@ export class NavLateral {
   irHaciaAprender() {
     this.router.navigate(['/aprender']);
   }
+
+  abrirVentanaRegalo() {
+    this.ventanaRegaloAbierta = true
+  }
+
+  cerrarVentanaRegalo() {
+    this.ventanaRegaloAbierta = false
+  }
+
 }

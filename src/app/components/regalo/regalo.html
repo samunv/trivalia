@@ -1,0 +1,15 @@
+<app-modal titulo="Regalo" btn1="Cerrar" [btn2Activo]="false" (click1)="onCancelar()">
+  <div class="!w-[230px] !h-[230px] overflow-hidden flex flex-col items-center justify-center">
+    @if(vectorRegaloVisible()){
+    <img src="/img/gift.png" alt="" (click)="abrirRegalo()" style="width: 190px"
+      class="animate-jelly hover:cursor-pointer hover:scale-105 transition-normal" />
+    <p>Toca el regalo para abrir</p>
+    }@else{
+    <div class="flex flex-row items-center scale-250 animate-expand-horizontally">
+      <item [item]="itemObtenido()" [cantidad]="cantidadItemObtenido()"></item>
+    </div>
+    }
+  </div>
+
+
+</app-modal>

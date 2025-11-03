@@ -1,3 +1,6 @@
+import { RegaloInterface } from "./RegaloInterface";
+
+
 export interface Usuario {
   uid?: string;
   nombre?: string,
@@ -10,5 +13,6 @@ export interface Usuario {
   vidas?: number;
   logros?: string[];
   arrayIdPreguntasGanadas?: number[],
-  preguntasFalladas?: number
+  preguntasFalladas?: number,
+  fechaUltimoRegalo?: Date
 }

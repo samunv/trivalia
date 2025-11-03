@@ -53,14 +53,15 @@
       </svg>
     </div> -->
     <div
-      class="relative col-span-2 h-[250px] cursor-pointer bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center hover:border-2 border-[var(--azul-claro)] bg-green-500"
+      class="relative h-[250px] cursor-pointer bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center hover:border-2 border-[var(--azul-claro)]"
     >
       <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[nunito]">juega contra la IA✨</h2>
+      <img [src]="'/img/trivalia-man.png'" alt=""  [style.width%]="100" [style.heigth]="100" style="object-fit: cover;" />
+
       <div
         class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl"
       ></div>
-      <img [src]="'/img/ia-portada.png'" alt="" style="heigth: 100%; width: 100%; object-fit: cover" />
-    </div>
+      </div>
 
     @for (categoria of categorias(); track $index) {
     <div

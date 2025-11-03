@@ -7,6 +7,6 @@ import { Component, Input } from '@angular/core';
   templateUrl: './item.html'
 })
 export class Item {
-  @Input() item?: "cerebro" | "moneda" | "vida";
+  @Input() item?: "estrellas" | "monedas" | "vidas";
   @Input() cantidad?: number = 0;
 }

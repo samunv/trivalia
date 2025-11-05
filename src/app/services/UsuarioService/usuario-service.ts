@@ -20,7 +20,12 @@ export class UsuarioService {
 
   constructor() { }
 
-  private usuarioDocRef = doc(this.firestore, 'usuarios', this.usuarioSignal().uid);
+  private get usuarioDocRef() {
+    const uid = this.usuarioSignal()?.uid;
+    if (!uid) throw new Error("Usuario no logueado");
+    return doc(this.firestore, 'usuarios', uid);
+  }
+
 
   //usuario$: Observable<Usuario> = this.usuarioSubject.asObservable();
   //token$: Observable<string | any> = this.tokenSubject.asObservable();
@@ -112,6 +117,16 @@ export class UsuarioService {
       console.log("Actualización exitosa");
     } catch (err) {
       console.error("Error actualizando preguntasFalladas:", err);
+    }
+  }
+
+  async actualizarPartidasGanadas() {
+    try {
+      await updateDoc(this.usuarioDocRef, { partidasGanadas: increment(1) })
+      console.log("Actualización de partidas ganadas exitosa");
+
+    } catch (error) {
+      console.log(error)
     }
   }
 

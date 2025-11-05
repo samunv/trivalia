@@ -21,8 +21,7 @@ export class AuthService {
   token = this.usuarioService.token
 
   // Obtiene el usuario de Firestore por UID
-  private obtenerUsuario(proveedor: string, uid: string, user: User): Observable<Usuario> {
-
+  private obtenerUsuario(uid: string, user: User): Observable<Usuario> {
     // Referencia de la colección usuarios
     const usuariosRef = doc(this.firestore, `usuarios/${uid}`);
 
@@ -41,7 +40,7 @@ export class AuthService {
     const provider = new GoogleAuthProvider();
     return from(signInWithPopup(this.auth, provider)).pipe(
       switchMap(result =>
-        this.obtenerUsuario("Google", result.user.uid, result.user).pipe(
+        this.obtenerUsuario(result.user.uid, result.user).pipe(
           switchMap(usuario =>
             from(result.user.getIdToken()).pipe(
               switchMap(firebaseToken => of({ usuario, firebaseToken }))
@@ -67,7 +66,8 @@ export class AuthService {
       logros: [],
       arrayIdPreguntasGanadas: [],
       preguntasFalladas: 0,
-      fechaUltimoRegalo: new Date()
+      fechaUltimoRegalo: new Date(),
+      partidasGanadas:0
     };
     return from(setDoc(usuariosRef, nuevoUsuario)).pipe(
       switchMap(() => of(nuevoUsuario))

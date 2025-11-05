@@ -15,4 +15,5 @@ export interface Usuario {
   arrayIdPreguntasGanadas?: number[],
   preguntasFalladas?: number,
   fechaUltimoRegalo?: Date
+  partidasGanadas?: number
 }

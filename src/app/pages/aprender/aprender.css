@@ -9,6 +9,7 @@
   border-radius: 30px;
   gap: 15px;
   margin-top: 20px;
+  background-color: var(--color-principal);
 }
 
 
@@ -28,5 +29,5 @@
 
 
 .campo-buscador.activo{
-  border: 2px solid white;
+  border: 1px solid white;
 }

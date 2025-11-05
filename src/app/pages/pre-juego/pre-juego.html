@@ -3,30 +3,17 @@
 
   @if (categoria()) {
   <div>
-    <a
-      routerLink="/jugar"
-      class="flex flex-rox items-center hover:underline gap-0 font-[inter-bold]"
-      ><svg
-        xmlns="http://www.w3.org/2000/svg"
-        height="20px"
-        viewBox="0 -960 960 960"
-        width="20px"
-        fill="white"
-      >
+    <a routerLink="/jugar" class="flex flex-rox items-center hover:underline gap-0 font-[inter-bold]"><svg
+        xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="white">
         <path d="M400-93.85 13.85-480 400-866.15l56.77 56.77L127.38-480l329.39 329.38L400-93.85Z" />
       </svg>
       Volver atrás
     </a>
 
     <div
-      class="rounded-[20px] !mt-10 flex flex-row gap-5 bg-[var(--color-principal)] border border-[var(--color-bordes)] !p-[30px]"
-    >
-      <img
-        [src]="categoria().imagenURL"
-        alt=""
-        class="rounded-[10px] border border-[var(--color-bordes)]"
-        style="object-fit: cover; width: 150px; height: 150px"
-      />
+      class="rounded-[20px] !mt-[20px] flex flex-row gap-5 bg-[var(--color-principal)] border border-[var(--color-bordes)] !p-[30px]">
+      <img [src]="categoria().imagenURL" alt="" class="rounded-[10px] border border-[var(--color-bordes)]"
+        style="object-fit: cover; width: 150px; height: 150px" />
       <div class="flex flex-row justify-between items-center !w-full">
         <div>
           <h2 class="text-[25px]">{{ categoria()?.titulo }}</h2>
@@ -35,7 +22,15 @@
 
         <app-boton-general [tipo]="'destacado'" [texto]="'Jugar'" (click)="onJugar()">
           <espacio></espacio>
-          <img src="/img/punta-de-flecha-del-boton-de-reproduccion.png" alt="" width="20px" />
+          <svg viewBox="0 0 24 24" fill="none" width="20px" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path
+                d="M21.4086 9.35258C23.5305 10.5065 23.5305 13.4935 21.4086 14.6474L8.59662 21.6145C6.53435 22.736 4 21.2763 4 18.9671L4 5.0329C4 2.72368 6.53435 1.26402 8.59661 2.38548L21.4086 9.35258Z"
+                fill="white"></path>
+            </g>
+          </svg>
         </app-boton-general>
       </div>
     </div>
@@ -43,77 +38,51 @@
     <div class="flex flex-col gap-5 !mt-[30px]">
       <app-texto-h1 [texto]="'Vista Previa'"></app-texto-h1>
       @for (pregunta of preguntas(); track $index) {
-      <div
-        class="flex flex-row items-center justify-between bg-[var(--color-principal)] rounded-[20px] !p-[15px]"
+      <div class="flex flex-row items-center justify-between bg-[var(--color-principal)] rounded-[20px] !p-[15px]"
         [ngStyle]="{
           border: usuario().arrayIdPreguntasGanadas?.includes(pregunta.idPregunta)
             ? '1px white solid'
             : '2px var(--color-bordes) dashed'
-        }"
-      >
+        }">
         <div class="flex flex-row items-center gap-5">
-          <img
-            [src]="pregunta.imagenURL"
-            alt=""
-            style="width: 70px; height: 70px; object-fit: contain"
-          />
+          <img [src]="pregunta.imagenURL" alt="" style="width: 70px; height: 70px; object-fit: contain" />
           <p class="!text-[18px] !font-[inter-bold]">
             {{
-              pregunta.pregunta.length > 25
-                ? pregunta.pregunta.slice(0, 25).trim() + '...'
-                : pregunta.pregunta
+            pregunta.pregunta.length > 25
+            ? pregunta.pregunta.slice(0, 25).trim() + '...'
+            : pregunta.pregunta
             }}
           </p>
         </div>
 
         <div class="flex flex-row items-center gap-5">
           @if(usuario().arrayIdPreguntasGanadas?.includes(pregunta?.idPregunta)){
-          <svg
-            fill="#ffffff"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            stroke="#ffffff"
-            width="25px"
-          >
-            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-            <g id="SVGRepo_iconCarrier">
-              <path
-                d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm5.676,8.237-6,5.5a1,1,0,0,1-1.383-.03l-3-3a1,1,0,1,1,1.414-1.414l2.323,2.323,5.294-4.853a1,1,0,1,1,1.352,1.474Z"
-              ></path>
-            </g>
-          </svg>
+          <img src="/img/accept.png" alt="" class="!w-7">
           }
 
-          <p
-            [style.background-color]="
+          <p [style.background-color]="
               pregunta.dificultad === 'DIFICIL'
                 ? 'red'
                 : pregunta.dificultad === 'MEDIO'
                 ? 'orange'
                 : '#00B241'
-            "
-            class="!w-[60px] text-center rounded-3xl !pl-1 !pr-1 !font-[inter-bold] text-[14px]"
-          >
+            " class="!w-[60px] text-center rounded-3xl !pl-1 !pr-1 !font-[inter-bold] text-[14px]">
             {{
-              pregunta.dificultad === 'FACIL'
-                ? 'Fácil'
-                : pregunta.dificultad === 'DIFICIL'
-                ? 'Difícil'
-                : 'Medio'
+            pregunta.dificultad === 'FACIL'
+            ? 'Fácil'
+            : pregunta.dificultad === 'DIFICIL'
+            ? 'Difícil'
+            : 'Medio'
             }}
           </p>
         </div>
       </div>
       }@empty {
-        <p>Cargando preguntas...</p>
+      <p>Cargando preguntas...</p>
       }
     </div>
   </div>
   } @if (alerta()) {
-  <app-mensaje-alerta
-    [mensaje]="'Debes recargar tus vidas para poder jugar'"
-    [tipo]="'error'"
-  ></app-mensaje-alerta>
+  <app-mensaje-alerta [mensaje]="'Debes recargar tus vidas para poder jugar'" [tipo]="'error'"></app-mensaje-alerta>
   }
 </app-main-layout>

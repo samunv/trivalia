@@ -9,5 +9,5 @@ import { Component, Input } from '@angular/core';
 })
 export class BotonGeneral {
   @Input() texto: string = '';
-  @Input() tipo: 'general' | 'destacado' | 'rojo' = 'general'
+  @Input() tipo?: 'general' | 'destacado' | 'rojo' = 'general'
 }

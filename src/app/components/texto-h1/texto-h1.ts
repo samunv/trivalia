@@ -4,6 +4,7 @@ import { Component, Input, input } from '@angular/core';
   selector: 'app-texto-h1',
   imports: [],
   templateUrl: './texto-h1.html',
+  styleUrl:"./texto-h1.css"
 })
 export class TextoH1 {
   @Input() texto: string = "";

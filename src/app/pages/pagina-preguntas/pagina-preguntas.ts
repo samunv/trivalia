@@ -1,7 +1,6 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed, effect, WritableSignal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, effect, WritableSignal, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { MainLayout } from '../../layout/main-layout/main-layout';
 import { Header } from '../../layout/header/header';
-import { TextoH1 } from './../../components/texto-h1/texto-h1';
 import { CategoriaService } from './../../services/CategoriaService/categoria-service';
 import { Pregunta } from '../../interfaces/Pregunta';
 import { PreguntaService } from './../../services/PreguntaService/pregunta-service';
@@ -13,8 +12,11 @@ import { Modal } from '../../components/modal/modal';
 import { Espacio } from "../../components/espacio/espacio";
 import { UsuarioService } from '../../services/UsuarioService/usuario-service';
 import { AudioComponent } from '../../components/audio-component/audio-component';
-import { finalize, interval, map, Observable, Subscription, take } from 'rxjs';
+import { Observable } from 'rxjs';
 import { TemporizadorComponent } from '../../components/temporizador-component/temporizador-component';
+import { Item } from '../../components/item/item';
+import { FinPartida } from '../fin-partida/fin-partida';
+
 
 @Component({
   selector: 'app-pagina-preguntas',
@@ -29,10 +31,13 @@ import { TemporizadorComponent } from '../../components/temporizador-component/t
     Espacio,
     AudioComponent,
     TemporizadorComponent,
+    Item,
+    FinPartida,
+    ReactiveFormsModule
   ],
   templateUrl: './pagina-preguntas.html'
 })
-export class PaginaPreguntas implements OnInit, OnDestroy {
+export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
   private categoriaService = inject(CategoriaService);
   private preguntaService = inject(PreguntaService);
   private router = inject(Router);
@@ -51,6 +56,7 @@ export class PaginaPreguntas implements OnInit, OnDestroy {
   esCorrecta = signal<boolean | undefined>(undefined);
   mensaje = signal('');
   finPartida = signal(false);
+  ganarPartida = signal(false);
   turnoPerdido = signal(false);
   reiniciarTemporizador = signal<boolean>(false);
   temporizadorFinalizado = signal<boolean>(false);
@@ -71,6 +77,9 @@ export class PaginaPreguntas implements OnInit, OnDestroy {
   vidasRestantes = computed(() => Number(this.usuario()?.vidas) || 0);
   monedasDisponibles = computed(() => Number(this.usuario()?.monedas) || 0);
   puedeJugar = computed(() => this.vidasRestantes() > 0);
+
+  @ViewChild('inputEscribir') inputEscribir!: ElementRef<HTMLInputElement>;
+  inputFocusActivado = signal<boolean>(false);
 
   // ==================== EFFECTS ====================
   constructor() {
@@ -116,6 +125,9 @@ export class PaginaPreguntas implements OnInit, OnDestroy {
   verificarRespuesta(respuesta: string) {
     const pregunta = this.preguntaActual();
     if (!pregunta) return;
+    if (this.inputEscribir && this.inputFocusActivado()) {
+      this.inputFocusActivado.set(false)
+    }
 
     this.respuestaSeleccionada.set(respuesta.toLowerCase().trim());
 
@@ -255,7 +267,7 @@ export class PaginaPreguntas implements OnInit, OnDestroy {
 
   private finalizarPartida() {
     this.finPartida.set(true);
-    this.navegar("/fin-partida");
+    this.ganarPartida.set(true);
   }
 
   private resetear() {
@@ -288,5 +300,14 @@ export class PaginaPreguntas implements OnInit, OnDestroy {
   private capitalizarPrimeraLetra(texto: string) {
     if (!texto) return '';
     return texto.charAt(0).toUpperCase() + texto.slice(1);
+  }
+
+  ngAfterViewChecked() {
+    if (this.inputEscribir && !this.inputFocusActivado()) {
+      setTimeout(() => {
+        this.inputEscribir.nativeElement.focus();
+        this.inputFocusActivado.set(true);
+      }, 1000);
+    }
   }
 }

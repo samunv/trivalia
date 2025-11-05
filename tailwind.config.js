@@ -12,7 +12,8 @@ export default {
       fontFamily: {
         interRegular: ['Inter-regular', 'sans-serif'],
         interBold: ['Inter-bold'],
-        interExtrabold: ['inter-extrabold']
+        interExtrabold: ['Inter-extrabold'],
+        nunito: ['nunito']
       }
     },
   },

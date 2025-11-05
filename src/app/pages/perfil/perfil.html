@@ -3,36 +3,20 @@
   <div class="perfil-main">
     <div class="info-usuario">
       <div class="columna-1">
-        <img
-          [src]="fotoPreview() ? fotoPreview() : foto()"
-          class="foto-perfil"
-          (click)="fileInput.click()"
-        />
+        <img [src]="fotoPreview() ? fotoPreview() : foto()" class="foto-perfil" (click)="fileInput.click()" />
         <div class="columna-texto !w-full">
           <!-- <div>
             <p>{{ usuario.proveedor }}</p>
           </div> -->
           <form class="flex flex-row gap-5 items-center flex-wrap flex-1 !w-full">
-            <input
-              type="file"
-              id="foto"
-              (change)="onImagenSeleccionada($event)"
-              accept=".jpg, .jpeg, .png"
-              class="hidden"
-              #fileInput
-            />
+            <input type="file" id="foto" (change)="onImagenSeleccionada($event)" accept=".jpg, .jpeg, .png"
+              class="hidden" #fileInput />
 
             <div class="flex flex-col w-full">
               <!-- <h1 class="text-3xl">{{usuario().nombre}}</h1> -->
-              <input
-                type="text"
+              <input type="text"
                 class="rounded-[10px] border-1 border-[var(--color-bordes)] focus: outline-white focus:outline-1 !p-[10px]"
-                value=""
-                id="nombre"
-                [formControl]="nombreFormControl()"
-                maxlength="15"
-                minlength="4"
-              />
+                value="" id="nombre" [formControl]="nombreFormControl()" maxlength="15" minlength="4" />
 
               @if (nombreFormControl().invalid) {
               <div class="text-red-500 text-[14px]">El nombre debe tener al menos 4 caracteres</div>
@@ -41,86 +25,56 @@
           </form>
         </div>
         <div class="flex flex-row align-middle gap-4">
-          <app-boton-general
-            [texto]="'Guardar Cambios'"
-            [tipo]="'general'"
-            (click)="actualizarUsuarioClick()"
-          ></app-boton-general>
+          <app-boton-general [texto]="'Guardar Cambios'" [tipo]="'general'"
+            (click)="actualizarUsuarioClick()"></app-boton-general>
         </div>
       </div>
     </div>
   </div>
   <espacio [altura]="20"></espacio>
 
-  <app-boton-general [texto]="'Cerrar Sesión'" [tipo]="'destacado'" (click)="abrirModal()"
-    ><svg
-      xmlns="http://www.w3.org/2000/svg"
-      height="24px"
-      viewBox="0 -960 960 960"
-      width="24px"
-      fill="var(--color-principal)"
-    >
+  <app-boton-general [texto]="'Cerrar Sesión'" (click)="abrirModal()"><svg
+      xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+      fill="white">
       <path
-        d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"
-      />
+        d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
     </svg>
   </app-boton-general>
 
   @if (guardado()) {
-  <app-mensaje-alerta
-    [mensaje]="'Perfil actualizado con éxito'"
-    [tipo]="'exito'"
-  ></app-mensaje-alerta>
+  <app-mensaje-alerta [mensaje]="'Perfil actualizado con éxito'" [tipo]="'exito'"></app-mensaje-alerta>
   } @if (modalAbierto()) {
-  <app-modal
-    [titulo]="'¿Estás seguro de que quieres cerrar sesión?'"
-    [btn1]="'Cancelar'"
-    [btn2]="'Cerrar Sesión'"
-    (click1)="cerrarModal()"
-    (click2)="cerrarSesion()"
-  >
+  <app-modal [titulo]="'¿Estás seguro de que quieres cerrar sesión?'" [btn1]="'Cancelar'" [btn2]="'Cerrar Sesión'"
+    (click1)="cerrarModal()" (click2)="cerrarSesion()">
   </app-modal>
 
   }
   <espacio [altura]="40"></espacio>
   <app-texto-h1 [texto]="'Estadísticas'"></app-texto-h1>
   <espacio [altura]="20"></espacio>
-  <div class="flex flex-row flex-wrap items-center gap-5 justify-between animate-fade-in-up">
+  <div class="flex flex-row flex-wrap items-stretch text-center gap-5 justify-between animate-fade-in-up estadisticas">
     <div
-      class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2"
-    >
-      <strong>Preguntas Ganadas</strong
-      ><strong class="text-4xl"
-        ><om-number-ticker
-          [countTo]="usuario().arrayIdPreguntasGanadas?.length"
-          [countDuration]="600"
-          styleClass="ticker-custom-style"
-        ></om-number-ticker
-      ></strong>
+      class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2">
+      <p>Preguntas Ganadas</p><strong class="text-4xl"><om-number-ticker
+          [countTo]="usuario().arrayIdPreguntasGanadas?.length" [countDuration]="500"
+          styleClass="ticker-custom-style"></om-number-ticker></strong>
     </div>
     <div
-      class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2"
-    >
-      <strong>Fallos</strong
-      ><strong class="text-4xl"
-        ><om-number-ticker
-          [countTo]="usuario().preguntasFalladas"
-          [countDuration]="600"
-          styleClass="ticker-custom-style"
-        ></om-number-ticker
-      ></strong>
+      class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2">
+      <p>Fallos</p><strong class="text-4xl"><om-number-ticker [countTo]="usuario().preguntasFalladas"
+          [countDuration]="500" styleClass="ticker-custom-style"></om-number-ticker></strong>
     </div>
     <div
-      class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2"
-    >
-      <strong>Difíciles Ganadas</strong
-      ><strong class="text-4xl"
-        ><om-number-ticker
-          [countTo]="preguntasDificilesGanadas()"
-          [countDuration]="600"
-          styleClass="ticker-custom-style"
-        ></om-number-ticker
-      ></strong>
+      class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2">
+      <p>Difíciles Ganadas</p><strong class="text-4xl"><om-number-ticker
+          [countTo]="preguntasDificilesGanadas()" [countDuration]="500"
+          styleClass="ticker-custom-style"></om-number-ticker></strong>
+    </div>
+    <div
+      class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2">
+      <p>Partidas Ganadas</p><strong class="text-4xl"><om-number-ticker
+          [countTo]="usuario().partidasGanadas" [countDuration]="500"
+          styleClass="ticker-custom-style"></om-number-ticker></strong>
     </div>
   </div>
 </app-main-layout>

@@ -39,7 +39,7 @@ export class Aprender {
   }
 
   filtrarCategorias(valorBusqueda: string): Categoria[] | any {
-    return this.categorias()?.filter((c) => c.titulo?.toLowerCase().includes(valorBusqueda?.toLowerCase()))
+    return this.categorias()?.filter((categoria: Categoria) => categoria.titulo?.toLowerCase().includes(valorBusqueda?.toLowerCase()))
   }
 
   navegarHaciaCategoria(idCategoria: number | any) {

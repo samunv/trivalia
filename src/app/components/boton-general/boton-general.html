@@ -1,10 +1,10 @@
 <button
   [ngClass]="{
-    'border-1 bg-white text-[var(--color-principal)] border-[white]': tipo === 'destacado',
-    'border-1 bg-[var(--color-bordes)] text-white border-[var(--color-bordes)]': tipo === 'general',
-    'border-1 bg-red-600 text-white border-red-600': tipo === 'rojo'
+    'bg-[#fdbb27] text-[white]': tipo === 'destacado',
+    'bg-[var(--azul-claro)] text-white': tipo === 'general',
+    ' bg-red-600 text-white': tipo === 'rojo'
   }"
-  class="text-[16px] !p-4 rounded-4xl hover:cursor-pointer hover:opacity-80 flex flex-row items-center gap-1 font-bold"
+  class="!border-2 !border-[white] text-[16px] !p-4 rounded-4xl hover:cursor-pointer hover:scale-105 flex flex-row items-center gap-1 font-[inter-bold]"
 >
   {{ texto }}
   <ng-content></ng-content>

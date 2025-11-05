@@ -8,15 +8,19 @@ export const noAuthGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router)
 
-  return verificarJWT(authService).pipe(
-    map((jwtValido: boolean) => {
-      if (jwtValido) {
-        return router.createUrlTree(["/jugar"])
-      } else {
-        return true
-      }
-    })
-  )
+  if (localStorage.getItem("usuario") && localStorage.getItem("tokenJWT")) {
+    return verificarJWT(authService).pipe(
+      map((jwtValido: boolean) => {
+        if (jwtValido) {
+          return router.createUrlTree(["/jugar"])
+        } else {
+          return true
+        }
+      })
+    )
+  } else {
+    return true;
+  }
 };
 
 function verificarJWT(authService: AuthService): Observable<boolean> {

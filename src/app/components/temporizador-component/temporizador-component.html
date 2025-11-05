@@ -1,14 +1,18 @@
-<div>
+<div class="flex flex-row items-center !w-full gap-5">
+  <img src="/img/clock.png" alt="" class="!w-[40px]">
   <div
-    class="border border-[var(--color-bordes)] rounded-4xl overflow-hidden bg-[var(--color-principal)]"
-  >
-    <div
-      class="bg-[var(--azul-claro)]  !p-3 rounded-3xl animacion-progreso flex flex-row items-center gap-2"
-      [style.width.%]="tiempo() * 10"
-      [ngStyle]="{ 'background-color': tiempo() <= 3 ? 'red' : '' }"
-    >
-      <img src="/img/clock.png" alt="" class="!w-[30px]">
+    class="!h-max border-2 border-[white] rounded-4xl overflow-hidden bg-[var(--color-principal)] flex-1" [ngClass]="{'!border-[red]' : tiempo()<=3}">
+
+    <div class="bg-gradient-to-r from-blue-500 to-purple-500 !h-max !p-3 rounded-3xl animacion-progreso flex flex-row items-center gap-2"
+      [style.width.%]="tiempo() * 10" [ngStyle]="{ 'background-color': tiempo() <= 3 ? 'red' : '' }">
       <p class="text-[white] !font-[inter-bold]">{{ tiempo() }}</p>
     </div>
   </div>
+  <div>
+    <app-boton-general [texto]="'+ 5 seg'" (click)="anadirTiempo(5, 50)">
+      <espacio [ancho]="5"></espacio>
+      <item [item]="'monedas'" [cantidad]="50"></item>
+    </app-boton-general>
+  </div>
+
 </div>

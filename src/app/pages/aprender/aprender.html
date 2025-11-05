@@ -4,19 +4,11 @@
   <div class="aprender-main">
     <div class="campo-buscador" [class.activo]="inputBuscadorActivo">
       <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 20 20">
-        <path
-          fill="var(--color-secundario)"
-          d="M12.9 14.32a8 8 0 1 1 1.41-1.41l5.35 5.33l-1.42 1.42l-5.33-5.34zM8 14A6 6 0 1 0 8 2a6 6 0 0 0 0 12z"
-        />
+        <path fill="var(--color-secundario)"
+          d="M12.9 14.32a8 8 0 1 1 1.41-1.41l5.35 5.33l-1.42 1.42l-5.33-5.34zM8 14A6 6 0 1 0 8 2a6 6 0 0 0 0 12z" />
       </svg>
-      <input
-        type="text"
-        class="buscador font-[inter-bold]"
-        placeholder="Buscar temas..."
-        (focus)="inputBuscadorActivo = true"
-        (blur)="inputBuscadorActivo = false"
-        [(ngModel)]="valorBusqueda"
-      />
+      <input type="text" class="buscador font-[inter-bold]" placeholder="Buscar temas..."
+        (focus)="inputBuscadorActivo = true" (blur)="inputBuscadorActivo = false" [(ngModel)]="valorBusqueda" />
     </div>
   </div>
 
@@ -53,31 +45,21 @@
       </svg>
     </div> -->
     <div
-      class="relative h-[250px] cursor-pointer bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center hover:border-2 border-[var(--azul-claro)]"
-    >
-      <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[nunito]">juega contra la IA✨</h2>
-      <img [src]="'/img/trivalia-man.png'" alt=""  [style.width%]="100" [style.heigth]="100" style="object-fit: cover;" />
+      class="relative h-[250px] cursor-pointer bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center hover:border-2 border-[var(--azul-claro)]">
+      <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left !text-[20px] !font-[nunito]">juega contra la IA✨</h2>
+      <img [src]="'/img/trivalia-man.png'" alt="" [style.width%]="100" [style.heigth]="100"
+        style="object-fit: cover;" />
 
-      <div
-        class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl"
-      ></div>
-      </div>
+    </div>
 
     @for (categoria of categorias(); track $index) {
-    <div
+    <div #categorias
       class="relative h-[250px] cursor-pointer rounded-2xl overflow-hidden hover:border-2 border-[var(--azul-claro)]"
-      (click)="navegarHaciaCategoria(categoria.idCategoria)"
-    >
-      <img
-        [src]="categoria.imagenURL"
-        alt=""
-        style="object-fit: cover; height: 100%; width: 100%"
-        class="rounded-2xl hover:scale-0"
-      />
-      <div
-        class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl"
-      ></div>
-      <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[nunito]">
+      (click)="navegarHaciaCategoria(categoria.idCategoria)">
+      <img [src]="categoria.imagenURL" alt="" style="object-fit: cover; height: 100%; width: 100%"
+        class="rounded-2xl hover:scale-0" />
+      <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl"></div>
+      <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left !text-[20px] !font-[nunito]">
         {{ categoria.titulo }}
       </h2>
     </div>
@@ -89,22 +71,18 @@
     <div class="grid grid-cols-4 gap-5 !mt-[30px]">
       @for (categoria of filtrarCategorias(valorBusqueda()); track $index) {
       <div
-       class="relative h-[250px] cursor-pointer rounded-2xl overflow-hidden  hover:border-2 border-[var(--azul-claro)]"
-        (click)="navegarHaciaCategoria(categoria.idCategoria)"
-      >
-        <img
-          [src]="categoria.imagenURL"
-          alt=""
-          style="object-fit: cover; height: 100%; width: 100%"
-          class="rounded-2xl"
-        />
-        <div
-          class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl"
-        ></div>
-        <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[nunito]">
+        class="relative h-[250px] cursor-pointer rounded-2xl overflow-hidden  hover:border-2 border-[var(--azul-claro)]"
+        (click)="navegarHaciaCategoria(categoria.idCategoria)">
+        <img [src]="categoria.imagenURL" alt="" style="object-fit: cover; height: 100%; width: 100%"
+          class="rounded-2xl" />
+        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl">
+        </div>
+        <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left !text-[20px] !font-[nunito]">
           {{ categoria.titulo }}
         </h2>
       </div>
+      }@empty{
+      <div #categorias></div>
       }
     </div>
   </div>

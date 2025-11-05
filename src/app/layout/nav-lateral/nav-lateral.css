@@ -12,13 +12,14 @@
 .nav-lateral {
   padding: 20px;
   background-color: var(--color-principal);
-  border-right: 1px solid var(--color-bordes);
+  border-right: 1.5px solid var(--color-bordes);
   height: 100%;
   width: 300px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   position: fixed;
+  justify-content: space-between;
 }
 
 .nav-lateral nav ul {
@@ -41,8 +42,8 @@
 }
 
 .nav-lateral nav ul li svg {
-  width: 35px;
-  height: 35px;
+  width: 32px;
+  height: 32px;
 }
 
 .nav-lateral nav ul li a {
@@ -54,8 +55,8 @@
   align-items: center;
   gap: 5px;
   padding: 5px;
-  padding-top: 15px;
-  padding-bottom: 15px;
+  padding-top: 17px;
+  padding-bottom: 17px;
   border-radius: 10px;
 
   border: 2px solid transparent;

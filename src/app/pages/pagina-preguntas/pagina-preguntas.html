@@ -4,60 +4,50 @@
   <div>
     @if (preguntaActual()) {
     <div
-      class="bg-[var(--color-principal)] rounded-[20px] border border-[var(--color-bordes)] !p-[30px] !mt-[20px] relative"
-    >
+      class="bg-[var(--color-principal)] rounded-[20px] border border-[var(--color-bordes)] !p-[30px] !mt-[20px] relative">
       <p class="font-[inter-bold] text-center">
         {{ preguntaIndex() + 1 + '/' + preguntas().length }}
       </p>
       <div class="flex flex-row items-center gap-5">
-        <img
-          [src]="preguntaActual().imagenURL"
-          alt=""
-          class="!w-[250px] !h-[250px] object-contain rounded-[10px] !p-[15px] overflow-hidden"
-        />
+        <img [src]="preguntaActual().imagenURL" alt=""
+          class="!w-[250px] !h-[250px] object-contain rounded-[10px] !p-[15px] overflow-hidden" />
         <div class="flex flex-col items-center gap-2 !w-full">
           <h2 class="text-[18px] text-center">{{ preguntaActual().pregunta }}</h2>
           <div class="flex flex-col items-center gap-2 !w-full">
             @if (preguntaActual().tipo_pregunta == 'OPCIONES') { @for (opcion of opcionesPregunta();
             track $index) {
-            <button
-              (click)="verificarRespuesta(opcion)"
+            <button (click)="verificarRespuesta(opcion)"
               class="border-2 border-[var(--color-bordes)] !p-2 rounded-[30px] !w-full cursor-pointer hover:bg-white hover:text-[var(--color-principal)]"
-              [disabled]="respuestaSeleccionada() || temporizadorFinalizado()"
-            >
+              [disabled]="respuestaSeleccionada() || temporizadorFinalizado()">
               {{ opcion }}
             </button>
             } } @if (preguntaActual().tipo_pregunta == 'VF') { @for (opcion of
             opcionesPregunta().slice(0, 2); track $index) {
-            <button
-              (click)="verificarRespuesta(opcion)"
+            <button (click)="verificarRespuesta(opcion)"
               class="border-2 border-[var(--color-bordes)] !p-2 rounded-[30px] !w-full cursor-pointer hover:bg-white hover:text-[var(--color-principal)]"
-              [disabled]="respuestaSeleccionada() || temporizadorFinalizado()"
-            >
+              [disabled]="respuestaSeleccionada() || temporizadorFinalizado()">
               {{ opcion }}
             </button>
             } } @if (preguntaActual().tipo_pregunta == 'ESCRIBIR') {
-            <input
-              [(ngModel)]="respuestaInput"
-              placeholder="Escribir..."
-              type="text"
-              class="border-2 border-[var(--color-bordes)] focus:outline-1 outline-[white] !p-2 rounded-[10px] placeholder:text-[var(--color-bordes)] !w-full"
-            />
-            @if (respuestaInput().trim() !== "") {
-            <app-boton-general
-              [texto]="'Verificar'"
-              (click)="verificarRespuesta(respuestaInput())"
-            ></app-boton-general>
-            }}
+            <form (ngSubmit)="verificarRespuesta(respuestaInput())" class="!w-full" class="flex flex-col items-center gap-5 !w-full">
+              <input #inputEscribir name="respuestaInput" [ngModel]="respuestaInput()" (ngModelChange)="respuestaInput.set($event)"
+                placeholder="Escribir..." type="text"
+                class="border-2 border-[var(--color-bordes)] focus:outline-1 outline-[white] !p-2 rounded-[10px] placeholder:text-[var(--color-bordes)] !w-full" />
+              @if (respuestaInput().trim() !== "") {
+              <button type="submit">
+                <app-boton-general [texto]="'Verificar'" [tipo]="'destacado'"></app-boton-general>
+              </button>
+
+              }
+            </form>
+            }
           </div>
         </div>
       </div>
 
       @if (mensaje()) {
-      <div
-        [ngStyle]="{ 'background-color': esCorrecta() ? '#00B241' : 'red' }"
-        class="animate-rubber-band !p-3 rounded-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border-4 z-100"
-      >
+      <div [ngStyle]="{ 'background-color': esCorrecta() ? '#00B241' : 'red' }"
+        class="animate-rubber-band !p-3 rounded-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border-4 z-100">
         <p class="!font-[inter-bold] text-3xl text-center">{{ mensaje() }}</p>
       </div>
       @if(esCorrecta()){
@@ -68,31 +58,25 @@
   </div>
 
   } @if(turnoPerdido()){
-  <app-modal
-    titulo="Has perdido la partida...😢"
-    btn1="Salir"
-    btn2="Continuar con 100 monedas"
-    (click1)="navegar('/jugar')"
-    (click2)="continuarConMonedas(100)"
-    ><espacio [altura]="20"></espacio>
+  <app-modal titulo="Has perdido la partida...😢" btn1="Salir" btn2="Continuar con 100 monedas"
+    (click1)="navegar('/jugar')" (click2)="continuarConMonedas(100)">
+    <espacio [altura]="20"></espacio>
     <img src="/img/heartbreak_4001557.png" alt="" width="150" class="animate-tada" />
     <p class="text-[#D23F34] !font-[inter-bold]">
       Tienes una vida menos. Te quedan {{ usuario()?.vidas }}
     </p>
-    <app-audio-component
-      [audioArchivo]="'/audio/game-over.mp3'"
-      [loop]="false"
-    ></app-audio-component>
-    <espacio [altura]="20"></espacio
-  ></app-modal>
+    <app-audio-component [audioArchivo]="'/audio/game-over.mp3'" [loop]="false"></app-audio-component>
+    <espacio [altura]="20"></espacio>
+  </app-modal>
   } @if(!turnoPerdido()){
   <app-audio-component [audioArchivo]="'/audio/musica.mp3'" [loop]="true"></app-audio-component>
   }
 
   <espacio [altura]="30"> </espacio>
-  <app-temporizador-component
-    (temporizadorTerminado)="onTemporizadorTerminado($event)"
-    [reiniciar]="reiniciarTemporizador()"
-    [pausar]="temporizadorPausado()"
-  ></app-temporizador-component>
+  <app-temporizador-component (temporizadorTerminado)="onTemporizadorTerminado($event)"
+    [reiniciar]="reiniciarTemporizador()" [pausar]="temporizadorPausado()"></app-temporizador-component>
+
+  @if(ganarPartida()){
+  <app-fin-partida></app-fin-partida>
+  }
 </app-main-layout>

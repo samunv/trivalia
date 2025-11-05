@@ -15,7 +15,6 @@ export const routes: Routes = [
   { path: 'perfil', component: Perfil, canActivate: [authGuard] },
   { path: 'categoria/:idCategoria', component: PreJuego, canActivate: [authGuard] },
   { path: 'partida', component: PaginaPreguntas, canActivate: [authGuard] },
-  { path: 'fin-partida', component: FinPartida, canActivate: [authGuard]},
   // Siempre debe ir al final
   { path: '**', redirectTo: '/jugar', pathMatch: 'full' },
 

@@ -1,5 +1,5 @@
-<app-main-layout>
-  <app-header titulo="Resultados de tu partida">
-
-  </app-header>
-</app-main-layout>
+<app-modal [titulo]="'¡Has ganado la partida!😁'" [btn2Activo]="false" [btn1]="'Cerrar'" (click1)="cerrar()">
+  <p>Enhorabuena {{nombreUsuario}}, has ganado la partida de la categoría {{categoria().titulo}}.</p>
+  <p class="flex flex-row items-center text-4xl gap-1 !p-3"> + <item [item]="'monedas'" [cantidad]="monedasRecompensa"></item></p>
+  <app-confeti-component></app-confeti-component>
+</app-modal>

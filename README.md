@@ -1,7 +1,7 @@
 # Trivialia
 Trivalia es una aplicación gratuita de juegos de trivia dinámicos. Permite al jugador elegir entre diferentes categorías y responder cada pregunta en un tiempo de 10 segundos.
 
-##¿Cómo funciona?
+## ¿Cómo funciona?
 Hay cientos de preguntas, de 3 tipos posibles: Opciones (elegir entre opciones), Escribir (el jugados introduce su respuesta en un campo de texto) y Verdadero o Falso.
 
 El jugador tendrá 10 segundos para responder cada pregunta. Puede aumentar 5 segundos gastando 50 monedas.

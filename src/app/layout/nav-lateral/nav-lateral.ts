@@ -17,7 +17,7 @@ export class NavLateral {
   private router = inject(Router);
 
   usuario = this.usuarioService.usuario
-  fotoUsuario = computed(() => this.usuario()?.fotoURL);
+  fotoUsuario = this.usuario()?.fotoURL;
   ventanaRegaloAbierta: boolean = false;
 
 

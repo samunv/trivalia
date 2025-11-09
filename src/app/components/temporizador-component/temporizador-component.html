@@ -1,5 +1,5 @@
 <div class="flex flex-row items-center !w-full gap-5">
-  <img src="/img/clock.png" alt="" class="!w-[40px]">
+  
   <div
     class="!h-max border-2 border-[white] rounded-4xl overflow-hidden bg-[var(--color-principal)] flex-1" [ngClass]="{'!border-[red]' : tiempo()<=3}">
 
@@ -11,7 +11,7 @@
   <div>
     <app-boton-general [texto]="'+ 5 seg'" (click)="anadirTiempo(5, 50)">
       <espacio [ancho]="5"></espacio>
-      <item [item]="'monedas'" [cantidad]="50"></item>
+      <item [item]="'monedas'" [cantidad]="50" [cssIconDimension]="20"></item>
     </app-boton-general>
   </div>
 

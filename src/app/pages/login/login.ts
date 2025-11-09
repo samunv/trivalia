@@ -46,7 +46,7 @@ export class Login {
         if (respuestaServidor.token) {
           return respuestaServidor.token;
         } else {
-          console.error("Error al autenticar:", respuestaServidor.error);
+          console.error("Error al autenticar: ", respuestaServidor.error);
           alert("Error al autenticar con el servidor.");
           throw new Error("Token Firebase inválido")
         }

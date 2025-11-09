@@ -1,14 +1,17 @@
-<div *ngIf="item === 'estrellas'" class="flex flex-row items-center gap-2 text-[#2CA9BC] font-[inter-bold]">
-  <img src="/img/star-svgrepo-com (1).png" alt="" width="30" height="30" />
+<div *ngIf="item === 'estrellas'" class="flex items-center gap-2 text-[#2CA9BC] font-[inter-bold]"
+  [ngClass]="{'flex-row':cssFlexRow === 'row', 'flex-row-reverse': cssFlexRow === 'reverse'}">
+  <img src="/img/star-svgrepo-com (1).png" alt="" [style.width.px]="cssIconDimension" />
   {{ cantidad }}
 </div>
 
-<div *ngIf="item === 'monedas'" class="flex flex-row items-center gap-2 text-[var(--color-amarillo)] font-[inter-bold]">
-  <img #monedasHeader src="/img/coin-svgrepo-com.png" alt="" width="30" height="30"/>
+<div *ngIf="item === 'monedas'" class="flex items-center gap-2 text-[var(--color-amarillo)] font-[inter-bold]"
+  [ngClass]="{'flex-row':cssFlexRow === 'row', 'flex-row-reverse': cssFlexRow === 'reverse'}">
+  <img #monedasHeader src="/img/coin-svgrepo-com.png" alt="" [style.width.px]="cssIconDimension" />
   {{ cantidad }}
 </div>
 
-<div *ngIf="item === 'vidas'" class="flex flex-row items-center gap-2 text-[var(--color-rojo)] font-[inter-bold]">
-  <img src="/img/heart-suit-svgrepo-com.png" alt="" width="30" height="30" />
+<div *ngIf="item === 'vidas'" class="flex  items-center gap-2 text-[var(--color-rojo)] font-[inter-bold]"
+  [ngClass]="{'flex-row':cssFlexRow === 'row', 'flex-row-reverse': cssFlexRow === 'reverse'}">
+  <img src="/img/heart-suit-svgrepo-com.png" alt="" [style.width.px]="cssIconDimension" />
   {{ cantidad }}
 </div>

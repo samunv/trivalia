@@ -45,7 +45,7 @@
       </svg>
     </div> -->
     <div
-      class="relative h-[250px] cursor-pointer bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center hover:border-2 border-[var(--azul-claro)]">
+      class="relative h-[250px] cursor-pointer bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center border border-[var(--color-bordes)] hover:border-2 hover:border-[var(--azul-claro)]">
       <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left !text-[20px] !font-[nunito]">juega contra la IA✨</h2>
       <img [src]="'/img/trivalia-man.png'" alt="" [style.width%]="100" [style.heigth]="100"
         style="object-fit: cover;" />
@@ -54,7 +54,7 @@
 
     @for (categoria of categorias(); track $index) {
     <div #categorias
-      class="relative h-[250px] cursor-pointer rounded-2xl overflow-hidden hover:border-2 border-[var(--azul-claro)]"
+      class="relative h-[250px] cursor-pointer rounded-2xl overflow-hidden border border-[var(--color-bordes)] hover:border-2 hover:border-[var(--azul-claro)]"
       (click)="navegarHaciaCategoria(categoria.idCategoria)">
       <img [src]="categoria.imagenURL" alt="" style="object-fit: cover; height: 100%; width: 100%"
         class="rounded-2xl hover:scale-0" />
@@ -71,7 +71,7 @@
     <div class="grid grid-cols-4 gap-5 !mt-[30px]">
       @for (categoria of filtrarCategorias(valorBusqueda()); track $index) {
       <div
-        class="relative h-[250px] cursor-pointer rounded-2xl overflow-hidden  hover:border-2 border-[var(--azul-claro)]"
+        class="relative h-[250px] cursor-pointer rounded-2xl overflow-hidden border border-[var(--color-bordes)] hover:border-2 hover:border-[var(--azul-claro)]"
         (click)="navegarHaciaCategoria(categoria.idCategoria)">
         <img [src]="categoria.imagenURL" alt="" style="object-fit: cover; height: 100%; width: 100%"
           class="rounded-2xl" />

@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { BehaviorSubject, from, Observable } from 'rxjs';
+import { BehaviorSubject, from, map, Observable } from 'rxjs';
 import { Usuario } from '../../interfaces/Usuario';
-import { arrayUnion, doc, DocumentReference, Firestore, increment, updateDoc } from '@angular/fire/firestore';
+import { arrayUnion, collection, doc, DocumentData, DocumentReference, DocumentSnapshot, Firestore, getDocs, increment, QueryDocumentSnapshot, QuerySnapshot, updateDoc } from '@angular/fire/firestore';
 import { getAuth, onAuthStateChanged, onIdTokenChanged } from '@angular/fire/auth';
 
 @Injectable({
@@ -128,6 +128,16 @@ export class UsuarioService {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  obtenerUsuarios(limite: number): Observable<Usuario[]> {
+    return from(getDocs(collection(this.firestore, "usuarios"))).pipe(
+      map((snapshot) => {
+        return snapshot.docs.map((doc) =>
+          doc.data() as Usuario
+        ).slice(0, limite)
+      })
+    )
   }
 
 }

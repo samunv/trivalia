@@ -9,4 +9,6 @@ import { Component, Input } from '@angular/core';
 export class Item {
   @Input() item?: "estrellas" | "monedas" | "vidas";
   @Input() cantidad?: number = 0;
+  @Input() cssFlexRow?: "row" | "reverse" = "row"
+  @Input() cssIconDimension?: number = 30
 }

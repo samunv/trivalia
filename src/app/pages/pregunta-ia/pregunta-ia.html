@@ -1,0 +1,66 @@
+<app-main-layout>
+  <app-header [titulo]="'Trival-IA pregunta'"></app-header>
+
+  @if(!partidaComenzada()) {
+  <div
+    class="!mt-[20px] !p-[30px] border border-[var(--color-bordes)] rounded-[20px] bg-[var(--color-principal)] flex flex-row gap-6 items-center justify-between">
+
+    <div class="flex flex-row items-center gap-4">
+      <img src="/img/trivalia-man.png" alt="IA" class="!w-[150px] !h-[150px] animate-squeeze">
+      <div>
+        <h2>Hola, {{usuario().nombre}}</h2>
+        <p>¿Te atreves a responder una pregunta difícil hecha por <strong>Trival-IA</strong>?</p>
+      </div>
+
+    </div>
+
+
+    <div class="flex flex-row items-center gap-4">
+      <espacio [ancho]="10"></espacio>
+      <div>
+        <item item="monedas" [cantidad]="150" [cssFlexRow]="'reverse'" [cssIconDimension]="20"></item>
+        <item item="estrellas" [cantidad]="30" [cssFlexRow]="'reverse'" [cssIconDimension]="20"></item>
+      </div>
+      <app-boton-general [texto]="'Jugar'" [tipo]="'destacado'" (click)="obtenerPreguntaIA()"></app-boton-general>
+    </div>
+
+  </div>
+  }
+
+  @if(partidaComenzada()) {
+  @if (pregunta()) {
+  <div
+    class="bg-[var(--color-principal)] rounded-[20px] border border-[var(--color-bordes)] !p-[30px] !mt-[20px] relative">
+
+    <div class="flex flex-row items-center gap-5">
+      <img src="/img/trivalia-man.png" alt=""
+        class="!w-[250px] !h-[250px] object-contain rounded-[10px] !p-[15px] overflow-hidden" />
+      <div class="flex flex-col items-center gap-2 !w-full">
+        <h2 class="text-[18px] text-center">{{ pregunta()?.pregunta }}</h2>
+        <div class="flex flex-col items-center gap-2 !w-full">
+          @if (pregunta()?.tipo_pregunta == 'OPCIONES') { @for (opcion of opcionesPregunta();
+          track $index) {
+          <button (click)="verificarRespuesta(opcion)"
+            class="border-2 border-[var(--color-bordes)] !p-2 rounded-[30px] !w-full cursor-pointer hover:bg-white hover:text-[var(--color-principal)]"
+            [disabled]="respuestaSeleccionada()">
+            {{ opcion }}
+          </button>
+          }
+          }
+        </div>
+
+        @if (mensaje()) {
+        <div [ngStyle]="{ 'background-color': esCorrecta() ? '#00B241' : 'red' }"
+          class="animate-rubber-band !p-3 rounded-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border-4 z-100">
+          <p class="!font-[inter-bold] text-3xl text-center">{{ mensaje() }}</p>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+  } @else{
+  <p class="!mt-[20px] text-[18px]">Pensando en una pregunta... ✨</p>
+  }
+  }
+
+</app-main-layout>

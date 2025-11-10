@@ -26,23 +26,21 @@ export class Regalo {
     this.cancelar.emit();
   }
 
-  abrirRegalo(): void{
+  abrirRegalo(): void {
     console.log("Abrir regalo llamado");
     console.log("Usuario:", this.usuario());
     console.log("Vector visible:", this.vectorRegaloVisible());
 
-    if (this.comprobarFechaUltimoRegaloDelUsuario()) {
-      this.vectorRegaloVisible.set(false);
-      const regalo = this.obtenerRegalo();
-      console.log("Regalo generado:", regalo);
-      this.asignarRecompensaInterfaz(regalo);
-      console.log("ItemObtenido >>>  " + this.itemObtenido())
-      console.log("cantidadItems >>>  " + this.cantidadItemObtenido())
-      this.actualizarItemsUsuario(regalo);
-      this.actualizarFechaUltimoRegaloUsuario(new Date())
-    } else {
-      alert("No ha pasado 1 hora desde el último regalo");
-    }
+
+    this.vectorRegaloVisible.set(false);
+    const regalo = this.obtenerRegalo();
+    console.log("Regalo generado:", regalo);
+    this.asignarRecompensaInterfaz(regalo);
+    console.log("ItemObtenido >>>  " + this.itemObtenido())
+    console.log("cantidadItems >>>  " + this.cantidadItemObtenido())
+    this.actualizarItemsUsuario(regalo);
+    this.actualizarFechaUltimoRegaloUsuario(new Date())
+
   }
 
 
@@ -118,13 +116,13 @@ export class Regalo {
 
   }
 
-  actualizarFechaUltimoRegaloUsuario(ahora: Date){
+  actualizarFechaUltimoRegaloUsuario(ahora: Date) {
     this.usuarioService.actualizarFechaUltimoRegaloUsuario(ahora).subscribe(
       {
-        next:()=>{
+        next: () => {
           this.usuarioService.updateUsuario("fechaUltimoRegalo", ahora)
         },
-        error:(error)=>{
+        error: (error) => {
           console.log(error)
           alert(error)
         }

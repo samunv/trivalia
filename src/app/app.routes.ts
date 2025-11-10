@@ -8,6 +8,7 @@ import { noAuthGuard } from './Guards/no-auth-guard/no-auth-guard';
 import { authGuard } from './Guards/auth-guard/auth-guard-guard';
 import { FinPartida } from './pages/fin-partida/fin-partida';
 import { Clasificacion } from './pages/clasificacion/clasificacion';
+import { PreguntaIa } from './pages/pregunta-ia/pregunta-ia';
 
 export const routes: Routes = [
   { path: '', component: Login, canActivate: [noAuthGuard] },
@@ -17,6 +18,7 @@ export const routes: Routes = [
   { path: 'categoria/:idCategoria', component: PreJuego, canActivate: [authGuard] },
   { path: 'partida', component: PaginaPreguntas, canActivate: [authGuard] },
   { path: 'clasificacion', component: Clasificacion, canActivate: [authGuard] },
+  { path: 'ia', component: PreguntaIa, canActivate: [authGuard] },
   // Siempre debe ir al final
   { path: '**', redirectTo: '/jugar', pathMatch: 'full' },
 

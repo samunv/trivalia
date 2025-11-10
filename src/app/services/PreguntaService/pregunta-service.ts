@@ -17,6 +17,10 @@ export class PreguntaService {
 
   token = this.usuarioService.token
 
+  headers = new HttpHeaders({
+    "Authorization": `Bearer ${this.token()}`
+  })
+
 
   // obtenerVistaPreviaPreguntas(idCategoria: number | any): Observable<Pregunta[] | any> {
   //   const headers = new HttpHeaders({
@@ -54,6 +58,13 @@ export class PreguntaService {
       { headers }
 
     )
+  }
+
+  obtenerPreguntaGeneradaPorIA(): Observable<Pregunta> {
+    const headers = new HttpHeaders({
+      "Authorization": `Bearer ${this.token()}`
+    })
+    return this.http.get<Pregunta>(url_servidor + "/api/preguntas/obtener-pregunta-ia", { headers })
   }
 
 }

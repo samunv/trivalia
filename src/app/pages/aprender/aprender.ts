@@ -46,4 +46,8 @@ export class Aprender {
     this.router.navigate(['/categoria', idCategoria])
   }
 
+  navegarHaciaIA() {
+    this.router.navigate(['/ia'])
+  }
+
 }

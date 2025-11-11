@@ -7,7 +7,7 @@ import { PreguntaService } from './../../services/PreguntaService/pregunta-servi
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { BotonGeneral } from '../../components/boton-general/boton-general';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Modal } from '../../components/modal/modal';
 import { Espacio } from "../../components/espacio/espacio";
 import { UsuarioService } from '../../services/UsuarioService/usuario-service';

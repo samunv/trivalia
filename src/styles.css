@@ -2,15 +2,15 @@
 @plugin '@midudev/tailwind-animations';
 
 :root {
-  --azul-claro: #00AFCB;
-  --color-principal: #113270;
-  --color-secundario: #dde9ff;
+  --azul-claro: #00ddff;
+  --color-principal: #0344CB;
+  --color-secundario: #a4c6ff;
   --color-texto: white;
   --color-texto-juego: black;
-  --azul-oscuro: #0f2c63;
-  --color-bordes: #728fc4;
+  --azul-oscuro: #023aad;
+  --color-bordes: white;
   --color-rosa: #f4abba;
-  --color-amarillo: #f0c419;
+  --color-amarillo: #F0C419;
   --color-rojo: #ff262e;
 }
 
@@ -77,6 +77,11 @@ strong{
   padding: 0;
 }
 
+
+*::selection {
+    background-color: #F0C419;
+    color: white;
+}
 
 .mensaje-error {
   color: red;

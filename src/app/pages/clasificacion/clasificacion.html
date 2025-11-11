@@ -3,12 +3,12 @@
   <div class="!mt-[20px] !mb-[20px] flex flex-row items-stretch gap-3">
     <button class="!p-3 rounded-[30px] border border-[var(--color-bordes)] hover:cursor-pointer"
       (click)="seleccionarFiltro('estrellas')" [ngClass]="{
-    '!bg-[#00AFCB] !border-white': filtroSeleccionado() === 'estrellas',
+    '!bg-[#F0C419] !border-white': filtroSeleccionado() === 'estrellas',
     'bg-[var(--color-principal)]': filtroSeleccionado() !== 'estrellas'
   }">Estrellas</button>
     <button class="!p-3 rounded-[30px] border border-[var(--color-bordes)] hover:cursor-pointer"
       (click)="seleccionarFiltro('partidasGanadas')" [ngClass]="{
-    '!bg-[#00AFCB] !border-white': filtroSeleccionado() === 'partidasGanadas',
+    '!bg-[#F0C419] !border-white': filtroSeleccionado() === 'partidasGanadas',
     'bg-[var(--color-principal)]': filtroSeleccionado() !== 'partidasGanadas'
   }">Partidas Ganadas</button>
   </div>

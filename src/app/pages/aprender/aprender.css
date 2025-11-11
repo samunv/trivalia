@@ -24,10 +24,10 @@
 
 
 .campo-buscador input::placeholder{
-  color: var(--color-bordes);
+  color: var(--color-secundario);
 }
 
 
 .campo-buscador.activo{
-  border: 1px solid white;
+  border: 1.5px solid white;
 }

@@ -27,7 +27,7 @@ export class PreguntaIa {
   pregunta: WritableSignal<Pregunta | null> = signal<Pregunta | null>(null);
   opcionesPregunta: WritableSignal<string[]> = signal<string[]>([]);
   mensaje: WritableSignal<string> = signal<string>("");
-  respuestaSeleccionada: WritableSignal<string> = signal<string>("");
+  respuestaSeleccionada: WritableSignal<boolean> = signal<boolean>(false);
   esCorrecta: WritableSignal<boolean> = signal<boolean>(false);
   partidaComenzada: WritableSignal<boolean> = signal<boolean>(false);
   finPartida: WritableSignal<boolean> = signal<boolean>(false);
@@ -44,6 +44,7 @@ export class PreguntaIa {
   }
 
   verificarRespuesta(opcionSeleccionada: string) {
+    this.respuestaSeleccionada.set(true);
     if (String(this.pregunta()?.respuesta_correcta) === opcionSeleccionada) {
       this.mensaje.set("¡Correcto!");
       this.esCorrecta.set(true);

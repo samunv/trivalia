@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, switchMap } from 'rxjs';
 import { url_servidor } from './../../urlServidor';
 import { Categoria } from '../../interfaces/Categoria';
+import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +47,21 @@ export class CategoriaService {
 
     return this.http.get<Categoria | any>(url_servidor + "/api/categorias/obtener/" + idCategoria, { headers });
   }
+
+  jugarCategoria(uid: string): Observable<RespuestaServidor> {
+    return this.http.get<RespuestaServidor>(url_servidor + "/api/categorias/jugar/" + uid, {
+      headers:
+        { "Authorization": "Bearer " + this.token() }
+    })
+  }
+
+  continuarConMonedas(uid: string): Observable<RespuestaServidor> {
+    return this.http.get<RespuestaServidor>(url_servidor + "/api/categorias/continuar-con-monedas/" + uid, {
+      headers:
+        { "Authorization": "Bearer " + this.token() }
+    })
+  }
 }
+
 
 

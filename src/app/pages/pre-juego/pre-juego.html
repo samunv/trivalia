@@ -40,7 +40,7 @@
       @for (pregunta of preguntas(); track $index) {
       <div class="flex flex-row items-center justify-between bg-[var(--color-principal)] rounded-[20px] !p-[15px]"
         [ngStyle]="{
-          border: usuario().arrayIdPreguntasGanadas?.includes(pregunta.idPregunta)
+          border: usuario().idsPreguntasGanadas?.includes(pregunta.idPregunta)
             ? '1px white solid'
             : '2px var(--color-bordes) dashed'
         }">
@@ -56,7 +56,7 @@
         </div>
 
         <div class="flex flex-row items-center gap-5">
-          @if(usuario().arrayIdPreguntasGanadas?.includes(pregunta?.idPregunta)){
+          @if(usuario().idsPreguntasGanadas?.includes(pregunta?.idPregunta)){
           <img src="/img/accept.png" alt="" class="!w-7">
           }
 

@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal, WritableSignal } from '@angular/core';
+import { Component, computed, effect, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { NavLateral } from '../../layout/nav-lateral/nav-lateral';
 import { MainLayout } from '../../layout/main-layout/main-layout';
 import { AuthService } from '../../services/AuthService/auth-service';
@@ -44,7 +44,7 @@ export class Perfil {
   imagenSeleccionada = signal<File | null>(null)
   editarFotoActivo = signal<boolean>(false)
   fotoPreview = signal<any>(null)
-  usuario = this.usuarioService.usuario;
+  usuario: Signal<Usuario> = this.usuarioService.usuario;
   preguntasDificilesGanadas = signal<number>(0);
   display = signal<number>(0)
 
@@ -55,10 +55,10 @@ export class Perfil {
     const usuario = this.usuario();
     if (usuario) {
       this.nombreFormControl.set(new FormControl(usuario.nombre, [Validators.required, Validators.minLength(4), Validators.maxLength(15)]));
-      this.foto.set(this.usuario().fotoURL)
+      this.foto.set(String(this.usuario()?.fotoURL))
     }
 
-    this.obtenerPreguntasDificilesGanadas(this.usuario().arrayIdPreguntasGanadas);
+    //this.obtenerPreguntasDificilesGanadas(this.usuario().arrayIdPreguntasGanadas);
   }
 
   activarEditarFoto() {
@@ -117,28 +117,32 @@ export class Perfil {
       this.enviarImagen(this.imagenSeleccionada() as File).subscribe({
         next: (data) => {
           const nuevaURL = data.data.url; // URL de la nueva imagen
-          this.usuarioService.actualizarNombreYfotoUsuario(this.nombreFormControl().value ?? '', nuevaURL).subscribe({
-            next: () => this.finalizarGuardado(nuevaURL),
-            error: (err) => console.error('Error al guardar con nueva imagen:', err)
-          });
+          this.usuarioService.actualizarNombreYfotoUsuario(this.nombreFormControl().value ?? '', nuevaURL, String(this.usuario().uid))
+            .subscribe((usuarioActualizado: Usuario) => {
+              this.usuarioService.updateUsuarioSignal("nombre", usuarioActualizado.nombre);
+              this.usuarioService.updateUsuarioSignal("fotoURL", usuarioActualizado.fotoURL)
+              this.finalizarGuardado()
+            })
         },
         error: (err) => console.error('Error al subir la imagen:', err)
       });
     } else {
       // Si no hay imagen nueva
-      this.usuarioService.actualizarNombreYfotoUsuario(this.nombreFormControl()?.value ?? '', this.usuario().fotoURL ? String(this.usuario().fotoURL) : "").subscribe({
-        next: () => this.finalizarGuardado(this.usuario().fotoURL ? String(this.usuario().fotoURL) : ""),
-        error: (err) => console.error('Error al guardar sin imagen nueva:', err)
-      });
+      this.usuarioService.actualizarNombreYfotoUsuario(this.nombreFormControl()?.value ?? '', this.usuario().fotoURL ? String(this.usuario().fotoURL) : "", String(this.usuario().uid)).subscribe((usuarioActualizado: Usuario) => {
+        this.usuarioService.updateUsuarioSignal("nombre", usuarioActualizado.nombre);
+        this.usuarioService.updateUsuarioSignal("fotoURL", usuarioActualizado.fotoURL)
+
+        this.finalizarGuardado()
+      })
     }
   }
 
-  finalizarGuardado(fotoURL: string) {
+  finalizarGuardado() {
     this.guardado.set(true);
     setTimeout(() => (this.guardado.set(false)), 2000);
 
-    this.usuarioService.updateUsuario("nombre", this.nombreFormControl().value)
-    this.usuarioService.updateUsuario("fotoURL", fotoURL)
+    //this.usuarioService.updateUsuario("nombre", this.nombreFormControl().value)
+    //this.usuarioService.updateUsuario("fotoURL", fotoURL)
   }
 
   obtenerPreguntasDificilesGanadas(arrayIdPreguntas: number[] | any[]) {

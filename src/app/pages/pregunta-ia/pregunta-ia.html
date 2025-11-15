@@ -5,7 +5,7 @@
   <div
     class="!mt-[20px] !p-[30px] border border-[var(--color-bordes)] rounded-[20px] bg-[var(--color-principal)] flex flex-row gap-6 items-center justify-between">
 
-    <div class="flex flex-row items-center gap-4">
+    <div class="flex flex-row items-center gap-2">
       <img src="/img/Trival-IA.png" alt="IA" class="!w-[150px] !h-[150px] animate-squeeze">
       <div>
         <h2>Hola, {{usuario().nombre}}</h2>
@@ -17,12 +17,19 @@
 
     <div class="flex flex-row items-center gap-4">
       <espacio [ancho]="10"></espacio>
-      <div>
-        <item item="monedas" [cantidad]="150" [cssFlexRow]="'reverse'" [cssIconDimension]="20"></item>
+      <div class="flex flex-col items-end">
+        <p class="text-[var(--color-secundario)]">Recompensas:</p>
+        <item item="monedas" [cantidad]="400" [cssFlexRow]="'reverse'" [cssIconDimension]="20"></item>
         <item item="estrellas" [cantidad]="30" [cssFlexRow]="'reverse'" [cssIconDimension]="20"></item>
+        <item item="regalo" [cantidad]="1" [cssFlexRow]="'reverse'" [cssIconDimension]="20"></item>
       </div>
-      <app-boton-general [texto]="'Jugar'" [tipo]="'destacado'" (click)="obtenerPreguntaIA()"></app-boton-general>
+      <div class="">
+        <app-boton-general [texto]="'Jugar (300 monedas)'" [tipo]="'destacado'"
+          (click)="obtenerPreguntaIA()"></app-boton-general>
+      </div>
+
     </div>
+
 
   </div>
   }
@@ -58,8 +65,36 @@
       </div>
     </div>
   </div>
+
   } @else{
-  <p class="!mt-[20px] text-[18px]">Pensando en una pregunta... ✨</p>
+  <div class="!mt-[20px] flex flex-col items-center gap-5 justify-center !w-full !h-[100%]">
+    <p class="text-[18px]">Pensando en una pregunta... ✨</p>
+    <div class="loader"></div>
+  </div>
+
+  }
+  }
+
+  @if(finPartida()){
+  @if(esCorrecta()){
+  <app-modal [titulo]="'¡Felicidades, ' + usuario().nombre + '!'" [btn2Activo]="false" btn1="Vale" (click1)="salir()">
+    <p class="flex flex-row flex-wrap items-center gap-2">Has respondido correctamente la pregunta de Trival-IA y has
+      ganado
+
+    </p>
+    <div class="flex flex-row items-center gap-4">
+      <item [item]="'estrellas'" [cantidad]="30" [cssFlexRow]="'reverse'"></item>
+      <item [item]="'monedas'" [cantidad]="400" [cssFlexRow]="'reverse'"></item>
+      <item [item]="'regalo'" [cantidad]="1" [cssFlexRow]="'reverse'"></item>
+    </div>
+
+  </app-modal>
+  } @else {
+  <app-modal [titulo]="'¡Vaya, ' + usuario().nombre + '!😞'" btn1="Salir" (click1)="salir()"
+    btn2="Volver a intentar (300 monedas)" (click2)="intentarDeNuevo()">
+    <p>Has respondido incorrectamente la pregunta de Trival-IA. ¡Inténtalo de nuevo!</p>
+    <p>Has perdido una vida... Te quedan {{usuario().vidas}}</p>
+  </app-modal>
   }
   }
 

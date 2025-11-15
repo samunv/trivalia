@@ -1,10 +1,12 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, Signal, signal } from '@angular/core';
 import { Pregunta } from '../../interfaces/Pregunta';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Usuario } from './../../interfaces/Usuario';
 import { UsuarioService } from '../UsuarioService/usuario-service';
 import { Observable, switchMap } from 'rxjs';
 import { url_servidor } from '../../urlServidor';
+import { ResultadoRespuestaRespondida } from '../../interfaces/ResultadoRespuestaRespondida';
+import { RespuestaUsuario } from '../../interfaces/RespuestaUsuario';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +17,8 @@ export class PreguntaService {
 
   constructor(private http: HttpClient) { }
 
-  token = this.usuarioService.token
+  token = this.usuarioService.token;
+  usuario: Signal<Usuario> = this.usuarioService.usuario;
 
   headers = new HttpHeaders({
     "Authorization": `Bearer ${this.token()}`
@@ -65,6 +68,17 @@ export class PreguntaService {
       "Authorization": `Bearer ${this.token()}`
     })
     return this.http.get<Pregunta>(url_servidor + "/api/preguntas/obtener-pregunta-ia", { headers })
+  }
+
+  responderPregunta(respuestaUsuario: RespuestaUsuario): Observable<ResultadoRespuestaRespondida> {
+    console.log("Respuesta usuario >>"+respuestaUsuario.respuestaSeleccionada)
+    return this.http.post<ResultadoRespuestaRespondida>(url_servidor + "/api/preguntas/responder/" + this.usuario().uid,
+      respuestaUsuario ,
+      {
+        headers: {
+          "Authorization": "Bearer " + this.token()
+        }
+      })
   }
 
 }

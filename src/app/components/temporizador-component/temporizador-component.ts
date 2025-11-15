@@ -90,7 +90,7 @@ export class TemporizadorComponent {
     this.usuarioService.actualizarItemUsuarioConClaveValor("monedas", restoMonedas).subscribe(
       {
         next: () => {
-          this.usuarioService.updateUsuario("monedas", restoMonedas);
+          //this.usuarioService.updateUsuario("monedas", restoMonedas);
         },
         error: (error) => {
           console.log(error)

@@ -45,8 +45,8 @@ export class Regalo {
 
 
   asignarRecompensaInterfaz(regaloObtenido: RegaloInterface) {
-    this.itemObtenido.set(regaloObtenido.itemRecompensa)
-    this.cantidadItemObtenido.set(Number(regaloObtenido.cantidadItem))
+    this.itemObtenido.set(regaloObtenido.item)
+    this.cantidadItemObtenido.set(Number(regaloObtenido.cantidad))
   }
 
   comprobarFechaUltimoRegaloDelUsuario(): boolean {
@@ -71,6 +71,7 @@ export class Regalo {
   }
 
   obtenerRegalo(): RegaloInterface {
+    this.usuarioService.actualizarRegaloDisponible(false);
     const itemObtenido = this.obtenerItemAleatorio()
     let cantidadItems = 0;
     let regalo: RegaloInterface = {};
@@ -84,8 +85,8 @@ export class Regalo {
     }
 
     regalo = {
-      itemRecompensa: itemObtenido,
-      cantidadItem: cantidadItems
+      item: itemObtenido,
+      cantidad: cantidadItems
     }
     return regalo;
   }
@@ -101,13 +102,13 @@ export class Regalo {
   }
 
   actualizarItemsUsuario(regalo: RegaloInterface) {
-    let claveItem: string = regalo.itemRecompensa == "estrellas" ? "estrellas" : regalo.itemRecompensa == "monedas" ? "monedas" : "vidas"
-    let cantidadItem: number = Number(regalo.cantidadItem)
+    let claveItem: string = regalo.item == "estrellas" ? "estrellas" : regalo.item == "monedas" ? "monedas" : "vidas"
+    let cantidadItem: number = Number(regalo.cantidad)
     let cantidadTotalItem: number = Number(this.usuario()[claveItem]) + Number(cantidadItem);
 
     this.usuarioService.actualizarItemUsuarioConClaveValor(claveItem, cantidadTotalItem).subscribe({
       next: () => {
-        this.usuarioService.updateUsuario(claveItem, cantidadTotalItem)
+        //this.usuarioService.updateUsuario(claveItem, cantidadTotalItem)
       },
       error: (error) => {
         console.log("Error: " + error)
@@ -120,7 +121,7 @@ export class Regalo {
     this.usuarioService.actualizarFechaUltimoRegaloUsuario(ahora).subscribe(
       {
         next: () => {
-          this.usuarioService.updateUsuario("fechaUltimoRegalo", ahora)
+          //this.usuarioService.updateUsuario("fechaUltimoRegalo", ahora)
         },
         error: (error) => {
           console.log(error)

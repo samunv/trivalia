@@ -3,7 +3,7 @@ import { Auth, createUserWithEmailAndPassword, GoogleAuthProvider, OAuthProvider
 import { doc, DocumentReference, Firestore, getDoc, serverTimestamp, setDoc } from '@angular/fire/firestore';
 import { nanoid } from 'nanoid';
 
-import { from, Observable, of, switchMap } from 'rxjs';
+import { from, map, Observable, of, switchMap } from 'rxjs';
 import { Usuario } from '../../interfaces/Usuario';
 import { HttpClient } from '@angular/common/http';
 import { url_servidor } from '../../urlServidor';
@@ -20,27 +20,11 @@ export class AuthService {
 
   token = this.usuarioService.token
 
-  // Obtiene el usuario de Firestore por UID
-  private obtenerUsuario(uid: string, user: User): Observable<Usuario> {
-    // Referencia de la colección usuarios
-    const usuariosRef = doc(this.firestore, `usuarios/${uid}`);
-
-    return from(getDoc(usuariosRef)).pipe(
-      switchMap(docSnap => {
-        if (docSnap.exists()) {
-          return of({ ...docSnap.data(), uid } as Usuario);
-        } else {
-          return this.crearNuevoUsuario(uid, user, usuariosRef);
-        }
-      })
-    );
-  }
-
-  loginConGoogle(): Observable<{ usuario: Usuario, firebaseToken: string }> {
+  login(): Observable<{ usuario: Usuario, firebaseToken: string }> {
     const provider = new GoogleAuthProvider();
     return from(signInWithPopup(this.auth, provider)).pipe(
       switchMap(result =>
-        this.obtenerUsuario(result.user.uid, result.user).pipe(
+        this.crearUsuario(result.user.uid, result.user).pipe(
           switchMap(usuario =>
             from(result.user.getIdToken()).pipe(
               switchMap(firebaseToken => of({ usuario, firebaseToken }))
@@ -52,27 +36,18 @@ export class AuthService {
   }
 
 
-  crearNuevoUsuario(uid: string, user: User, usuariosRef: DocumentReference): Observable<Usuario> {
+  private crearUsuario(uid: string, user: User): Observable<Usuario> {
     const nuevoUsuario: Usuario = {
       uid,
       nombre: user?.displayName || 'usuario_' + nanoid(5),
       email: user?.email || '',
       fotoURL: user.photoURL,
-      creadoEn: serverTimestamp(),
-      codigo_usuario: nanoid(25),
-      estrellas: 0,
-      monedas: 300,
-      vidas: 5,
-      logros: [],
-      arrayIdPreguntasGanadas: [],
-      preguntasFalladas: 0,
-      fechaUltimoRegalo: new Date(),
-      partidasGanadas:0
     };
-    return from(setDoc(usuariosRef, nuevoUsuario)).pipe(
-      switchMap(() => of(nuevoUsuario))
-    );
+
+    return this.usuarioService.crearUsuario(nuevoUsuario).pipe(map((usuario)=>{return usuario}))
   }
+
+
 
   autenticarFirebaseToken(firebaseToken: string | any): Observable<RespuestaServidor> {
     return this.http.post<RespuestaServidor>(url_servidor + "/auth/login", { firebaseToken: firebaseToken })
@@ -87,4 +62,5 @@ export class AuthService {
     const jwtCliente = this.token();
     return this.http.post<RespuestaServidor>(url_servidor + "/auth/verificar-jwt", { jwtCliente: jwtCliente })
   }
+  
 }

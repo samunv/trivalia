@@ -29,7 +29,8 @@ export class Clasificacion {
   usuarios: WritableSignal<Usuario[]> = signal<Usuario[]>([]);
   usuariosOrdenados: WritableSignal<Usuario[]> = signal<Usuario[]>([]);
   filtroSeleccionado: WritableSignal<string> = signal<string>("estrellas");
-  
+  usuarioActual: Signal<Usuario> = this.usuarioService.usuario;
+
   ngOnInit() {
     this.obtenerUsuarios();
   }
@@ -60,7 +61,7 @@ export class Clasificacion {
   }
 
   ordenarUsuariosPorPartidasGanadas(usuarios: Usuario[]) {
-    this.usuariosOrdenados.set(usuarios.sort((a, b) => Number(b.partidasGanadas) - Number(a.partidasGanadas)))
+    this.usuariosOrdenados.set(usuarios.sort((a, b) => Number(b.cantidadPartidasGanadas) - Number(a.cantidadPartidasGanadas)))
   }
 
 

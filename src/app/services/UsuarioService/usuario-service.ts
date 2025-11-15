@@ -1,24 +1,32 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { BehaviorSubject, from, map, Observable } from 'rxjs';
+import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { BehaviorSubject, from, map, Observable, Subscribable, Subscription } from 'rxjs';
 import { Usuario } from '../../interfaces/Usuario';
-import { arrayUnion, collection, doc, DocumentData, DocumentReference, DocumentSnapshot, Firestore, getDocs, increment, QueryDocumentSnapshot, QuerySnapshot, updateDoc } from '@angular/fire/firestore';
+import { arrayUnion, collection, doc, docData, DocumentData, DocumentReference, DocumentSnapshot, Firestore, getDocs, increment, QueryDocumentSnapshot, QuerySnapshot, updateDoc } from '@angular/fire/firestore';
 import { getAuth, onAuthStateChanged, onIdTokenChanged } from '@angular/fire/auth';
+import { HttpClient } from '@angular/common/http';
+import { url_servidor } from '../../urlServidor';
+import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsuarioService {
-  //private usuarioSubject = new BehaviorSubject<Usuario | any>(JSON.parse(localStorage.getItem('usuario') || 'null'));
-  //private tokenSubject = new BehaviorSubject<string | any>(localStorage.getItem('tokenJWT'));
 
   private firestore = inject(Firestore)
-  private tokenSignal = signal<string | any>(localStorage.getItem('tokenJWT'))
-  public readonly token = this.tokenSignal.asReadonly();
+  private http = inject(HttpClient);
 
-  private usuarioSignal = signal<Usuario | any>(JSON.parse(localStorage.getItem('usuario') || 'null'))
-  public readonly usuario = this.usuarioSignal.asReadonly();
+  private tokenSignal: WritableSignal<string | any> = signal<string | any>(localStorage.getItem('tokenJWT'))
+  public readonly token: Signal<string> = this.tokenSignal.asReadonly();
 
-  constructor() { }
+  private usuarioSignal: WritableSignal<Usuario | any> = signal<Usuario | any>(JSON.parse(localStorage.getItem('usuario') || 'null'))
+  public readonly usuario: Signal<Usuario | any> = this.usuarioSignal.asReadonly();
+
+
+  constructor() {
+    if (localStorage.getItem('usuario')) {
+      this.setUsuarioSignal(JSON.parse(String(localStorage.getItem('usuario'))) as Usuario)
+    }
+  }
 
   private get usuarioDocRef() {
     const uid = this.usuarioSignal()?.uid;
@@ -27,10 +35,7 @@ export class UsuarioService {
   }
 
 
-  //usuario$: Observable<Usuario> = this.usuarioSubject.asObservable();
-  //token$: Observable<string | any> = this.tokenSubject.asObservable();
-
-  setUsuario(usuario: Usuario | null) {
+  setUsuarioSignal(usuario: Usuario) {
     this.usuarioSignal.set(usuario);
     if (usuario) {
       localStorage.setItem('usuario', JSON.stringify(usuario));
@@ -39,7 +44,7 @@ export class UsuarioService {
     }
   }
 
-  updateUsuario(claveDatoParaActualizar: string, valorDatoParaActualizar: any) {
+  updateUsuarioSignal(claveDatoParaActualizar: string, valorDatoParaActualizar: any) {
     this.usuarioSignal.update(usuario => {
       if (!usuario) return usuario;
       const actualizado = { ...usuario, [claveDatoParaActualizar]: valorDatoParaActualizar };
@@ -48,7 +53,8 @@ export class UsuarioService {
     });
   }
 
-  setToken(token: string | null) {
+
+  setTokenSignal(token: string | null) {
     this.tokenSignal.set(token);
     if (token) {
       localStorage.setItem('tokenJWT', token);
@@ -66,27 +72,17 @@ export class UsuarioService {
     this.tokenSignal.set(null);
   }
 
-  actualizarNombreYfotoUsuario(nombre: string, foto: string): Observable<any> {
-    return from(updateDoc(this.usuarioDocRef, {
-      nombre: nombre.trim(),
-      fotoURL: foto,
-      actualizado: new Date()
-    }));
+  actualizarNombreYfotoUsuario(nombre: string, foto: string, uid: string): Observable<Usuario> {
+    const usuarioActualizar: Usuario = { nombre: nombre, fotoURL: foto };
+    const jwtCliente = this.token();
+    return this.http.patch<Usuario>(url_servidor + "/api/usuarios/actualizar-nombre-foto/" + uid, usuarioActualizar, {
+      headers: {
+        "Authorization": "Bearer " + jwtCliente
+      }
+    })
 
   }
-  // actualizarItemsUsuario(uid: string, monedas?: number, vidas?: number, estrellas?: number): Observable<any> {
-  //   const usuarioDocRef = doc(this.firestore, 'usuarios', uid);
 
-  //   const datosParaActualizar: any = {
-  //     actualizado: new Date()
-  //   };
-
-  //   if (monedas !== undefined) datosParaActualizar.monedas = monedas;
-  //   if (vidas !== undefined) datosParaActualizar.vidas = vidas;
-  //   if (estrellas !== undefined) datosParaActualizar.estrellas = increment(estrellas);
-
-  //   return from(updateDoc(usuarioDocRef, datosParaActualizar));
-  // }
 
   actualizarItemUsuarioConClaveValor(claveItem: string, cantidadItem: number): Observable<any> {
     const clave =
@@ -130,14 +126,36 @@ export class UsuarioService {
     }
   }
 
+  async actualizarRegaloDisponible(valor: boolean) {
+    try {
+      await updateDoc(this.usuarioDocRef, { regaloDisponible: valor })
+      console.log("Actualización de regalo disponible exitosa");
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   obtenerUsuarios(limite: number): Observable<Usuario[]> {
-    return from(getDocs(collection(this.firestore, "usuarios"))).pipe(
-      map((snapshot) => {
-        return snapshot.docs.map((doc) =>
-          doc.data() as Usuario
-        ).slice(0, limite)
-      })
-    )
+    const jwtCliente = this.token();
+    return this.http.get<Usuario[]>(url_servidor + "/api/usuarios/listar/" + limite, {
+      headers: {
+        "Authorization": "Bearer " + jwtCliente
+      }
+    })
+
+  }
+
+  crearUsuario(usuario: Usuario): Observable<Usuario> {
+    // No necesita JWT porque es una operación pública
+    return this.http.post<Usuario>(url_servidor + "/api/usuarios/crear", usuario,
+    );
+  }
+
+  obtenerUsuario(uid: string): Observable<Usuario> {
+    const jwtCliente = this.token();
+    return this.http.get<Usuario | any>(url_servidor + "/api/usuarios/" + uid, {
+      headers: { "Authorization": "Bearer " + jwtCliente }
+    })
   }
 
 }

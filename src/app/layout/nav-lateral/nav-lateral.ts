@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, Signal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterLink, RouterModule } from '@angular/router';
 import { UsuarioService } from '../../services/UsuarioService/usuario-service';
@@ -16,7 +16,7 @@ export class NavLateral {
   private usuarioService = inject(UsuarioService)
   private router = inject(Router);
 
-  usuario = this.usuarioService.usuario
+  usuario: Signal<Usuario> = this.usuarioService.usuario
   fotoUsuario = this.usuario()?.fotoURL;
   ventanaRegaloAbierta: boolean = false;
 
@@ -29,7 +29,9 @@ export class NavLateral {
   }
 
   abrirVentanaRegalo() {
-    this.ventanaRegaloAbierta = true
+    if (this.usuario()?.regaloDisponible) {
+      this.ventanaRegaloAbierta = true
+    }
   }
 
   cerrarVentanaRegalo() {

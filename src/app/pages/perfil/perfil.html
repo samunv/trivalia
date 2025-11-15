@@ -56,12 +56,12 @@
     <div
       class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2">
       <p>Preguntas Ganadas</p><strong class="text-4xl"><om-number-ticker
-          [countTo]="usuario().arrayIdPreguntasGanadas?.length" [countDuration]="500"
+          [countTo]="usuario().idsPreguntasGanadas?.length || 0" [countDuration]="500"
           styleClass="ticker-custom-style"></om-number-ticker></strong>
     </div>
     <div
       class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2">
-      <p>Fallos</p><strong class="text-4xl"><om-number-ticker [countTo]="usuario().preguntasFalladas"
+      <p>Fallos</p><strong class="text-4xl"><om-number-ticker [countTo]="usuario().cantidadPreguntasFalladas || 0"
           [countDuration]="500" styleClass="ticker-custom-style"></om-number-ticker></strong>
     </div>
     <div
@@ -73,7 +73,7 @@
     <div
       class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2">
       <p>Partidas Ganadas</p><strong class="text-4xl"><om-number-ticker
-          [countTo]="usuario().partidasGanadas" [countDuration]="500"
+          [countTo]="usuario().cantidadPartidasGanadas || 0" [countDuration]="500"
           styleClass="ticker-custom-style"></om-number-ticker></strong>
     </div>
   </div>

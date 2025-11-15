@@ -21,12 +21,14 @@ export class Login {
   usuarioSignal = this.usuarioService.usuario
   tokenSignal = this.usuarioService.token
 
-  irHaciaLanding() {
-    this.router.navigate(['/']);
+  ngOnInit(){
+    if(this.usuarioSignal() && this.tokenSignal()){
+      this.usuarioService.clearUsuario();
+    }
   }
 
   loginConGoogle() {
-    this.authService.loginConGoogle().subscribe({
+    this.authService.login().subscribe({
       next: (res) => {
         this.obtenerJWT(res.firebaseToken).subscribe((jwt: string) => {
           this.establecerUsuarioYjwt(res.usuario, jwt);
@@ -34,7 +36,7 @@ export class Login {
         })
       },
       error: (err) => {
-        console.error(' Error durante el login con Google:', err);
+        console.error('Error durante el login con Google:', err);
         alert('Error durante el login con Google. Por favor, intenta de nuevo.');
       }
     });
@@ -54,8 +56,8 @@ export class Login {
   }
 
   establecerUsuarioYjwt(usuario: Usuario, token: string): void {
-    this.usuarioService.setUsuario(usuario);
-    this.usuarioService.setToken(token)
+    this.usuarioService.setUsuarioSignal(usuario);
+    this.usuarioService.setTokenSignal(token)
   }
 
   // iniciarSesion(usuario: Usuario) {

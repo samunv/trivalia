@@ -1,5 +1,16 @@
 <app-modal [titulo]="'¡Has ganado la partida!😁'" [btn2Activo]="false" [btn1]="'Cerrar'" (click1)="cerrar()">
   <p>Enhorabuena {{nombreUsuario}}, has ganado la partida de la categoría {{categoria().titulo}}.</p>
-  <p class="flex flex-row items-center text-4xl gap-1 !p-3"> + <item [item]="'monedas'" [cantidad]="monedasRecompensa"></item></p>
+  <p>Recompensas:</p>
+  <div class="!p-3 flex flex-col items-end">
+    <p class="flex flex-row items-center text-4xl gap-1"> + <item [item]="'monedas'" [cantidad]="monedasRecompensa" [cssFlexRow]="'reverse'">
+      </item>
+    </p>
+    <p class="flex flex-row items-center text-4xl gap-1"> + <item [item]="'regalo'" [cantidad]="1" [cssFlexRow]="'reverse'">
+      </item>
+    </p>
+  </div>
+
+
+
   <app-confeti-component></app-confeti-component>
 </app-modal>

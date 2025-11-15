@@ -7,7 +7,7 @@ import { Component, Input } from '@angular/core';
   templateUrl: './item.html'
 })
 export class Item {
-  @Input() item?: "estrellas" | "monedas" | "vidas";
+  @Input() item?: "estrellas" | "monedas" | "vidas" | "regalo";
   @Input() cantidad?: number = 0;
   @Input() cssFlexRow?: "row" | "reverse" = "row"
   @Input() cssIconDimension?: number = 30

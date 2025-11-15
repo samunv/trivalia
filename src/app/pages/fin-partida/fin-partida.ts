@@ -32,6 +32,7 @@ export class FinPartida {
   ngOnInit(){
     this.actualizarMonedasUsuario(this.monedasRecompensa)
     this.actualizarPartidasGanadasUsuario()
+    this.actualizarRegaloDisponibleUsuario(true)
   }
 
   cerrar() {
@@ -43,7 +44,7 @@ export class FinPartida {
     this.usuarioService.actualizarItemUsuarioConClaveValor("monedas", monedasTotales)
       .subscribe({
         next: () => {
-          this.usuarioService.updateUsuario("monedas", monedasTotales)
+          //this.usuarioService.updateUsuario("monedas", monedasTotales)
         },
         error: (error) => {
           console.log(error)
@@ -53,7 +54,12 @@ export class FinPartida {
 
   actualizarPartidasGanadasUsuario(){
     this.usuarioService.actualizarPartidasGanadas()
-    this.usuarioService.updateUsuario("partidasGanadas", Number(this.usuario()?.partidasGanadas) + 1)
+    //this.usuarioService.updateUsuario("partidasGanadas", Number(this.usuario()?.partidasGanadas) + 1)
   }
+
+  actualizarRegaloDisponibleUsuario(valor: boolean){
+    this.usuarioService.actualizarRegaloDisponible(valor);
+  }
+
 
 }

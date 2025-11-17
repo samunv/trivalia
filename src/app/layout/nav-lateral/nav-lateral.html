@@ -132,8 +132,8 @@
         <li>
           <a routerLink="/perfil" routerLinkActive="activo">
             <img [src]="fotoUsuario" alt="" style="
-              width: 30px;
-              height: 30px;
+              width: 33px;
+              height: 33px;
               object-fit: cover;
               border-radius: 50%;
               margin: 0 5px;
@@ -144,27 +144,8 @@
         </li>
       </ul>
       <hr class="border-[var(--color-bordes)] !mt-7 !mb-7" />
-      <!-- <a routerLink="/perfil" routerLinkActive="activo">
-      <div
-        class="flex flex-row items-center !p-[5px] !pt-[15px] !pb-[15px] gap-[5px] hover:cursor-pointer hover:bg-[var(--azul-oscuro)] rounded-[10px]"
-      >
-        <img
-          [src]="fotoUsuario()"
-          alt=""
-          style="
-            width: 45px;
-            height: 45px;
-            object-fit: cover;
-            border-radius: 50%;
-            margin: 0 5px;
-            border: 1px solid white;
-          "
-        />
-        <p class="text-[18px]">Mi Perfil</p>
-      </div>
-    </a> -->
 
-      <button (click)="abrirVentanaRegalo()" [disabled]="!usuario().regaloDisponible"
+      <button (click)="abrirVentanaRegalo()" [disabled]="!usuario().regaloDisponible" [ngClass]="{'border-2 border-dashed border-[var(--color-secundario)]': !usuario().regaloDisponible }"
         class="group not-only:flex flex-row items-center justify-center !p-[5px] !pt-[15px] !pb-[15px] gap-[5px] hover:cursor-pointer hover: rounded-[10px] border border-[var(--color-bordes)] !w-full bg-[var(--azul-oscuro)]">
         @if(usuario().regaloDisponible){
         <p class="text-[16px] text-[white] !font-[inter-bold]">Abrir regalo</p>

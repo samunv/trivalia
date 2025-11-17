@@ -12,81 +12,57 @@
     </div>
   </div>
 
-  @if (!valorBusqueda()) {
-  <div class="grid grid-cols-4 gap-5 !mt-[30px] animate-fade-in-up">
-    <!-- <div
-      class="relative h-[250px] !w-[250px] cursor-pointer border-1 border-[var(--color-bordes)] bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center hover:border-[white] bg-yellow-500"
-    >
-      <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left text-[25px] !font-[nunito]">
-        5 Preguntas aleatorias
-      </h2>
-      <div
-        class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl"
-      ></div>
-      <svg
-        viewBox="0 0 12 12"
-        enable-background="new 0 0 12 12"
-        id="Слой_1"
-        version="1.1"
-        xml:space="preserve"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        fill="#000000"
-        width="80%"
-      >
-        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-        <g id="SVGRepo_iconCarrier">
-          <path
-            d="M6,0C2.6862793,0,0,2.6862793,0,6s2.6862793,6,6,6s6-2.6862793,6-6S9.3137207,0,6,0z M6.5,9.5h-1v-1h1V9.5z M7.2651367,6.1738281C6.7329102,6.5068359,6.5,6.6845703,6.5,7v0.5h-1V7c0-0.9023438,0.7138672-1.3486328,1.2348633-1.6738281 C7.2670898,4.9931641,7.5,4.8154297,7.5,4.5c0-0.5517578-0.4487305-1-1-1h-1c-0.5512695,0-1,0.4482422-1,1V5h-1V4.5 c0-1.1025391,0.8969727-2,2-2h1c1.1030273,0,2,0.8974609,2,2C8.5,5.4023438,7.7861328,5.8486328,7.2651367,6.1738281z"
-            fill="#DDE9FF"
-          ></path>
-        </g>
-      </svg>
-    </div> -->
+  @if(valorBusqueda()){
+  <p class="!mt-5">Resultados para {{ valorBusqueda() }}</p>
+  }
+
+  <div class="!mt-6 grid grid-cols-[repeat(auto-fill,minmax(16em,1fr))] gap-3">
+
+
+    @if (!valorBusqueda()) {
     <div
-      class="relative h-[250px] cursor-pointer bg-[var(--color-principal)] rounded-2xl overflow-hidden flex flex-col justify-center items-center border border-[var(--color-bordes)] hover:border-2 hover:border-[var(--color-amarillo)]"
+      class="relative rounded-[20px] h-[250px] cursor-pointer bg-[var(--color-principal)] overflow-hidden flex flex-col justify-center items-center border border-[var(--color-secundario)] hover:border-[var(--color-amarillo)]"
       (click)="navegarHaciaIA()">
-      <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left !text-[20px] !font-[nunito]">juega contra la IA✨</h2>
-      <img [src]="'img/Trival-IA.png'" alt="" [style.width%]="100" [style.heigth]="100"
-        style="object-fit: cover;" />
-        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl"></div>
+      <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left !text-[1.6em] !font-[nunito]">juega contra la IA✨</h2>
+      <img [src]="'img/Trival-IA.png'" alt="" [style.width%]="70" [style.heigth]="70" style="object-fit: contain;" />
+      <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent"></div>
 
     </div>
 
     @for (categoria of categorias(); track $index) {
     <div #categorias
-      class="relative h-[250px] cursor-pointer rounded-2xl overflow-hidden border border-[var(--color-bordes)] hover:border-2 hover:border-[var(--color-amarillo)]"
+      class="relative rounded-[20px] h-[250px] cursor-pointer overflow-hidden border-1 border-[var(--color-secundario)] hover:border-[var(--color-amarillo)]"
       (click)="navegarHaciaCategoria(categoria.idCategoria)">
       <img [src]="categoria.imagenURL" alt="" style="object-fit: cover; height: 100%; width: 100%"
-        class="rounded-2xl hover:scale-0" />
-      <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl"></div>
-      <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left !text-[20px] !font-[nunito]">
+        class=" hover:scale-105" />
+      <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent"></div>
+      <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left !text-[1.6em] !font-[nunito]">
         {{ categoria.titulo }}
       </h2>
     </div>
     }
-  </div>
-  } @if (valorBusqueda()) {
-  <div class="!mt-[30px]">
-    <p>Resultados para {{ valorBusqueda() }}</p>
-    <div class="grid grid-cols-4 gap-5 !mt-[30px]">
-      @for (categoria of filtrarCategorias(valorBusqueda()); track $index) {
-      <div
-        class="relative h-[250px] cursor-pointer rounded-2xl overflow-hidden border border-[var(--color-bordes)] hover:border-2 hover:border-[var(--color-amarillo)]"
-        (click)="navegarHaciaCategoria(categoria.idCategoria)">
-        <img [src]="categoria.imagenURL" alt="" style="object-fit: cover; height: 100%; width: 100%"
-          class="rounded-2xl" />
-        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent rounded-2xl">
-        </div>
-        <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left !text-[20px] !font-[nunito]">
-          {{ categoria.titulo }}
-        </h2>
+    } @if (valorBusqueda()) {
+
+
+    @for (categoria of filtrarCategorias(valorBusqueda()); track $index) {
+    <div
+      class="relative rounded-[20px] h-[250px] cursor-pointer  overflow-hidden border-1 border-[var(--color-secundario)] hover:border-[var(--color-amarillo)]"
+      (click)="navegarHaciaCategoria(categoria.idCategoria)">
+      <img [src]="categoria.imagenURL" alt="" style="object-fit: cover; height: 100%; width: 100%"
+        class="" />
+      <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent">
       </div>
-      }@empty{
-      <div #categorias></div>
-      }
+      <h2 class="absolute top-4 left-4 w-[80%] z-10 text-left !text-[1.6em] !font-[nunito]">
+        {{ categoria.titulo }}
+      </h2>
     </div>
+    }@empty{
+    <div #categorias></div>
+    }
+
+
+    }
   </div>
-  }
+
+
 </app-main-layout>

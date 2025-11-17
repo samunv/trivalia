@@ -48,19 +48,7 @@ export class CategoriaService {
     return this.http.get<Categoria | any>(url_servidor + "/api/categorias/obtener/" + idCategoria, { headers });
   }
 
-  jugarCategoria(uid: string): Observable<RespuestaServidor> {
-    return this.http.get<RespuestaServidor>(url_servidor + "/api/categorias/jugar/" + uid, {
-      headers:
-        { "Authorization": "Bearer " + this.token() }
-    })
-  }
 
-  continuarConMonedas(uid: string): Observable<RespuestaServidor> {
-    return this.http.get<RespuestaServidor>(url_servidor + "/api/categorias/continuar-con-monedas/" + uid, {
-      headers:
-        { "Authorization": "Bearer " + this.token() }
-    })
-  }
 }
 
 

@@ -42,7 +42,7 @@
         [ngStyle]="{
           border: usuario().idsPreguntasGanadas?.includes(pregunta.idPregunta)
             ? '1px white solid'
-            : '2px var(--color-bordes) dashed'
+            : '2px dashed var(--color-secundario)'
         }">
         <div class="flex flex-row items-center gap-5">
           <img [src]="pregunta.imagenURL" alt="" style="width: 70px; height: 70px; object-fit: contain" />

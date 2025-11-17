@@ -9,7 +9,13 @@
       <img src="/img/Trival-IA.png" alt="IA" class="!w-[150px] !h-[150px] animate-squeeze">
       <div>
         <h2>Hola, {{usuario().nombre}}</h2>
-        <p>¿Te atreves a responder una pregunta difícil hecha por <strong>Trival-IA</strong>?</p>
+        <p>¿Te atreves a responder una pregunta de dificultad Media hecha por <strong>Trival-IA</strong>?</p>
+        <div class="flex flex-row gap-3">
+          <p class="text-[var(--color-secundario)]">Recompensas:</p>
+          <item item="monedas" [cantidad]="400" [cssFlexRow]="'reverse'" [cssIconDimension]="20"></item>
+          <item item="estrellas" [cantidad]="30" [cssFlexRow]="'reverse'" [cssIconDimension]="20"></item>
+          <item item="regalo" [cantidad]="1" [cssFlexRow]="'reverse'" [cssIconDimension]="20"></item>
+        </div>
       </div>
 
     </div>
@@ -17,21 +23,37 @@
 
     <div class="flex flex-row items-center gap-4">
       <espacio [ancho]="10"></espacio>
-      <div class="flex flex-col items-end">
-        <p class="text-[var(--color-secundario)]">Recompensas:</p>
-        <item item="monedas" [cantidad]="400" [cssFlexRow]="'reverse'" [cssIconDimension]="20"></item>
-        <item item="estrellas" [cantidad]="30" [cssFlexRow]="'reverse'" [cssIconDimension]="20"></item>
-        <item item="regalo" [cantidad]="1" [cssFlexRow]="'reverse'" [cssIconDimension]="20"></item>
-      </div>
+
       <div class="">
         <app-boton-general [texto]="'Jugar (300 monedas)'" [tipo]="'destacado'"
-          (click)="obtenerPreguntaIA()"></app-boton-general>
+          (click)="jugarIA(usuario().uid)"></app-boton-general>
       </div>
 
     </div>
 
-
   </div>
+
+  <espacio [altura]="30"></espacio>
+  <div>
+    <app-texto-h1 [texto]="'¿Qué es Trival-IA?'"></app-texto-h1>
+
+    <div class="!mt-5 !p-[30px] border border-[var(--color-bordes)] rounded-[20px] bg-[var(--color-principal)] flex flex-col gap-6 justify-between">
+      <p>Es un modo de juego en el que la IA te puede hacer preguntas de cultura general de cualquier tipo.
+
+
+
+    </div>
+
+    <div class="!mt-5 !p-[30px] border border-[var(--color-bordes)] rounded-[20px] bg-[var(--color-principal)] flex flex-col gap-6 justify-between">
+      <p>Si ganas a Trival-IA, obtendrás 400 monedas, 30 estrellas y un regalo nuevo. Eso sí, si pierdes, perderás
+        también una vida.</p>
+    </div>
+
+    <div class="!mt-5 !p-[30px] border border-[var(--color-bordes)] rounded-[20px] bg-[var(--color-principal)] flex flex-col gap-6 justify-between">
+      <p>¡Además, dispondrás de tiempo ilimitado para responder!</p>
+    </div>
+  </div>
+
   }
 
   @if(partidaComenzada()) {
@@ -82,7 +104,7 @@
       ganado
 
     </p>
-    <div class="flex flex-row items-center gap-4">
+    <div class="flex flex-row items-center gap-4 !mt-3">
       <item [item]="'estrellas'" [cantidad]="30" [cssFlexRow]="'reverse'"></item>
       <item [item]="'monedas'" [cantidad]="400" [cssFlexRow]="'reverse'"></item>
       <item [item]="'regalo'" [cantidad]="1" [cssFlexRow]="'reverse'"></item>

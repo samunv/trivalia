@@ -42,8 +42,8 @@
 }
 
 .nav-lateral nav ul li svg {
-  width: 32px;
-  height: 32px;
+  width: 35px;
+  height: 35px;
 }
 
 .nav-lateral nav ul li a {
@@ -65,7 +65,7 @@
 .nav-lateral nav ul li a.activo {
   font-family: 'Inter-bold' !important;
   background-color: var(--azul-oscuro);
-  border: 2px dashed var(--color-secundario);
+  border: 2px solid var(--color-secundario);
 }
 
 

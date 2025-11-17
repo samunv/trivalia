@@ -15,6 +15,7 @@ import { UsuarioService } from '../../services/UsuarioService/usuario-service';
 import { Usuario } from '../../interfaces/Usuario';
 import { MensajeAlerta } from '../../components/mensaje-alerta/mensaje-alerta';
 import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
+import { PartidaService } from '../../services/PartidaService/partida-service';
 @Component({
   selector: 'app-pre-juego',
   imports: [MainLayout, Header, TextoH1, BotonGeneral, RouterLink, CommonModule, Espacio, MensajeAlerta],
@@ -25,6 +26,8 @@ import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
 export class PreJuego {
 
   private usuarioService: UsuarioService = inject(UsuarioService);
+  private partidaService: PartidaService = inject(PartidaService);
+
   constructor(
     private categoriaService: CategoriaService, private rutaActiva: ActivatedRoute,
     private preguntaService: PreguntaService,
@@ -99,7 +102,7 @@ export class PreJuego {
 
   verificarVidas(): Observable<boolean> {
 
-    return this.categoriaService.jugarCategoria(this.usuario().uid).pipe(
+    return this.partidaService.jugarPartida(this.usuario().uid).pipe(
       map((respuesta: RespuestaServidor) => {
         if (respuesta.resultado) {
           return true;

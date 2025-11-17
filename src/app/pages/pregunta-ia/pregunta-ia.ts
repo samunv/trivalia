@@ -11,10 +11,14 @@ import { Modal } from '../../components/modal/modal';
 import { UsuarioService } from '../../services/UsuarioService/usuario-service';
 import { Usuario } from '../../interfaces/Usuario';
 import { Router } from '@angular/router';
+import { PartidaService } from '../../services/PartidaService/partida-service';
+import { map, Observable } from 'rxjs';
+import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
+import { TextoH1 } from '../../components/texto-h1/texto-h1';
 
 @Component({
   selector: 'app-pregunta-ia',
-  imports: [Header, MainLayout, Item, Espacio, BotonGeneral, CommonModule, Modal],
+  imports: [Header, MainLayout, Item, Espacio, BotonGeneral, CommonModule, Modal, TextoH1],
   templateUrl: './pregunta-ia.html',
   styleUrl: './pregunta-ia.css'
 })
@@ -22,6 +26,7 @@ export class PreguntaIa {
 
   private preguntaService: PreguntaService = inject(PreguntaService);
   private usuarioService: UsuarioService = inject(UsuarioService);
+  private partidaService: PartidaService = inject(PartidaService);
   private router: Router = inject(Router);
 
   constructor() { }
@@ -35,28 +40,34 @@ export class PreguntaIa {
   finPartida: WritableSignal<boolean> = signal<boolean>(false);
   usuario: Signal<Usuario> = this.usuarioService.usuario;
 
-  obtenerPreguntaIA() {
-    if (Number(this.usuario().monedas) >= 300) {
-      this.restarMonedasUsuario(300);
-      this.partidaComenzada.set(true);
-      this.preguntaService.obtenerPreguntaGeneradaPorIA().subscribe((pregunta: Pregunta) => {
-        this.pregunta.set(pregunta);
-        const opciones: string[] = [];
-        opciones.push(String(pregunta.opcion_a), String(pregunta.opcion_b), String(pregunta.opcion_c));
-        this.opcionesPregunta.set(opciones);
-      })
-    } else {
-      alert("No tienes suficientes monedas para jugar a Trival-IA.");
-      this.router.navigate(['/jugar']);
-    }
+  private obtenerPreguntaIA() {
+    this.partidaComenzada.set(true);
+    this.preguntaService.obtenerPreguntaGeneradaPorIA().subscribe((pregunta: Pregunta) => {
+      this.pregunta.set(pregunta);
+      const opciones: string[] = [];
+      opciones.push(String(pregunta.opcion_a), String(pregunta.opcion_b), String(pregunta.opcion_c));
+      this.opcionesPregunta.set(opciones);
+    })
+
+  }
+
+   jugarIA(uid: string | any): void {
+   this.partidaService.jugarIA(uid).subscribe(
+      (resultado: RespuestaServidor) => {
+        if (resultado.resultado == true) {
+          this.obtenerPreguntaIA()
+          this.restarMonedasUsuario(300)
+        } else {
+          alert("No tienes monedas suficientes para juagar.")
+        }
+      }
+    )
   }
 
   verificarRespuesta(opcionSeleccionada: string) {
     this.respuestaSeleccionada.set(true);
     if (String(this.pregunta()?.respuesta_correcta) === opcionSeleccionada) {
       this.ganar()
-    } else {
-      this.fallar()
     }
     setTimeout(() => {
       this.finPartida.set(true);
@@ -76,14 +87,7 @@ export class PreguntaIa {
 
   }
 
-  fallar() {
-    this.mensaje.set("Incorrecto, respuesta correcta: " + this.pregunta()?.respuesta_correcta);
-    this.esCorrecta.set(false);
-    setTimeout(() => {
-      this.restarVidasUsuario(1);
-    }, 1500);
 
-  }
 
   actualizarPreguntasGanadasUsuario() {
     this.usuarioService.actualizarArrayPreguntasJugadas(Number(this.pregunta()?.idPregunta)).subscribe(
@@ -134,8 +138,7 @@ export class PreguntaIa {
   }
 
   restarMonedasUsuario(cantidadMonedas: number): void {
-    const totalMonedas: number = this.usuario().monedas! - cantidadMonedas;
-    this.usuarioService.actualizarItemUsuarioConClaveValor("monedas", totalMonedas).subscribe();
+    this.usuarioService.updateUsuarioSignal("monedas", Number(this.usuario().monedas) - cantidadMonedas)
   }
 
 

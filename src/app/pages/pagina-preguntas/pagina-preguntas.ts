@@ -21,6 +21,7 @@ import { RespuestaUsuario } from '../../interfaces/RespuestaUsuario';
 import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
 import { Categoria } from '../../interfaces/Categoria';
 import { Usuario } from '../../interfaces/Usuario';
+import { PartidaService } from '../../services/PartidaService/partida-service';
 
 
 @Component({
@@ -47,6 +48,7 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
   private preguntaService = inject(PreguntaService);
   private router = inject(Router);
   private usuarioService = inject(UsuarioService);
+  private partidaService: PartidaService = inject(PartidaService);
 
   // ==================== SIGNALS ====================
   usuario: Signal<Usuario> = this.usuarioService.usuario;
@@ -178,7 +180,7 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
     const uid = this.usuario()?.uid;
     if (!uid) return;
 
-    this.categoriaService.continuarConMonedas(uid).subscribe(
+    this.partidaService.continuarPartidaConMonedas(uid).subscribe(
       (respuesta: RespuestaServidor) => {
         if (respuesta.resultado == true) {
           this.usuarioService.updateUsuarioSignal("monedas", (Number(this.usuario()?.monedas) - 100))

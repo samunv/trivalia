@@ -4,15 +4,15 @@
     class="!h-max border-2 border-[white] rounded-4xl overflow-hidden bg-[var(--color-principal)] flex-1" [ngClass]="{'!border-[red]' : tiempo()<=3}">
 
     <div class="bg-gradient-to-r from-blue-600 to-purple-500 !h-max !p-3 rounded-3xl animacion-progreso flex flex-row items-center gap-2"
-      [style.width.%]="tiempo() * 10" [ngStyle]="{ 'background-color': tiempo() <= 3 ? 'red' : '' }">
+      [style.width.%]="tiempo() * 10/2" [ngStyle]="{ 'background-color': tiempo() <= 3 ? 'red' : '' }">
       <p class="text-[white] !font-[inter-bold]">{{ tiempo() }}</p>
     </div>
   </div>
-  <div>
+  <!-- <div>
     <app-boton-general [texto]="'+ 5 seg'" (click)="anadirTiempo(5, 50)">
       <espacio [ancho]="5"></espacio>
       <item [item]="'monedas'" [cantidad]="50" [cssIconDimension]="20"></item>
     </app-boton-general>
-  </div>
+  </div> -->
 
 </div>

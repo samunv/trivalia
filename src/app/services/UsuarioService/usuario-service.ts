@@ -24,7 +24,13 @@ export class UsuarioService {
 
   constructor() {
     if (localStorage.getItem('usuario')) {
-      this.setUsuarioSignal(JSON.parse(String(localStorage.getItem('usuario'))) as Usuario)
+      const usuarioAlmacenado: Usuario = JSON.parse(String(localStorage.getItem('usuario'))) as Usuario;
+      const uidAlmacenado: string = String(usuarioAlmacenado.uid);
+
+      this.obtenerUsuario(uidAlmacenado).subscribe((usuario: Usuario) => {
+        this.setUsuarioSignal(usuario);
+      })
+
     }
   }
 

@@ -20,7 +20,7 @@ export class TemporizadorComponent {
 
   private usuarioService = inject(UsuarioService);
   private intervalo: any;
-  private tiempoInicial: number = 10;
+  private tiempoInicial: number = 20;
   reiniciar = input<boolean>(false);
   terminar = output<boolean>({ alias: 'temporizadorTerminado' });
   tiempo = signal<number>(this.tiempoInicial);
@@ -69,35 +69,6 @@ export class TemporizadorComponent {
       clearInterval(this.intervalo);
       this.intervalo = null;
     }
-  }
-
-
-  anadirTiempo(tiempoAnadido: number, monedasRestar: number) {
-    if (Number(this.usuario().monedas) >= monedasRestar) {
-      this.actualizarTiempo(tiempoAnadido);
-      this.actualizarMonedasUsuario(monedasRestar);
-    } else {
-      alert("No tienes monedas suficientes")
-    }
-  }
-
-  actualizarTiempo(tiempoAnadido: number) {
-    this.tiempo.set(Number(this.tiempo() + tiempoAnadido))
-  }
-
-  actualizarMonedasUsuario(monedasRestar: number) {
-    let restoMonedas: number = this.usuario().monedas - monedasRestar
-    this.usuarioService.actualizarItemUsuarioConClaveValor("monedas", restoMonedas).subscribe(
-      {
-        next: () => {
-          //this.usuarioService.updateUsuario("monedas", restoMonedas);
-        },
-        error: (error) => {
-          console.log(error)
-        }
-      }
-    )
-
   }
 
   ngOnDestroy(): void {

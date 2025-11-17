@@ -54,24 +54,24 @@
   <espacio [altura]="20"></espacio>
   <div class="flex flex-row flex-wrap items-stretch text-center gap-5 justify-between animate-fade-in-up estadisticas">
     <div
-      class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2">
+      class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center justify-center rounded-[20px] !p-[30px] border border-[var(--color-bordes)] gap-2">
       <p>Preguntas Ganadas</p><strong class="text-4xl"><om-number-ticker
           [countTo]="usuario().idsPreguntasGanadas?.length || 0" [countDuration]="500"
           styleClass="ticker-custom-style"></om-number-ticker></strong>
     </div>
     <div
-      class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2">
-      <p>Fallos</p><strong class="text-4xl"><om-number-ticker [countTo]="usuario().cantidadPreguntasFalladas || 0"
+      class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center justify-center rounded-[20px] !p-[30px] border border-[var(--color-bordes)] gap-2">
+      <p>Preguntas Falladas</p><strong class="text-4xl"><om-number-ticker [countTo]="usuario().cantidadPreguntasFalladas || 0"
           [countDuration]="500" styleClass="ticker-custom-style"></om-number-ticker></strong>
     </div>
     <div
-      class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2">
+      class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center justify-center rounded-[20px] !p-[30px] border border-[var(--color-bordes)] gap-2">
       <p>Difíciles Ganadas</p><strong class="text-4xl"><om-number-ticker
           [countTo]="preguntasDificilesGanadas()" [countDuration]="500"
           styleClass="ticker-custom-style"></om-number-ticker></strong>
     </div>
     <div
-      class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center rounded-[20px] !p-5 border border-[var(--color-bordes)] gap-2">
+      class="flex-1 text-[white] bg-[var(--color-principal)] flex flex-col items-center justify-center rounded-[20px] !p-[30px] border border-[var(--color-bordes)] gap-2">
       <p>Partidas Ganadas</p><strong class="text-4xl"><om-number-ticker
           [countTo]="usuario().cantidadPartidasGanadas || 0" [countDuration]="500"
           styleClass="ticker-custom-style"></om-number-ticker></strong>

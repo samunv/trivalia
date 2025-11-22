@@ -29,37 +29,8 @@ export class FinPartida {
 
   constructor() { }
 
-  ngOnInit(){
-    this.actualizarMonedasUsuario(this.monedasRecompensa)
-    this.actualizarPartidasGanadasUsuario()
-    this.actualizarRegaloDisponibleUsuario(true)
-  }
-
   cerrar() {
     this.router.navigate(["/jugar"])
   }
-
-  actualizarMonedasUsuario(monedasNuevas: number) {
-    let monedasTotales: number = Number(this.usuario().monedas) + monedasNuevas;
-    this.usuarioService.actualizarItemUsuarioConClaveValor("monedas", monedasTotales)
-      .subscribe({
-        next: () => {
-          //this.usuarioService.updateUsuario("monedas", monedasTotales)
-        },
-        error: (error) => {
-          console.log(error)
-        }
-      })
-  }
-
-  actualizarPartidasGanadasUsuario(){
-    this.usuarioService.actualizarPartidasGanadas()
-    //this.usuarioService.updateUsuario("partidasGanadas", Number(this.usuario()?.partidasGanadas) + 1)
-  }
-
-  actualizarRegaloDisponibleUsuario(valor: boolean){
-    this.usuarioService.actualizarRegaloDisponible(valor);
-  }
-
 
 }

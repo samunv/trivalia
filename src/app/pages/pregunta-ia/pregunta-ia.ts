@@ -68,6 +68,9 @@ export class PreguntaIa {
     this.respuestaSeleccionada.set(true);
     if (String(this.pregunta()?.respuesta_correcta) === opcionSeleccionada) {
       this.ganar()
+    }else{
+      this.mensaje.set("Incorrecto, respuesta correcta: " + this.pregunta()?.respuesta_correcta)
+      this.esCorrecta.set(false)
     }
     setTimeout(() => {
       this.finPartida.set(true);

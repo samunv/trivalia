@@ -71,7 +71,7 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
   permitirContinuar = signal<boolean | undefined>(false);
 
   // ==================== COMPUTED ====================
-  preguntaActual = computed(() => this.preguntas()[this.preguntaIndex()] || null);
+  preguntaActual: Signal<Pregunta> = computed(() => this.preguntas()[this.preguntaIndex()] || null);
 
   opcionesPregunta = computed(() => {
     const pregunta = this.preguntaActual();
@@ -95,6 +95,8 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
     effect(() => {
       if (this.usuario() && this.vidasRestantes() <= 0) {
         this.mensaje.set("¡Te has quedado sin vidas!");
+        this.navegar("/categoria/"+this.categoria(
+        ).idCategoria)
       }
       if (this.temporizadorFinalizado()) {
         this.fallarPorTiempoFinalizado()
@@ -187,25 +189,13 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
           this.turnoPerdido.set(false);
           this.aumentarIndexPregunta();
           this.respuestaSeleccionada.set("")
-        }else{
+        } else {
           this.mensaje.set("No tienes monedas suficientes")
-          setTimeout(() => this.navegar("/categoria/"+this.categoria().idCategoria), 1500);
+          setTimeout(() => this.navegar("/categoria/" + this.categoria().idCategoria), 1500);
         }
       }
     )
 
-    // if (this.monedasDisponibles() >= cantidadMonedas) {
-    //   const monedasRestantes = this.monedasDisponibles() - cantidadMonedas;
-    //   //this.usuarioService.updateUsuario("monedas", monedasRestantes)
-    //   this.usuarioService.actualizarItemUsuarioConClaveValor("monedas", monedasRestantes)
-    //     .subscribe({ next: () => { }, error: err => console.error(err) });
-
-    //   this.turnoPerdido.set(false);
-    //   this.aumentarIndexPregunta();
-    // } else {
-    //   this.mensaje.set("No tienes monedas suficientes");
-    //   setTimeout(() => this.navegar("/jugar"), 1500);
-    // }
   }
 
   // ==================== NAVEGACIÓN ====================
@@ -225,8 +215,33 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private finalizarPartida() {
-    this.finPartida.set(true);
-    this.ganarPartida.set(true);
+    this.ganar(this.usuario().uid as string, this.preguntaActual()).subscribe(
+      (resultadoGanar: boolean) => {
+        if (resultadoGanar === true) {
+          this.finPartida.set(true);
+          this.ganarPartida.set(true);
+          this.actualizarUsuario();
+        }
+      }
+    );
+
+  }
+
+
+  private ganar(uid: string, pregunta: Pregunta): Observable<boolean> {
+    return this.partidaService.ganarPartida(uid, pregunta).pipe(
+      map(
+        (respuesta: RespuestaServidor) => {
+          return respuesta.resultado as boolean;
+        }
+      )
+    )
+
+  }
+
+  private actualizarUsuario(): void {
+    this.usuarioService.updateUsuarioSignal("regaloDisponible", true);
+    this.usuarioService.updateUsuarioSignal("monedas", this.usuario().monedas as number + 100)
   }
 
   navegar(ruta: string) {

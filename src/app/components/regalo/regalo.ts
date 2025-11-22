@@ -1,8 +1,10 @@
-import { Component, EventEmitter, inject, Output, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Output, Signal, signal } from '@angular/core';
 import { Modal } from '../modal/modal';
 import { UsuarioService } from '../../services/UsuarioService/usuario-service';
 import { RegaloInterface } from '../../interfaces/RegaloInterface';
 import { Item } from '../item/item';
+import { RegaloService } from '../../services/RegaloService/regalo-service';
+import { Usuario } from '../../interfaces/Usuario';
 
 @Component({
   selector: 'app-regalo',
@@ -12,12 +14,13 @@ import { Item } from '../item/item';
 })
 export class Regalo {
   private usuarioService = inject(UsuarioService);
+  private regaloService = inject(RegaloService)
 
   @Output() cancelar = new EventEmitter<void>();
 
   constructor() { }
 
-  usuario = this.usuarioService.usuario;
+  usuario: Signal<Usuario> = this.usuarioService.usuario;
   itemObtenido = signal<"estrellas" | "monedas" | "vidas" | undefined>(undefined);
   cantidadItemObtenido = signal<number>(0);
   vectorRegaloVisible = signal<boolean>(true);
@@ -27,109 +30,31 @@ export class Regalo {
   }
 
   abrirRegalo(): void {
-    console.log("Abrir regalo llamado");
-    console.log("Usuario:", this.usuario());
-    console.log("Vector visible:", this.vectorRegaloVisible());
-
-
     this.vectorRegaloVisible.set(false);
-    const regalo = this.obtenerRegalo();
-    console.log("Regalo generado:", regalo);
-    this.asignarRecompensaInterfaz(regalo);
-    console.log("ItemObtenido >>>  " + this.itemObtenido())
-    console.log("cantidadItems >>>  " + this.cantidadItemObtenido())
-    this.actualizarItemsUsuario(regalo);
-    this.actualizarFechaUltimoRegaloUsuario(new Date())
-
+    this.regaloService.abrirRegalo(String(this.usuario().uid))
+      .subscribe(
+        (regaloObtenido: RegaloInterface) => {
+          this.mostrarRecompensaInterfaz(regaloObtenido);
+          this.actualizarUsuario(regaloObtenido);
+        })
   }
 
 
-  asignarRecompensaInterfaz(regaloObtenido: RegaloInterface) {
+  mostrarRecompensaInterfaz(regaloObtenido: RegaloInterface) {
     this.itemObtenido.set(regaloObtenido.item)
     this.cantidadItemObtenido.set(Number(regaloObtenido.cantidad))
   }
 
-  comprobarFechaUltimoRegaloDelUsuario(): boolean {
-    const ultimaVez = this.obtenerUltimaFecha()
-    const ahora = new Date();
+  actualizarUsuario(regaloObtenido: RegaloInterface) {
+    const itemClave = regaloObtenido.item as "estrellas" | "monedas" | "vidas";
 
-    if (this.obtenerDiferenciaDeHoras(ahora, ultimaVez) >= 1) {
-      return true
-    } else {
-      return false
-    }
+    const valorActual: number | undefined = this.usuario()[itemClave];
+    const nuevoValor = Number(valorActual || 0) + Number(regaloObtenido.cantidad);
+
+    this.usuarioService.updateUsuarioSignal(itemClave, nuevoValor);
+    this.usuarioService.updateUsuarioSignal("regaloDisponible", false);
   }
-
-  obtenerUltimaFecha(): Date {
-    return new Date(this.usuario().fechaUltimoRegalo)
-  }
-
-  obtenerDiferenciaDeHoras(ahora: Date, ultimaVez: Date): number {
-    const diferenciaMs = ahora.getTime() - ultimaVez.getTime();
-    const horasPasadas = diferenciaMs / (1000 * 60 * 60);
-    return horasPasadas;
-  }
-
-  obtenerRegalo(): RegaloInterface {
-    this.usuarioService.actualizarRegaloDisponible(false);
-    const itemObtenido = this.obtenerItemAleatorio()
-    let cantidadItems = 0;
-    let regalo: RegaloInterface = {};
-
-    if (itemObtenido == "vidas") {
-      cantidadItems = this.obtenerCantidadItem(1, 2);
-    } else if (itemObtenido == "estrellas") {
-      cantidadItems = this.obtenerCantidadItem(10, 30);
-    } else if (itemObtenido == "monedas") {
-      cantidadItems = this.obtenerCantidadItem(100, 300)
-    }
-
-    regalo = {
-      item: itemObtenido,
-      cantidad: cantidadItems
-    }
-    return regalo;
-  }
-
-  obtenerItemAleatorio(): "estrellas" | "vidas" | "monedas" {
-    const opciones: ("estrellas" | "vidas" | "monedas")[] = ["estrellas", "vidas", "monedas"];
-    const indice = Math.floor(Math.random() * opciones.length);
-    return opciones[indice];
-  }
-
-  obtenerCantidadItem(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-  actualizarItemsUsuario(regalo: RegaloInterface) {
-    let claveItem: string = regalo.item == "estrellas" ? "estrellas" : regalo.item == "monedas" ? "monedas" : "vidas"
-    let cantidadItem: number = Number(regalo.cantidad)
-    let cantidadTotalItem: number = Number(this.usuario()[claveItem]) + Number(cantidadItem);
-
-    this.usuarioService.actualizarItemUsuarioConClaveValor(claveItem, cantidadTotalItem).subscribe({
-      next: () => {
-        //this.usuarioService.updateUsuario(claveItem, cantidadTotalItem)
-      },
-      error: (error) => {
-        console.log("Error: " + error)
-      }
-    })
-
-  }
-
-  actualizarFechaUltimoRegaloUsuario(ahora: Date) {
-    this.usuarioService.actualizarFechaUltimoRegaloUsuario(ahora).subscribe(
-      {
-        next: () => {
-          //this.usuarioService.updateUsuario("fechaUltimoRegalo", ahora)
-        },
-        error: (error) => {
-          console.log(error)
-          alert(error)
-        }
-      }
-    )
-  }
-
 
 }
+
+

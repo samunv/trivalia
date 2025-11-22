@@ -4,6 +4,7 @@ import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
 import { url_servidor } from '../../urlServidor';
 import { HttpClient } from '@angular/common/http';
 import { UsuarioService } from './../UsuarioService/usuario-service';
+import { Pregunta } from '../../interfaces/Pregunta';
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +34,12 @@ export class PartidaService {
     return this.http.get<RespuestaServidor>(url_servidor + "/api/partida/jugar-ia/" + uid, {
       headers:
         { "Authorization": "Bearer " + this.token() }
+    })
+  }
+
+  ganarPartida(uid: string, pregunta: Pregunta): Observable<RespuestaServidor> {
+    return this.http.post<RespuestaServidor>(url_servidor + "/api/partida/ganar/" + uid, pregunta, {
+      headers: { "Authorization": "Bearer " + this.token() }
     })
   }
 

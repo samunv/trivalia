@@ -90,57 +90,6 @@ export class UsuarioService {
   }
 
 
-  actualizarItemUsuarioConClaveValor(claveItem: string, cantidadItem: number): Observable<any> {
-    const clave =
-      claveItem === "vidas" ? "vidas" :
-        claveItem === "monedas" ? "monedas" :
-          "estrellas";
-
-    return from(updateDoc(this.usuarioDocRef, { [clave]: cantidadItem, }));
-  }
-
-  actualizarArrayPreguntasJugadas(idPregunta: number): Observable<any> {
-    return from(updateDoc(this.usuarioDocRef, {
-      arrayIdPreguntasGanadas: arrayUnion(idPregunta)
-    }));
-  }
-
-  actualizarFechaUltimoRegaloUsuario(ahora: Date): Observable<any> {
-    return from(updateDoc(this.usuarioDocRef, {
-      fechaUltimoRegalo: ahora
-    }));
-  }
-
-  async actualizarPreguntasFalladas(): Promise<any> {
-    try {
-      await updateDoc(this.usuarioDocRef, {
-        preguntasFalladas: increment(1)
-      });
-      console.log("Actualización exitosa");
-    } catch (err) {
-      console.error("Error actualizando preguntasFalladas:", err);
-    }
-  }
-
-  async actualizarPartidasGanadas() {
-    try {
-      await updateDoc(this.usuarioDocRef, { partidasGanadas: increment(1) })
-      console.log("Actualización de partidas ganadas exitosa");
-
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  async actualizarRegaloDisponible(valor: boolean) {
-    try {
-      await updateDoc(this.usuarioDocRef, { regaloDisponible: valor })
-      console.log("Actualización de regalo disponible exitosa");
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   obtenerUsuarios(limite: number): Observable<Usuario[]> {
     const jwtCliente = this.token();
     return this.http.get<Usuario[]>(url_servidor + "/api/usuarios/listar/" + limite, {

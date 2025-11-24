@@ -93,14 +93,7 @@ export class PreguntaIa {
 
 
   actualizarPreguntasGanadasUsuario() {
-    this.usuarioService.actualizarArrayPreguntasJugadas(Number(this.pregunta()?.idPregunta)).subscribe(
-      {
-        next: () => {
-          // this.usuarioService.updateUsuario("arrayIdPreguntasGanadas", [...this.usuario().arrayIdPreguntasGanadas!, 0]);
-        },
-        error: (error) => { console.error("Error al actualizar preguntas jugadas del usuario:", error); }
-      }
-    )
+
   }
 
   salir() {
@@ -117,27 +110,15 @@ export class PreguntaIa {
   }
 
   aumentarMonedasUsuario(cantidadMonedas: number): void {
-    const totalMonedas: number = this.usuario().monedas! + cantidadMonedas;
-    this.usuarioService.actualizarItemUsuarioConClaveValor("monedas", totalMonedas).subscribe(() => {
-      //this.usuarioService.updateUsuario("monedas", totalMonedas);
-    }
-    )
+
   }
 
   aumentarEstrellasUsuario(cantidadEstrellas: number): void {
-    const totalEstrellas: number = this.usuario().estrellas! + cantidadEstrellas;
-    this.usuarioService.actualizarItemUsuarioConClaveValor("estrellas", totalEstrellas).subscribe(() => {
-      //this.usuarioService.updateUsuario("estrellas", totalEstrellas);
-    }
-    )
+
   }
 
   restarVidasUsuario(cantidadVidas: number): void {
-    const totalVidas: number = this.usuario().vidas! - cantidadVidas;
-    this.usuarioService.actualizarItemUsuarioConClaveValor("vidas", totalVidas).subscribe(() => {
-      //this.usuarioService.updateUsuario("vidas", totalVidas);
-    }
-    );
+    
   }
 
   restarMonedasUsuario(cantidadMonedas: number): void {

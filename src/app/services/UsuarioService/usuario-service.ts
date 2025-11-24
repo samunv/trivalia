@@ -12,7 +12,6 @@ import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
 })
 export class UsuarioService {
 
-  private firestore = inject(Firestore)
   private http = inject(HttpClient);
 
   private tokenSignal: WritableSignal<string | any> = signal<string | any>(localStorage.getItem('tokenJWT'))
@@ -28,16 +27,10 @@ export class UsuarioService {
       const uidAlmacenado: string = String(usuarioAlmacenado.uid);
 
       this.obtenerUsuario(uidAlmacenado).subscribe((usuario: Usuario) => {
-        this.setUsuarioSignal(usuario);
+        this.usuarioSignal.set(usuario);
       })
 
     }
-  }
-
-  private get usuarioDocRef() {
-    const uid = this.usuarioSignal()?.uid;
-    if (!uid) throw new Error("Usuario no logueado");
-    return doc(this.firestore, 'usuarios', uid);
   }
 
 
@@ -108,7 +101,7 @@ export class UsuarioService {
 
   obtenerUsuario(uid: string): Observable<Usuario> {
     const jwtCliente = this.token();
-    return this.http.get<Usuario | any>(url_servidor + "/api/usuarios/" + uid, {
+    return this.http.get<Usuario | any>(url_servidor + "/api/usuarios/obtener/" + uid, {
       headers: { "Authorization": "Bearer " + jwtCliente }
     })
   }

@@ -16,22 +16,14 @@
   <p class="!mt-5">Resultados para {{ valorBusqueda() }}</p>
   }
 
-  <div class="!mt-6 grid grid-cols-[repeat(auto-fill,minmax(16em,1fr))] gap-5">
+  <div class="!mt-6 grid grid-cols-[repeat(auto-fill,minmax(15em,1fr))] gap-5">
 
 
     @if (!valorBusqueda()) {
-    <!-- <div
-      class="rounded-[20px] h-[250px] cursor-pointer bg-[var(--color-principal)] overflow-hidden flex flex-col justify-center items-center border border-[var(--color-secundario)] hover:border-[var(--color-amarillo)]"
-      (click)="navegarHaciaIA()">
-      <h2 class="top-4 left-4 w-[80%] z-10 text-left !text-[1.6em] !font-[nunito]">juega contra la IA✨</h2>
-      <img [src]="'img/Trival-IA.png'" alt="" class="!w-[150px] !h-[150px]" />
-       <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-transparent"></div> 
-
-    </div> -->
 
     @for (categoria of categorias(); track $index) {
     <div #categorias
-      class="relative rounded-[20px] h-[250px] cursor-pointer overflow-hidden border-1 border-[var(--color-secundario)] hover:border-[var(--color-amarillo)]"
+      class="relative rounded-[20px] h-[210px] cursor-pointer overflow-hidden hover:scale-102 transition-all duration-100"
       (click)="navegarHaciaCategoria(categoria.idCategoria)">
       <img [src]="categoria.imagenURL" alt="" style="object-fit: cover; height: 100%; width: 100%"
         class=" hover:scale-105" />
@@ -46,7 +38,7 @@
 
     @for (categoria of filtrarCategorias(valorBusqueda()); track $index) {
     <div
-      class="relative rounded-[20px] h-[250px] cursor-pointer  overflow-hidden border-1 border-[var(--color-secundario)] hover:border-[var(--color-amarillo)]"
+      class="relative rounded-[20px] h-[250px] cursor-pointer overflow-hidden hover:scale-102 transition-all duration-100"
       (click)="navegarHaciaCategoria(categoria.idCategoria)">
       <img [src]="categoria.imagenURL" alt="" style="object-fit: cover; height: 100%; width: 100%"
         class="" />

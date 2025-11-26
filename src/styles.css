@@ -47,11 +47,13 @@
 body {
   font-family: 'Inter-regular', sans-serif;
   overflow-x: hidden;
+
 }
 
 p,
 li {
   font-family: 'Inter-regular' !important;
+
 }
 
 button {

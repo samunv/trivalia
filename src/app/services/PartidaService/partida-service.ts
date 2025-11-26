@@ -5,6 +5,8 @@ import { url_servidor } from '../../urlServidor';
 import { HttpClient } from '@angular/common/http';
 import { UsuarioService } from './../UsuarioService/usuario-service';
 import { Pregunta } from '../../interfaces/Pregunta';
+import { RespuestaUsuario } from '../../interfaces/RespuestaUsuario';
+import { ResultadoRespuestaRespondida } from '../../interfaces/ResultadoRespuestaRespondida';
 
 @Injectable({
   providedIn: 'root'
@@ -42,5 +44,22 @@ export class PartidaService {
       headers: { "Authorization": "Bearer " + this.token() }
     })
   }
+
+  obtenerPrimeraPregunta(idCategoria: number): Observable<Pregunta>{
+    return this.http.get<Pregunta>(url_servidor + "/api/partida/obtener-primera/"+ idCategoria, {
+      headers: { "Authorization": "Bearer " + this.token() }
+    })
+  }
+
+  responderPregunta(respuestaUsuario: RespuestaUsuario, uid: string): Observable<ResultadoRespuestaRespondida> {
+      console.log("Respuesta usuario >>"+respuestaUsuario.respuestaSeleccionada)
+      return this.http.post<ResultadoRespuestaRespondida>(url_servidor + "/api/partida/responder-pregunta/" + uid,
+        respuestaUsuario ,
+        {
+          headers: {
+            "Authorization": "Bearer " + this.token()
+          }
+        })
+    }
 
 }

@@ -53,6 +53,16 @@
           </a>
         </li>
         <li>
+          <a routerLink="/crear" routerLinkActive="activo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+              <title xmlns="">add-to-queue</title>
+              <path fill="#ffffff"
+                d="M11 15h2v-3h3v-2h-3V7h-2v3H8v2h3zm-3 6v-2H4q-.825 0-1.412-.587T2 17V5q0-.825.588-1.412T4 3h16q.825 0 1.413.588T22 5v12q0 .825-.587 1.413T20 19h-4v2z" />
+            </svg>
+            <p>Crear</p>
+          </a>
+        </li>
+        <li>
           <a routerLink="/perfil" routerLinkActive="activo">
             <img [src]="fotoUsuario" alt="" style="
               width: 35px;
@@ -64,10 +74,12 @@
             <p>Mi Perfil</p>
           </a>
         </li>
+
       </ul>
       <hr class="border-[var(--color-bordes)] !mt-7 !mb-7" />
 
-      <button (click)="abrirVentanaRegalo()" [disabled]="!usuario().regaloDisponible" [ngClass]="{'border-2 border-dashed border-[var(--color-secundario)]': !usuario().regaloDisponible }"
+      <button (click)="abrirVentanaRegalo()" [disabled]="!usuario().regaloDisponible"
+        [ngClass]="{'border-2 border-dashed border-[var(--color-secundario)]': !usuario().regaloDisponible }"
         class="group not-only:flex flex-row items-center justify-center !p-[5px] !pt-[15px] !pb-[15px] gap-[5px] hover:cursor-pointer hover: rounded-[10px] border border-[var(--color-bordes)] !w-full bg-[var(--azul-oscuro)]">
         @if(usuario().regaloDisponible){
         <p class="text-[16px] text-[white] !font-[inter-bold]">Abrir regalo</p>
@@ -104,8 +116,8 @@
     </nav>
   </div>
 
-  <p class="text-[var(--color-bordes)] text-[16px] text-center">Trivalia®. Creado por <a
-      href="https://www.linkedin.com/in/samuel-navasardyan-vardanyan/" target="_blank" class="underline">SamuNV</a></p>
+  <!-- <p class="text-[var(--color-bordes)] text-[16px] text-center">Trivalia®. Creado por <a
+      href="https://www.linkedin.com/in/samuel-navasardyan-vardanyan/" target="_blank" class="underline">SamuNV</a></p> -->
 </div>
 
 @if(ventanaRegaloAbierta){

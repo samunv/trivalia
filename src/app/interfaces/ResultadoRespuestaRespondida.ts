@@ -1,4 +1,5 @@
 import { Usuario } from "./Usuario";
+import { Pregunta } from './Pregunta';
 
 export interface ResultadoRespuestaRespondida {
   esCorrecta?: boolean,
@@ -7,4 +8,6 @@ export interface ResultadoRespuestaRespondida {
   cantidadItemAfectado?: number,
   continuar?: boolean,
   usuarioActualizado?: Usuario
+  siguientePregunta?: Pregunta,
+  preguntaIndex?: number
 }

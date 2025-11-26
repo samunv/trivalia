@@ -45,7 +45,6 @@ import { PartidaService } from '../../services/PartidaService/partida-service';
 })
 export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
   private categoriaService = inject(CategoriaService);
-  private preguntaService = inject(PreguntaService);
   private router = inject(Router);
   private usuarioService = inject(UsuarioService);
   private partidaService: PartidaService = inject(PartidaService);
@@ -71,7 +70,7 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
   permitirContinuar = signal<boolean | undefined>(false);
 
   // ==================== COMPUTED ====================
-  preguntaActual: Signal<Pregunta> = computed(() => this.preguntas()[this.preguntaIndex()] || null);
+  preguntaActual: WritableSignal<Pregunta | undefined> = signal<Pregunta | undefined>(undefined)
 
   opcionesPregunta = computed(() => {
     const pregunta = this.preguntaActual();
@@ -95,7 +94,7 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
     effect(() => {
       if (this.usuario() && this.vidasRestantes() <= 0) {
         this.mensaje.set("¡Te has quedado sin vidas!");
-        this.navegar("/categoria/"+this.categoria(
+        this.navegar("/categoria/" + this.categoria(
         ).idCategoria)
       }
       if (this.temporizadorFinalizado()) {
@@ -121,46 +120,62 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
       return;
     }
     this.categoriaTitulo.set(String(this.categoria().titulo));
-    this.obtenerPreguntas(Number(this.categoria().idCategoria));
+    //this.obtenerPreguntas(Number(this.categoria().idCategoria));
+    this.obtenerPrimeraPregunta(Number(this.categoria().idCategoria))
+
   }
 
-  private obtenerPreguntas(idCategoria: number) {
-    this.preguntaService.obtenerPreguntas(idCategoria).subscribe({
-      next: preguntas => this.preguntas.set(preguntas),
-      error: err => console.error("Error al cargar preguntas:", err)
-    });
+  private obtenerPrimeraPregunta(idCategoria: number) {
+    this.preguntaIndex.set(1)
+    this.partidaService.obtenerPrimeraPregunta(idCategoria).subscribe(
+      (pregunta) => {
+        this.preguntaActual.set(pregunta)
+      }
+    )
   }
+
+  // private obtenerPreguntas(idCategoria: number) {
+  //   this.preguntaService.obtenerPreguntas(idCategoria).subscribe({
+  //     next: preguntas => this.preguntas.set(preguntas),
+  //     error: err => console.error("Error al cargar preguntas:", err)
+  //   });
+  // }
+
 
   // ==================== VERIFICACIÓN DE RESPUESTA ====================
   verificarRespuesta(respuesta: string) {
-    console.log(respuesta + " idPregunta: " + this.preguntaActual().idPregunta)
+    console.log(respuesta + " idPregunta: " + this.preguntaActual()!.idPregunta)
     const pregunta = this.preguntaActual();
     if (!pregunta) return;
     if (this.inputEscribir && this.inputFocusActivado()) {
       this.inputFocusActivado.set(false)
     }
     this.respuestaSeleccionada.set(respuesta.toLowerCase().trim());
-    this.preguntaService.responderPregunta({ idPregunta: Number(this.preguntaActual().idPregunta), respuestaSeleccionada: respuesta } as RespuestaUsuario)
+    this.partidaService.responderPregunta({ idPregunta: Number(this.preguntaActual()!.idPregunta), idCategoria: Number(this.categoria().idCategoria), respuestaSeleccionada: respuesta } as RespuestaUsuario, String(this.usuario().uid))
       .subscribe((resultado: ResultadoRespuestaRespondida) => {
         this.temporizadorPausado.set(true);
         this.mensaje.set(String(resultado.mensaje));
         this.esCorrecta.set(resultado.esCorrecta);
-        setTimeout(() => { this.mensaje.set(""); this.esCorrecta.set(undefined) }, 1000)
-        this.usuarioService.updateUsuarioSignal("vidas", resultado.usuarioActualizado?.vidas)
-        this.usuarioService.updateUsuarioSignal("estrellas", resultado.usuarioActualizado?.estrellas)
-        this.usuarioService.updateUsuarioSignal("idsPreguntasGanadas", resultado.usuarioActualizado?.idsPreguntasGanadas)
-        this.usuarioService.updateUsuarioSignal("cantidadPreguntasFalladas", resultado.usuarioActualizado?.cantidadPreguntasFalladas)
-        this.respuestaInput.set("")
+        setTimeout(() => { this.mensaje.set(""); this.esCorrecta.set(undefined) }, 1000);
+        this.usuarioService.updateUsuarioSignal("vidas", resultado.usuarioActualizado?.vidas);
+        this.usuarioService.updateUsuarioSignal("estrellas", resultado.usuarioActualizado?.estrellas);
+        this.usuarioService.updateUsuarioSignal("idsPreguntasGanadas", resultado.usuarioActualizado?.idsPreguntasGanadas);
+        this.usuarioService.updateUsuarioSignal("cantidadPreguntasFalladas", resultado.usuarioActualizado?.cantidadPreguntasFalladas);
+        this.respuestaInput.set("");
 
-        if (resultado.continuar) {
-          setTimeout(() => { this.respuestaSeleccionada.set(""), this.aumentarIndexPregunta() }, 1000)
-        } else {
-          setTimeout(() => {
-            this.turnoPerdido.set(true)
-          }, 1000);
+        if (!resultado.siguientePregunta && resultado.continuar) {
+          setTimeout(() => { this.finalizarPartida(); }, 1000);
 
         }
 
+        if (resultado.continuar) {
+          setTimeout(() => { this.respuestaSeleccionada.set(""), this.preguntaActual.set(resultado.siguientePregunta ? resultado.siguientePregunta : undefined); this.preguntaIndex.set(Number(resultado.preguntaIndex));}, 1000);
+        } else {
+          setTimeout(() => {
+            this.turnoPerdido.set(true);
+          }, 1000);
+
+        }
 
       })
   }
@@ -178,32 +193,37 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
 
 
   // ==================== CONTINUAR CON MONEDAS ====================
-  continuarConMonedas(cantidadMonedas: number) {
+  reintentar() {
     const uid = this.usuario()?.uid;
     if (!uid) return;
+     this.turnoPerdido.set(false);
+    this.respuestaSeleccionada.set("")
+    this.obtenerPrimeraPregunta(Number(this.categoria().idCategoria))
 
-    this.partidaService.continuarPartidaConMonedas(uid).subscribe(
-      (respuesta: RespuestaServidor) => {
-        if (respuesta.resultado == true) {
-          this.usuarioService.updateUsuarioSignal("monedas", (Number(this.usuario()?.monedas) - 100))
-          this.turnoPerdido.set(false);
-          this.aumentarIndexPregunta();
-          this.respuestaSeleccionada.set("")
-        } else {
-          this.mensaje.set("No tienes monedas suficientes")
-          setTimeout(() => this.navegar("/categoria/" + this.categoria().idCategoria), 1500);
-        }
-      }
-    )
+    // this.partidaService.continuarPartidaConMonedas(uid).subscribe(
+    //   (respuesta: RespuestaServidor) => {
+    //     if (respuesta.resultado == true) {
+    //       this.usuarioService.updateUsuarioSignal("monedas", (Number(this.usuario()?.monedas) - 100))
+    //       this.turnoPerdido.set(false);
+    //       this.respuestaSeleccionada.set("")
+    //       this.obtenerPrimeraPregunta(Number(this.categoria().idCategoria))
+    //     } else {
+    //       this.mensaje.set("No tienes monedas suficientes")
+    //       setTimeout(() => this.navegar("/categoria/" + this.categoria().idCategoria), 1500);
+    //     }
+    //   }
+    // )
 
   }
 
-  // ==================== NAVEGACIÓN ====================
+  /**
+ * @deprecated Esta función ya no se utiliza. La lógica proviene directamente del servidor.
+ */
   private aumentarIndexPregunta() {
 
     if (this.preguntaIndex() < this.preguntas().length - 1) {
       this.preguntaIndex.update(i => i + 1);
-      // Reiniciar temporizador y volver a declararlo como false en un segundo
+      //     // Reiniciar temporizador y volver a declararlo como false en un segundo
       this.reiniciarTemporizador.set(true);
       this.temporizadorPausado.set(false);
       setInterval(() => { this.reiniciarTemporizador.set(false) }, 1000)
@@ -215,7 +235,7 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private finalizarPartida() {
-    this.ganar(this.usuario().uid as string, this.preguntaActual()).subscribe(
+    this.ganar(this.usuario().uid as string, this.preguntaActual()!).subscribe(
       (resultadoGanar: boolean) => {
         if (resultadoGanar === true) {
           this.finPartida.set(true);

@@ -8,7 +8,14 @@ import { Component, Input } from '@angular/core';
 })
 export class Item {
   @Input() item?: "estrellas" | "monedas" | "vidas" | "regalo";
-  @Input() cantidad?: number = 0;
+  @Input() cantidad: number = 0
   @Input() cssFlexRow?: "row" | "reverse" = "row"
   @Input() cssIconDimension: number = 30
+
+  obtenerCantidadFormateada(cantidad: number): string {
+    return cantidad > 1000 ? Math.floor(cantidad / 1000) + 'k' : cantidad.toString();
+  }
 }
+
+
+

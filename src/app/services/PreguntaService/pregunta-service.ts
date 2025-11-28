@@ -42,13 +42,13 @@ export class PreguntaService {
 
   }
 
-  obtenerRespuestaCorrecta(idPregunta: number): Observable<string | any> {
-    const headers = new HttpHeaders({
-      "Authorization": `Bearer ${this.token()}`
-    })
-    return this.http.get<{ respuesta_correcta: string }>(url_servidor + "/api/preguntas/obtener-respuesta-correcta/" + idPregunta, { headers })
+  // obtenerRespuestaCorrecta(idPregunta: number): Observable<string | any> {
+  //   const headers = new HttpHeaders({
+  //     "Authorization": `Bearer ${this.token()}`
+  //   })
+  //   return this.http.get<{ respuesta_correcta: string }>(url_servidor + "/api/preguntas/obtener-respuesta-correcta/" + idPregunta, { headers })
 
-  }
+  // }
 
   obtenerPreguntasDificiles(arrayIdPreguntas: number[] | any[]): Observable<Pregunta[] | any> {
 

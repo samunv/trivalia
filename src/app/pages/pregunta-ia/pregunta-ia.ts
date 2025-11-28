@@ -51,8 +51,8 @@ export class PreguntaIa {
 
   }
 
-   jugarIA(uid: string | any): void {
-   this.partidaService.jugarIA(uid).subscribe(
+  jugarIA(uid: string | any): void {
+    this.partidaService.jugarIA(uid).subscribe(
       (resultado: RespuestaServidor) => {
         if (resultado.resultado == true) {
           this.obtenerPreguntaIA()
@@ -68,7 +68,7 @@ export class PreguntaIa {
     this.respuestaSeleccionada.set(true);
     if (String(this.pregunta()?.respuesta_correcta) === opcionSeleccionada) {
       this.ganar()
-    }else{
+    } else {
       this.mensaje.set("Incorrecto, respuesta correcta: " + this.pregunta()?.respuesta_correcta)
       this.esCorrecta.set(false)
     }
@@ -82,10 +82,17 @@ export class PreguntaIa {
   ganar() {
     this.mensaje.set("¡Correcto!");
     this.esCorrecta.set(true);
-    setTimeout(() => {
-      this.aumentarMonedasUsuario(400);
-      this.aumentarEstrellasUsuario(30);
-    }, 1500);
+    this.partidaService.ganarPartidaIA(String(this.usuario().uid)).subscribe(
+      (resultado: RespuestaServidor) => {
+        if (resultado.resultado == true) {
+          setTimeout(() => {
+            this.usuarioService.updateUsuarioSignal("monedas", Number(this.usuario().monedas) + 400);
+            this.usuarioService.updateUsuarioSignal("estrellas", Number(this.usuario().estrellas) + 30);
+            this.usuarioService.updateUsuarioSignal("regaloDisponible", true);
+          }, 1500)
+        }
+      }
+    )
 
 
   }
@@ -107,27 +114,12 @@ export class PreguntaIa {
     this.mensaje.set("");
     this.respuestaSeleccionada.set(false);
     this.esCorrecta.set(false);
-  }
-
-  aumentarMonedasUsuario(cantidadMonedas: number): void {
-
-  }
-
-  aumentarEstrellasUsuario(cantidadEstrellas: number): void {
-
-  }
-
-  restarVidasUsuario(cantidadVidas: number): void {
-    
+    this.jugarIA(String(this.usuario().uid))
   }
 
   restarMonedasUsuario(cantidadMonedas: number): void {
     this.usuarioService.updateUsuarioSignal("monedas", Number(this.usuario().monedas) - cantidadMonedas)
   }
-
-
-
-
 
 
 }

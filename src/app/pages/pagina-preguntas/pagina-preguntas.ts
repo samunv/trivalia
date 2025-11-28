@@ -169,7 +169,10 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
         }
 
         if (resultado.continuar) {
-          setTimeout(() => { this.respuestaSeleccionada.set(""), this.preguntaActual.set(resultado.siguientePregunta ? resultado.siguientePregunta : undefined); this.preguntaIndex.set(Number(resultado.preguntaIndex));}, 1000);
+          setTimeout(() => {
+          this.respuestaSeleccionada.set(""),
+          this.preguntaActual.set(resultado.siguientePregunta ? resultado.siguientePregunta : undefined);
+          this.preguntaIndex.set(Number(resultado.preguntaIndex));}, 1000);
         } else {
           setTimeout(() => {
             this.turnoPerdido.set(true);
@@ -196,9 +199,9 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
   reintentar() {
     const uid = this.usuario()?.uid;
     if (!uid) return;
-     this.turnoPerdido.set(false);
+    this.turnoPerdido.set(false);
     this.respuestaSeleccionada.set("")
-    this.obtenerPrimeraPregunta(Number(this.categoria().idCategoria))
+    //this.obtenerPrimeraPregunta(Number(this.categoria().idCategoria))
 
     // this.partidaService.continuarPartidaConMonedas(uid).subscribe(
     //   (respuesta: RespuestaServidor) => {
@@ -261,6 +264,7 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
 
   private actualizarUsuario(): void {
     this.usuarioService.updateUsuarioSignal("regaloDisponible", true);
+    this.usuarioService.updateUsuarioSignal("cantidadPartidasGanadas", Number(this.usuario().cantidadPartidasGanadas)+ 1)
     this.usuarioService.updateUsuarioSignal("monedas", this.usuario().monedas as number + 100)
   }
 

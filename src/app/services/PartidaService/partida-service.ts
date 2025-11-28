@@ -45,21 +45,30 @@ export class PartidaService {
     })
   }
 
-  obtenerPrimeraPregunta(idCategoria: number): Observable<Pregunta>{
-    return this.http.get<Pregunta>(url_servidor + "/api/partida/obtener-primera/"+ idCategoria, {
+  obtenerPrimeraPregunta(idCategoria: number): Observable<Pregunta> {
+    return this.http.get<Pregunta>(url_servidor + "/api/partida/obtener-primera/" + idCategoria, {
       headers: { "Authorization": "Bearer " + this.token() }
     })
   }
 
   responderPregunta(respuestaUsuario: RespuestaUsuario, uid: string): Observable<ResultadoRespuestaRespondida> {
-      console.log("Respuesta usuario >>"+respuestaUsuario.respuestaSeleccionada)
-      return this.http.post<ResultadoRespuestaRespondida>(url_servidor + "/api/partida/responder-pregunta/" + uid,
-        respuestaUsuario ,
-        {
-          headers: {
-            "Authorization": "Bearer " + this.token()
-          }
-        })
-    }
+    console.log("Respuesta usuario >>" + respuestaUsuario.respuestaSeleccionada)
+    return this.http.post<ResultadoRespuestaRespondida>(url_servidor + "/api/partida/responder-pregunta/" + uid,
+      respuestaUsuario,
+      {
+        headers: {
+          "Authorization": "Bearer " + this.token()
+        }
+      })
+  }
+
+
+  ganarPartidaIA(uid: string): Observable<RespuestaServidor> {
+    return this.http.post<RespuestaServidor>(url_servidor + "/api/partida/ganar-ia/" + uid, {}, {
+      headers: {
+        "Authorization": "Bearer " + this.token()
+      }
+    })
+  }
 
 }

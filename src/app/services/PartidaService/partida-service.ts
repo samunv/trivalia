@@ -71,4 +71,12 @@ export class PartidaService {
     })
   }
 
+  perderPorTiempo(uid: string): Observable<RespuestaServidor> {
+    return this.http.post<RespuestaServidor>(url_servidor + "/api/partida/perder-por-tiempo/" + uid, {}, {
+      headers: {
+        "Authorization": "Bearer " + this.token()
+      }
+    })
+  }
+
 }

@@ -44,7 +44,7 @@ export class TemporizadorComponent {
 
   private reiniciarTemporizador() {
     this.limpiarIntervalo();
-    this.tiempo.set(this.tiempoInicial);
+    this.tiempo.set(19);
     this.temporizadorAutomatico();
     this.reiniciar();
   }

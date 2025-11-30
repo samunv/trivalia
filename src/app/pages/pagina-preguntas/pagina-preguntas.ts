@@ -134,108 +134,90 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
     )
   }
 
-  // private obtenerPreguntas(idCategoria: number) {
-  //   this.preguntaService.obtenerPreguntas(idCategoria).subscribe({
-  //     next: preguntas => this.preguntas.set(preguntas),
-  //     error: err => console.error("Error al cargar preguntas:", err)
-  //   });
-  // }
-
-
-  // ==================== VERIFICACIÓN DE RESPUESTA ====================
   verificarRespuesta(respuesta: string) {
-    console.log(respuesta + " idPregunta: " + this.preguntaActual()!.idPregunta)
-    const pregunta = this.preguntaActual();
-    if (!pregunta) return;
-    if (this.inputEscribir && this.inputFocusActivado()) {
-      this.inputFocusActivado.set(false)
-    }
+    this.verificarInput();
+    this.temporizadorPausado.set(true);
     this.respuestaSeleccionada.set(respuesta.toLowerCase().trim());
     this.partidaService.responderPregunta({ idPregunta: Number(this.preguntaActual()!.idPregunta), idCategoria: Number(this.categoria().idCategoria), respuestaSeleccionada: respuesta } as RespuestaUsuario, String(this.usuario().uid))
       .subscribe((resultado: ResultadoRespuestaRespondida) => {
-        this.temporizadorPausado.set(true);
-        this.mensaje.set(String(resultado.mensaje));
-        this.esCorrecta.set(resultado.esCorrecta);
-        setTimeout(() => { this.mensaje.set(""); this.esCorrecta.set(undefined) }, 1000);
-        this.usuarioService.updateUsuarioSignal("vidas", resultado.usuarioActualizado?.vidas);
-        this.usuarioService.updateUsuarioSignal("estrellas", resultado.usuarioActualizado?.estrellas);
-        this.usuarioService.updateUsuarioSignal("idsPreguntasGanadas", resultado.usuarioActualizado?.idsPreguntasGanadas);
-        this.usuarioService.updateUsuarioSignal("cantidadPreguntasFalladas", resultado.usuarioActualizado?.cantidadPreguntasFalladas);
-        this.respuestaInput.set("");
-
-        if (!resultado.siguientePregunta && resultado.continuar) {
-          setTimeout(() => { this.finalizarPartida(); }, 1000);
-
-        }
-
-        if (resultado.continuar) {
-          setTimeout(() => {
-          this.respuestaSeleccionada.set(""),
-          this.preguntaActual.set(resultado.siguientePregunta ? resultado.siguientePregunta : undefined);
-          this.preguntaIndex.set(Number(resultado.preguntaIndex));}, 1000);
-        } else {
-          setTimeout(() => {
-            this.turnoPerdido.set(true);
-          }, 1000);
-
-        }
-
+        this.onResponder(resultado)
       })
   }
 
+  private verificarInput() {
+    if (this.inputEscribir && this.inputFocusActivado()) {
+      this.inputFocusActivado.set(false)
+    }
+  }
 
-  // ==================== LOGICA ACIERTO / FALLO ====================
+  private onResponder(resultado: ResultadoRespuestaRespondida) {
+    if (resultado != null) {
+      this.mensajeTrasResponder(String(resultado.mensaje), Boolean(resultado.esCorrecta))
+      this.limpiarMensajesEInteracciones()
+      this.actualizarUsuarioPorPreguntaRespondida(resultado);
+      if (!resultado.siguientePregunta && resultado.continuar) {
+        setTimeout(() => { this.finalizarPartida(); }, 1000);
+      }
+      if (resultado.continuar) {
+        this.continuar(resultado);
+      } else {
+        setTimeout(() => {
+          this.turnoPerdido.set(true);
+        }, 1000);
+      }
+    } else {
+      this.fallarPorTiempoFinalizado()
+    }
+  }
 
+  private limpiarMensajesEInteracciones() {
+    setTimeout(() => { this.mensaje.set(""); this.esCorrecta.set(undefined) }, 1000);
+    this.respuestaInput.set("");
+  }
 
-  private fallarPorTiempoFinalizado() {
-    this.esCorrecta.set(false);
-    this.mensaje.set(`Has perdido el turno por tiempo...`);
-    this.temporizadorFinalizado.set(false)
-    setTimeout(() => { this.turnoPerdido.set(true), this.mensaje.set("") }, 1500);
+  private mensajeTrasResponder(mensaje: string, esCorrecta: boolean) {
+    this.mensaje.set(mensaje);
+    this.esCorrecta.set(esCorrecta);
+  }
+
+  private continuar(resultado: ResultadoRespuestaRespondida) {
+    setTimeout(() => {
+      this.respuestaSeleccionada.set(""),
+      this.preguntaActual.set(resultado.siguientePregunta ? resultado.siguientePregunta : undefined);
+      this.preguntaIndex.set(Number(resultado.preguntaIndex));
+      this.reiniciarTemporizador.set(true)
+      this.temporizadorPausado.set(false)
+    }, 1000);
   }
 
 
-  // ==================== CONTINUAR CON MONEDAS ====================
+  private fallarPorTiempoFinalizado() {
+    this.mensajeTrasResponder(`Has perdido el turno por tiempo...`, false)
+    this.temporizadorFinalizado.set(false)
+    setTimeout(() => { this.turnoPerdido.set(true), this.mensaje.set("") }, 1000);
+    this.partidaService.perderPorTiempo(String(this.usuario().uid)).subscribe(
+      (respuesta) => {
+        if (respuesta.resultado == true) {
+          this.usuarioService.updateUsuarioSignal("vidas", Number(this.usuario().vidas) - 1)
+        } else {
+          alert("Error en el servidor")
+        }
+
+      }
+    )
+
+  }
+
+
   reintentar() {
     const uid = this.usuario()?.uid;
     if (!uid) return;
     this.turnoPerdido.set(false);
     this.respuestaSeleccionada.set("")
-    //this.obtenerPrimeraPregunta(Number(this.categoria().idCategoria))
-
-    // this.partidaService.continuarPartidaConMonedas(uid).subscribe(
-    //   (respuesta: RespuestaServidor) => {
-    //     if (respuesta.resultado == true) {
-    //       this.usuarioService.updateUsuarioSignal("monedas", (Number(this.usuario()?.monedas) - 100))
-    //       this.turnoPerdido.set(false);
-    //       this.respuestaSeleccionada.set("")
-    //       this.obtenerPrimeraPregunta(Number(this.categoria().idCategoria))
-    //     } else {
-    //       this.mensaje.set("No tienes monedas suficientes")
-    //       setTimeout(() => this.navegar("/categoria/" + this.categoria().idCategoria), 1500);
-    //     }
-    //   }
-    // )
-
+    this.temporizadorPausado.set(false)
+    this.reiniciarTemporizador.set(true)
   }
 
-  /**
- * @deprecated Esta función ya no se utiliza. La lógica proviene directamente del servidor.
- */
-  private aumentarIndexPregunta() {
-
-    if (this.preguntaIndex() < this.preguntas().length - 1) {
-      this.preguntaIndex.update(i => i + 1);
-      //     // Reiniciar temporizador y volver a declararlo como false en un segundo
-      this.reiniciarTemporizador.set(true);
-      this.temporizadorPausado.set(false);
-      setInterval(() => { this.reiniciarTemporizador.set(false) }, 1000)
-
-    } else {
-      this.finalizarPartida();
-    }
-
-  }
 
   private finalizarPartida() {
     this.ganar(this.usuario().uid as string, this.preguntaActual()!).subscribe(
@@ -243,7 +225,7 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
         if (resultadoGanar === true) {
           this.finPartida.set(true);
           this.ganarPartida.set(true);
-          this.actualizarUsuario();
+          this.actualizarUsuarioGanador();
         }
       }
     );
@@ -262,17 +244,22 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
 
   }
 
-  private actualizarUsuario(): void {
+  private actualizarUsuarioGanador(): void {
     this.usuarioService.updateUsuarioSignal("regaloDisponible", true);
-    this.usuarioService.updateUsuarioSignal("cantidadPartidasGanadas", Number(this.usuario().cantidadPartidasGanadas)+ 1)
+    this.usuarioService.updateUsuarioSignal("cantidadPartidasGanadas", Number(this.usuario().cantidadPartidasGanadas) + 1)
     this.usuarioService.updateUsuarioSignal("monedas", this.usuario().monedas as number + 100)
+  }
+
+  private actualizarUsuarioPorPreguntaRespondida(resultado: ResultadoRespuestaRespondida) {
+    this.usuarioService.updateUsuarioSignal("vidas", resultado.usuarioActualizado?.vidas);
+    this.usuarioService.updateUsuarioSignal("estrellas", resultado.usuarioActualizado?.estrellas);
+    this.usuarioService.updateUsuarioSignal("idsPreguntasGanadas", resultado.usuarioActualizado?.idsPreguntasGanadas);
+    this.usuarioService.updateUsuarioSignal("cantidadPreguntasFalladas", resultado.usuarioActualizado?.cantidadPreguntasFalladas);
   }
 
   navegar(ruta: string) {
     this.router.navigate([ruta]);
   }
-
-  // ==================== HELPERS ====================
 
   onTemporizadorTerminado(terminado: boolean) {
     if (terminado) {

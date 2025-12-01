@@ -52,7 +52,7 @@
             <p>Trival-IA</p>
           </a>
         </li>
-        <li>
+        <!-- <li>
           <a routerLink="/crear" routerLinkActive="activo">
             <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
               <title xmlns="">add-to-queue</title>
@@ -61,7 +61,7 @@
             </svg>
             <p>Crear</p>
           </a>
-        </li>
+        </li> -->
         <li>
           <a routerLink="/perfil" routerLinkActive="activo">
             <img [src]="fotoUsuario" alt="" style="
@@ -80,7 +80,7 @@
 
       <button (click)="abrirVentanaRegalo()" [disabled]="!usuario().regaloDisponible"
         [ngClass]="{'border-2 border-dashed border-[var(--color-secundario)]': !usuario().regaloDisponible }"
-        class="group not-only:flex flex-row items-center justify-center !p-[5px] !pt-[15px] !pb-[15px] gap-[5px] hover:cursor-pointer hover: rounded-[10px] border border-[var(--color-bordes)] !w-full bg-[var(--azul-oscuro)]">
+        class="group not-only:flex flex-row items-center justify-center !p-[15px] !pt-[20px] !pb-[20px] gap-[5px] hover:cursor-pointer hover: rounded-[10px] border border-[var(--color-bordes)] !w-full bg-[var(--azul-oscuro)]">
         @if(usuario().regaloDisponible){
         <p class="text-[16px] text-[white] !font-[inter-bold]">Abrir regalo</p>
         <img src="/img/gift.png" alt="" style="width: 40px; height: 40px; margin: 0 5px"

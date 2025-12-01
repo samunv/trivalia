@@ -12,7 +12,7 @@
     'bg-[var(--color-principal)]': filtroSeleccionado() !== 'partidasGanadas'
   }">Partidas Ganadas</button>
   </div>
-  <div class="flex flex-col gap-5 !mt-6">
+  <div class="flex flex-col gap-6 !mt-6">
     @for (usuario of usuariosOrdenados(); track $index) {
     <div
     [ngClass]="{ '!bg-[#0099ff]' : usuarioActual().uid === usuario.uid}"
@@ -23,7 +23,7 @@
           [ngClass]="{'bg-amber-500 !border-amber-300':($index + 1) == 1, 'bg-gray-500 !border-gray-300':($index + 1) == 2, 'bg-amber-800 !border-amber-700': ($index + 1) == 3}">
           <strong>{{$index + 1}}</strong>
         </div>
-        <img [src]="usuario.fotoURL" alt="" class="!w-[50px] !h-[50px] object-cover rounded-[50%] border border-white">
+        <img [src]="usuario.fotoURL" alt="" class="!w-[60px] !h-[60px] object-cover rounded-[50%] border border-white">
         <strong>{{usuario.nombre}} {{ usuarioActual().uid === usuario.uid ? "(Tú)" : ""}}</strong>
       </div>
 

@@ -70,9 +70,12 @@
   <app-audio-component [audioArchivo]="'/audio/musica.mp3'" [loop]="true"></app-audio-component>
   }
 
-  <espacio [altura]="30"> </espacio>
+  @if(!finPartida()){
+ <espacio [altura]="30"> </espacio>
   <app-temporizador-component (temporizadorTerminado)="onTemporizadorTerminado($event)"
     [reiniciar]="reiniciarTemporizador()" [pausar]="temporizadorPausado()"></app-temporizador-component>
+
+  }
 
   @if(ganarPartida()){
   <app-fin-partida></app-fin-partida>

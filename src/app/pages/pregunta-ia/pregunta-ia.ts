@@ -56,9 +56,9 @@ export class PreguntaIa {
       (resultado: RespuestaServidor) => {
         if (resultado.resultado == true) {
           this.obtenerPreguntaIA()
-          this.restarMonedasUsuario(300)
+          this.restarMonedasUsuario(this.calcularCostoSegunMonedasUsuario())
         } else {
-          alert("No tienes monedas suficientes para juagar.")
+          alert("No tienes monedas suficientes para jugar.")
         }
       }
     )
@@ -86,7 +86,7 @@ export class PreguntaIa {
       (resultado: RespuestaServidor) => {
         if (resultado.resultado == true) {
           setTimeout(() => {
-            this.usuarioService.updateUsuarioSignal("monedas", Number(this.usuario().monedas) + 400);
+            this.usuarioService.updateUsuarioSignal("monedas", Number(this.usuario().monedas) + this.calcularRecompensaSegunMonedasUsuario());
             this.usuarioService.updateUsuarioSignal("estrellas", Number(this.usuario().estrellas) + 30);
             this.usuarioService.updateUsuarioSignal("regaloDisponible", true);
           }, 1500)
@@ -97,11 +97,6 @@ export class PreguntaIa {
 
   }
 
-
-
-  actualizarPreguntasGanadasUsuario() {
-
-  }
 
   salir() {
     this.router.navigate(['/jugar']);
@@ -119,6 +114,33 @@ export class PreguntaIa {
 
   restarMonedasUsuario(cantidadMonedas: number): void {
     this.usuarioService.updateUsuarioSignal("monedas", Number(this.usuario().monedas) - cantidadMonedas)
+  }
+
+
+  calcularCostoSegunMonedasUsuario(): number {
+    if (this.usuario().monedas as number < 1000) {
+      return 300;
+    }
+    if (this.usuario().monedas as number >= 1000 && this.usuario().monedas as number <= 4000) {
+      return 650;
+    }
+    if (this.usuario().monedas as number >= 5000) {
+      return Math.round((this.usuario().monedas as number) / 4)
+    }
+    return 0;
+  }
+
+  calcularRecompensaSegunMonedasUsuario(): number {
+    if (this.usuario().monedas as number < 1000) {
+      return 400;
+    }
+    if (this.usuario().monedas as number >= 1000 && this.usuario().monedas as number <= 4000) {
+      return 750;
+    }
+    if (this.usuario().monedas as number >= 5000) {
+      return Math.round((this.usuario().monedas as number) / 4)+500;
+    }
+    return 0;
   }
 
 

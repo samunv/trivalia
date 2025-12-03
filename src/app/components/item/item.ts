@@ -13,7 +13,7 @@ export class Item {
   @Input() cssIconDimension: number = 30
 
   obtenerCantidadFormateada(cantidad: number): string {
-    return cantidad > 1000 ? Math.floor(cantidad / 1000) + 'k' : cantidad.toString();
+    return cantidad > 10000 ? Math.floor(cantidad / 1000) + 'k' : cantidad.toString();
   }
 }
 

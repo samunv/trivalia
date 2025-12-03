@@ -79,4 +79,12 @@ export class PartidaService {
     })
   }
 
+  reintentarPartida(uid: string): Observable<RespuestaServidor> {
+    return this.http.post<RespuestaServidor>(url_servidor + "/api/partida/reintentar-partida/" + uid, {}, {
+      headers: {
+        "Authorization": "Bearer " + this.token()
+      }
+    })
+  }
+
 }

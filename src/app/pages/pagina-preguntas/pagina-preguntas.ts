@@ -103,7 +103,6 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
     });
   }
 
-  // ==================== CICLO DE VIDA ====================
   ngOnInit() {
     this.inicializarJuego();
   }
@@ -112,7 +111,6 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
     this.categoriaService.setCategoria(null);
   }
 
-  // ==================== INICIALIZACIÓN ====================
   private inicializarJuego() {
     if (!this.categoriaService.categoria()) {
       console.log("No hay categoría seleccionada");
@@ -216,16 +214,19 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
     this.respuestaSeleccionada.set("")
     this.temporizadorPausado.set(false)
     this.reiniciarTemporizador.set(true)
+    this.partidaService.reintentarPartida(String(this.usuario().uid)).subscribe()
   }
 
 
   private finalizarPartida() {
+
     this.ganar(this.usuario().uid as string, this.preguntaActual()!).subscribe(
       (resultadoGanar: boolean) => {
         if (resultadoGanar === true) {
           this.finPartida.set(true);
           this.ganarPartida.set(true);
           this.actualizarUsuarioGanador();
+          this.temporizadorPausado.set(true);
         }
       }
     );

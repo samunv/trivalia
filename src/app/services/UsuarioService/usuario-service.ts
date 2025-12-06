@@ -6,19 +6,21 @@ import { getAuth, onAuthStateChanged, onIdTokenChanged } from '@angular/fire/aut
 import { HttpClient } from '@angular/common/http';
 import { url_servidor } from '../../urlServidor';
 import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
+import { JwtGlobalStoreService } from '../Global/JWTGlobalStoreService/jwt-global-store-service';
+import { UsuarioGlobalStoreService } from '../Global/UsuarioGlobalStoreService/usuario-global-store-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsuarioService {
 
-  private http = inject(HttpClient);
+  private http = inject(HttpClient); 
 
-  private tokenSignal: WritableSignal<string | any> = signal<string | any>(localStorage.getItem('tokenJWT'))
-  public readonly token: Signal<string> = this.tokenSignal.asReadonly();
+  private jwtStoreService: JwtGlobalStoreService = inject(JwtGlobalStoreService);
+  private JWToken: Signal<string> = this.jwtStoreService.token
 
-  private usuarioSignal: WritableSignal<Usuario | any> = signal<Usuario | any>(JSON.parse(localStorage.getItem('usuario') || 'null'))
-  public readonly usuario: Signal<Usuario | any> = this.usuarioSignal.asReadonly();
+  private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
+  private usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
 
 
   constructor() {
@@ -27,53 +29,23 @@ export class UsuarioService {
       const uidAlmacenado: string = String(usuarioAlmacenado.uid);
 
       this.obtenerUsuario(uidAlmacenado).subscribe((usuario: Usuario) => {
-        this.usuarioSignal.set(usuario);
+        this.usuarioStoreService.setUsuarioSignal(usuario)
       })
 
     }
   }
 
-
-  setUsuarioSignal(usuario: Usuario) {
-    this.usuarioSignal.set(usuario);
-    if (usuario) {
-      localStorage.setItem('usuario', JSON.stringify(usuario));
-    } else {
-      localStorage.removeItem('usuario');
-    }
-  }
-
-  updateUsuarioSignal(claveDatoParaActualizar: string, valorDatoParaActualizar: any) {
-    this.usuarioSignal.update(usuario => {
-      if (!usuario) return usuario;
-      const actualizado = { ...usuario, [claveDatoParaActualizar]: valorDatoParaActualizar };
-      localStorage.setItem('usuario', JSON.stringify(actualizado));
-      return actualizado;
-    });
-  }
-
-
-  setTokenSignal(token: string | null) {
-    this.tokenSignal.set(token);
-    if (token) {
-      localStorage.setItem('tokenJWT', token);
-    } else {
-      localStorage.removeItem('tokenJWT');
-    }
-  }
-
-
   clearUsuario() {
     localStorage.removeItem('usuario');
     localStorage.removeItem('tokenJWT');
     localStorage.removeItem("token")
-    this.usuarioSignal.set(null);
-    this.tokenSignal.set(null);
+    this.usuarioStoreService.setUsuarioSignal(null)
+    this.jwtStoreService.setTokenSignal(null)
   }
 
   actualizarNombreYfotoUsuario(nombre: string, foto: string, uid: string): Observable<Usuario> {
     const usuarioActualizar: Usuario = { nombre: nombre, fotoURL: foto };
-    const jwtCliente = this.token();
+    const jwtCliente = this.JWToken();
     return this.http.patch<Usuario>(url_servidor + "/api/usuarios/actualizar-nombre-foto/" + uid, usuarioActualizar, {
       headers: {
         "Authorization": "Bearer " + jwtCliente
@@ -84,7 +56,7 @@ export class UsuarioService {
 
 
   obtenerUsuarios(limite: number): Observable<Usuario[]> {
-    const jwtCliente = this.token();
+    const jwtCliente = this.JWToken();;
     return this.http.get<Usuario[]>(url_servidor + "/api/usuarios/listar/" + limite, {
       headers: {
         "Authorization": "Bearer " + jwtCliente
@@ -100,7 +72,7 @@ export class UsuarioService {
   }
 
   obtenerUsuario(uid: string): Observable<Usuario> {
-    const jwtCliente = this.token();
+    const jwtCliente = this.JWToken();;
     return this.http.get<Usuario | any>(url_servidor + "/api/usuarios/obtener/" + uid, {
       headers: { "Authorization": "Bearer " + jwtCliente }
     })

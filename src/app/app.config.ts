@@ -5,7 +5,8 @@ import { routes } from './app.routes';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { tokenInterceptorInterceptor } from './Interceptors/token-interceptor-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,7 +18,9 @@ export const appConfig: ApplicationConfig = {
       initializeApp({ projectId: "trivalia-app", appId: "1:850329478297:web:b31cab04c33e858fd50408", storageBucket: "trivalia-app.firebasestorage.app", apiKey: "AIzaSyDPYecuW5c9pwil8wa7HXcedEWwjztQc8U", authDomain: "trivalia-app.firebaseapp.com", messagingSenderId: "850329478297" })),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch(), withInterceptors([
+        tokenInterceptorInterceptor
+      ])),
 
   ]
 };

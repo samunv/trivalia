@@ -1,8 +1,9 @@
-import { Component, computed, inject, Input, signal } from '@angular/core';
+import { Component, computed, inject, Input, Signal, signal } from '@angular/core';
 import { Item } from '../../components/item/item';
 import { TextoH1 } from '../../components/texto-h1/texto-h1';
 import { Usuario } from '../../interfaces/Usuario';
 import { UsuarioService } from '../../services/UsuarioService/usuario-service';
+import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalStoreService/usuario-global-store-service';
 
 @Component({
   selector: 'app-header',
@@ -12,8 +13,8 @@ import { UsuarioService } from '../../services/UsuarioService/usuario-service';
   styleUrl: './header.css'
 })
 export class Header {
-  private usuarioService = inject(UsuarioService);
-  usuarioData = this.usuarioService.usuario;
+  private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
+  usuarioData: Signal<Usuario> = this.usuarioStoreService.usuario;
 
   constructor() { }
 

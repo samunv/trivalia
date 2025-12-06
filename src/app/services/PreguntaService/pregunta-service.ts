@@ -7,53 +7,41 @@ import { Observable, switchMap } from 'rxjs';
 import { url_servidor } from '../../urlServidor';
 import { ResultadoRespuestaRespondida } from '../../interfaces/ResultadoRespuestaRespondida';
 import { RespuestaUsuario } from '../../interfaces/RespuestaUsuario';
+import { JwtGlobalStoreService } from '../Global/JWTGlobalStoreService/jwt-global-store-service';
+import { UsuarioGlobalStoreService } from '../Global/UsuarioGlobalStoreService/usuario-global-store-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PreguntaService {
 
-  private usuarioService = inject(UsuarioService);
+  private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
+  private usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
+  private jwtStoreServie: JwtGlobalStoreService = inject(JwtGlobalStoreService)
+  private JWToken = this.jwtStoreServie.token
 
   constructor(private http: HttpClient) { }
 
-  token = this.usuarioService.token;
-  usuario: Signal<Usuario> = this.usuarioService.usuario;
 
   headers = new HttpHeaders({
-    "Authorization": `Bearer ${this.token()}`
+    "Authorization": `Bearer ${this.JWToken()}`
   })
 
-
-  // obtenerVistaPreviaPreguntas(idCategoria: number | any): Observable<Pregunta[] | any> {
-  //   const headers = new HttpHeaders({
-  //     'Authorization': `Bearer ${this.token()}`
-  //   });
-
-  //   return this.http.get<Pregunta[] | any>(url_servidor + "/api/preguntas/obtener-vista-previa/" + idCategoria, { headers })
-  // }
 
   obtenerPreguntas(idCategoria: number | any): Observable<Pregunta[] | any> {
 
     const headers = new HttpHeaders({
-      "Authorization": `Bearer ${this.token()}`
+      "Authorization": `Bearer ${this.JWToken()}`
     })
     return this.http.get<Pregunta[] | any>(url_servidor + "/api/preguntas/obtener/" + idCategoria + "/" + 15, { headers })
 
   }
 
-  // obtenerRespuestaCorrecta(idPregunta: number): Observable<string | any> {
-  //   const headers = new HttpHeaders({
-  //     "Authorization": `Bearer ${this.token()}`
-  //   })
-  //   return this.http.get<{ respuesta_correcta: string }>(url_servidor + "/api/preguntas/obtener-respuesta-correcta/" + idPregunta, { headers })
-
-  // }
 
   obtenerPreguntasDificiles(arrayIdPreguntas: number[] | any[]): Observable<Pregunta[] | any> {
 
     const headers = new HttpHeaders({
-      "Authorization": `Bearer ${this.token()}`
+      "Authorization": `Bearer ${this.JWToken()}`
     })
     return this.http.post<Pregunta[] | any[]>(
       url_servidor + "/api/preguntas/obtener-dificiles",
@@ -65,7 +53,7 @@ export class PreguntaService {
 
   obtenerPreguntaGeneradaPorIA(): Observable<Pregunta> {
     const headers = new HttpHeaders({
-      "Authorization": `Bearer ${this.token()}`
+      "Authorization": `Bearer ${this.JWToken()}`
     })
     return this.http.get<Pregunta>(url_servidor + "/api/preguntas/obtener-pregunta-ia", { headers })
   }
@@ -76,7 +64,7 @@ export class PreguntaService {
       respuestaUsuario ,
       {
         headers: {
-          "Authorization": "Bearer " + this.token()
+          "Authorization": "Bearer " + this.JWToken()
         }
       })
   }

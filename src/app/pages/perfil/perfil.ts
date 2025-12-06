@@ -21,6 +21,7 @@ import { Usuario } from '../../interfaces/Usuario';
 import { PreguntaService } from '../../services/PreguntaService/pregunta-service';
 import { Pregunta } from '../../interfaces/Pregunta';
 import { NgxNumberTickerComponent } from '@omnedia/ngx-number-ticker';
+import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalStoreService/usuario-global-store-service';
 
 @Component({
   selector: 'app-perfil',
@@ -35,6 +36,8 @@ export class Perfil {
   private router = inject(Router);
   private imagenService = inject(ImagenesService);
   private preguntaService = inject(PreguntaService);
+  private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
+  usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
 
   modalAbierto = signal<boolean>(false);
   nombreFormControl: WritableSignal<FormControl> = signal<FormControl | any>(null);
@@ -44,7 +47,6 @@ export class Perfil {
   imagenSeleccionada = signal<File | null>(null)
   editarFotoActivo = signal<boolean>(false)
   fotoPreview = signal<any>(null)
-  usuario: Signal<Usuario> = this.usuarioService.usuario;
   preguntasDificilesGanadas = signal<number>(0);
   display = signal<number>(0)
 
@@ -119,8 +121,8 @@ export class Perfil {
           const nuevaURL = data.data.url; // URL de la nueva imagen
           this.usuarioService.actualizarNombreYfotoUsuario(this.nombreFormControl().value ?? '', nuevaURL, String(this.usuario().uid))
             .subscribe((usuarioActualizado: Usuario) => {
-              this.usuarioService.updateUsuarioSignal("nombre", usuarioActualizado.nombre);
-              this.usuarioService.updateUsuarioSignal("fotoURL", usuarioActualizado.fotoURL)
+              this.usuarioStoreService.updateUsuarioSignal("nombre", usuarioActualizado.nombre);
+              this.usuarioStoreService.updateUsuarioSignal("fotoURL", usuarioActualizado.fotoURL)
               this.finalizarGuardado()
             })
         },
@@ -129,8 +131,8 @@ export class Perfil {
     } else {
       // Si no hay imagen nueva
       this.usuarioService.actualizarNombreYfotoUsuario(this.nombreFormControl()?.value ?? '', this.usuario().fotoURL ? String(this.usuario().fotoURL) : "", String(this.usuario().uid)).subscribe((usuarioActualizado: Usuario) => {
-        this.usuarioService.updateUsuarioSignal("nombre", usuarioActualizado.nombre);
-        this.usuarioService.updateUsuarioSignal("fotoURL", usuarioActualizado.fotoURL)
+        this.usuarioStoreService.updateUsuarioSignal("nombre", usuarioActualizado.nombre);
+        this.usuarioStoreService.updateUsuarioSignal("fotoURL", usuarioActualizado.fotoURL)
 
         this.finalizarGuardado()
       })

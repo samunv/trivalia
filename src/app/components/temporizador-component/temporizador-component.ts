@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject, input, Input, output, signal } from '@angular/core';
+import { Component, effect, inject, input, Input, output, Signal, signal } from '@angular/core';
 import { BotonGeneral } from '../boton-general/boton-general';
 import { Item } from '../item/item';
 import { Espacio } from '../espacio/espacio';
 import { UsuarioService } from '../../services/UsuarioService/usuario-service';
+import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalStoreService/usuario-global-store-service';
+import { Usuario } from '../../interfaces/Usuario';
 
 @Component({
   selector: 'app-temporizador-component',
@@ -18,14 +20,14 @@ import { UsuarioService } from '../../services/UsuarioService/usuario-service';
 })
 export class TemporizadorComponent {
 
-  private usuarioService = inject(UsuarioService);
+  private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
+  usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
   private intervalo: any;
   private tiempoInicial: number = 20;
   reiniciar = input<boolean>(false);
   terminar = output<boolean>({ alias: 'temporizadorTerminado' });
   tiempo = signal<number>(this.tiempoInicial);
   pausar = input<boolean>(false)
-  usuario = this.usuarioService.usuario;
 
   constructor() {
     effect(() => {

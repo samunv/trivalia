@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, Signal, signal } from '@angular/core';
 import { CategoriaService } from '../../services/CategoriaService/categoria-service';
 import { Categoria } from '../../interfaces/Categoria';
 import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
@@ -16,6 +16,7 @@ import { Usuario } from '../../interfaces/Usuario';
 import { MensajeAlerta } from '../../components/mensaje-alerta/mensaje-alerta';
 import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
 import { PartidaService } from '../../services/PartidaService/partida-service';
+import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalStoreService/usuario-global-store-service';
 @Component({
   selector: 'app-pre-juego',
   imports: [MainLayout, Header, TextoH1, BotonGeneral, RouterLink, CommonModule, Espacio, MensajeAlerta],
@@ -25,8 +26,10 @@ import { PartidaService } from '../../services/PartidaService/partida-service';
 })
 export class PreJuego {
 
-  private usuarioService: UsuarioService = inject(UsuarioService);
+
   private partidaService: PartidaService = inject(PartidaService);
+  private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
+  usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
 
   constructor(
     private categoriaService: CategoriaService, private rutaActiva: ActivatedRoute,
@@ -37,7 +40,6 @@ export class PreJuego {
   categoria = signal<Categoria | any>(null);
   preguntas = signal<Pregunta[] | any>([]);
   cantidadPreguntas = signal<number>(0);
-  usuario = this.usuarioService.usuario;
   alerta = signal<boolean>(false);
 
   ngOnInit() {
@@ -63,6 +65,7 @@ export class PreJuego {
 
   obtenerVistaPreviaPreguntas(idCategoria: number) {
     // Suscribirse al observable de preguntas
+
     this.preguntaService.obtenerPreguntas(idCategoria)
       .subscribe({
         next: (preguntas: Pregunta[]) => {
@@ -102,7 +105,7 @@ export class PreJuego {
 
   verificarVidas(): Observable<boolean> {
 
-    return this.partidaService.jugarPartida(this.usuario().uid).pipe(
+    return this.partidaService.jugarPartida(this.usuario().uid as string).pipe(
       map((respuesta: RespuestaServidor) => {
         if (respuesta.resultado) {
           return true;

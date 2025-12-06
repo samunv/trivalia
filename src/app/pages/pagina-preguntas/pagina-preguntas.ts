@@ -22,6 +22,7 @@ import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
 import { Categoria } from '../../interfaces/Categoria';
 import { Usuario } from '../../interfaces/Usuario';
 import { PartidaService } from '../../services/PartidaService/partida-service';
+import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalStoreService/usuario-global-store-service';
 
 
 @Component({
@@ -48,9 +49,9 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
   private router = inject(Router);
   private usuarioService = inject(UsuarioService);
   private partidaService: PartidaService = inject(PartidaService);
+  private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
+  usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
 
-  // ==================== SIGNALS ====================
-  usuario: Signal<Usuario> = this.usuarioService.usuario;
   preguntas = signal<Pregunta[]>([]);
   preguntaIndex = signal(0);
   categoriaTitulo = signal('');
@@ -196,7 +197,7 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
     this.partidaService.perderPorTiempo(String(this.usuario().uid)).subscribe(
       (respuesta) => {
         if (respuesta.resultado == true) {
-          this.usuarioService.updateUsuarioSignal("vidas", Number(this.usuario().vidas) - 1)
+          this.usuarioStoreService.updateUsuarioSignal("vidas", Number(this.usuario().vidas) - 1)
         } else {
           alert("Error en el servidor")
         }
@@ -246,16 +247,16 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private actualizarUsuarioGanador(): void {
-    this.usuarioService.updateUsuarioSignal("regaloDisponible", true);
-    this.usuarioService.updateUsuarioSignal("cantidadPartidasGanadas", Number(this.usuario().cantidadPartidasGanadas) + 1)
-    this.usuarioService.updateUsuarioSignal("monedas", this.usuario().monedas as number + 100)
+    this.usuarioStoreService.updateUsuarioSignal("regaloDisponible", true);
+    this.usuarioStoreService.updateUsuarioSignal("cantidadPartidasGanadas", Number(this.usuario().cantidadPartidasGanadas) + 1)
+    this.usuarioStoreService.updateUsuarioSignal("monedas", this.usuario().monedas as number + 100)
   }
 
   private actualizarUsuarioPorPreguntaRespondida(resultado: ResultadoRespuestaRespondida) {
-    this.usuarioService.updateUsuarioSignal("vidas", resultado.usuarioActualizado?.vidas);
-    this.usuarioService.updateUsuarioSignal("estrellas", resultado.usuarioActualizado?.estrellas);
-    this.usuarioService.updateUsuarioSignal("idsPreguntasGanadas", resultado.usuarioActualizado?.idsPreguntasGanadas);
-    this.usuarioService.updateUsuarioSignal("cantidadPreguntasFalladas", resultado.usuarioActualizado?.cantidadPreguntasFalladas);
+    this.usuarioStoreService.updateUsuarioSignal("vidas", resultado.usuarioActualizado?.vidas);
+    this.usuarioStoreService.updateUsuarioSignal("estrellas", resultado.usuarioActualizado?.estrellas);
+    this.usuarioStoreService.updateUsuarioSignal("idsPreguntasGanadas", resultado.usuarioActualizado?.idsPreguntasGanadas);
+    this.usuarioStoreService.updateUsuarioSignal("cantidadPreguntasFalladas", resultado.usuarioActualizado?.cantidadPreguntasFalladas);
   }
 
   navegar(ruta: string) {

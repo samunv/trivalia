@@ -3,22 +3,27 @@ import { Auth, createUserWithEmailAndPassword, GoogleAuthProvider, OAuthProvider
 import { doc, DocumentReference, Firestore, getDoc, serverTimestamp, setDoc } from '@angular/fire/firestore';
 import { nanoid } from 'nanoid';
 
-import { from, map, Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, switchMap, throwError, filter, take, finalize, from } from 'rxjs';
 import { Usuario } from '../../interfaces/Usuario';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpHandler, HttpHandlerFn, HttpRequest } from '@angular/common/http';
 import { url_servidor } from '../../urlServidor';
 import { UsuarioService } from '../UsuarioService/usuario-service';
 import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
+import { JwtGlobalStoreService } from '../Global/JWTGlobalStoreService/jwt-global-store-service';
+import { UsuarioGlobalStoreService } from '../Global/UsuarioGlobalStoreService/usuario-global-store-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private usuarioService: UsuarioService = inject(UsuarioService);
 
-  constructor(private auth: Auth, private firestore: Firestore, private http: HttpClient) { }
+  private http = inject(HttpClient);
+  private jwtStoreServie: JwtGlobalStoreService = inject(JwtGlobalStoreService)
+  private JWToken = this.jwtStoreServie.token
+  private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
+  private usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
 
-  token = this.usuarioService.token
+  constructor(private auth: Auth) { }
 
   login(): Observable<{ usuario: Usuario, firebaseToken: string }> {
     const provider = new GoogleAuthProvider();
@@ -44,8 +49,14 @@ export class AuthService {
       fotoURL: user.photoURL,
     };
 
-    return this.usuarioService.crearUsuario(nuevoUsuario).pipe(map((usuario)=>{return usuario}))
+    return this.crearUsuarioEnServidor(nuevoUsuario).pipe(map((usuario) => { return usuario }))
   }
+
+  crearUsuarioEnServidor(usuario: Usuario): Observable<Usuario> {
+      // No necesita JWT porque es una operación pública
+      return this.http.post<Usuario>(url_servidor + "/api/usuarios/crear", usuario,
+      );
+    }
 
 
 
@@ -54,13 +65,15 @@ export class AuthService {
   }
 
 
-  logout(): Observable<void> {
-    return from(signOut(this.auth));
+ logout(): Observable<void> {
+    return this.logoutEnServidor(this.usuario().uid as string).pipe(
+        switchMap(() => from(signOut(this.auth))),
+        map(() => undefined as void)
+    );
+}
+
+  private logoutEnServidor(uid: string): Observable<void> {
+    return this.http.post<any>(url_servidor + "/auth/logout/" + uid, {})
   }
 
-  verificarJWTenServidor(): Observable<RespuestaServidor> {
-    const jwtCliente = this.token();
-    return this.http.post<RespuestaServidor>(url_servidor + "/auth/verificar-jwt", { jwtCliente: jwtCliente })
-  }
-  
 }

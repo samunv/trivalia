@@ -31,3 +31,25 @@
       transform: translateY(-10px);
     }
   }
+
+
+.saltador {
+  display: inline-block;
+  transition: all 0.3s ease;
+  animation: saltoGiro 2s ease-in-out infinite; /* Cambia 2s por los segundos que desees */
+}
+
+@keyframes saltoGiro {
+  0% {
+    transform: translateY(0) rotateX(0deg);
+  }
+  30% {
+    transform: translateY(-80px) rotateX(180deg);
+  }
+  60% {
+    transform: translateY(-80px) rotateX(360deg);
+  }
+  100% {
+    transform: translateY(0) rotateX(360deg);
+  }
+}

@@ -5,6 +5,7 @@ import { UsuarioService } from '../../services/UsuarioService/usuario-service';
 import { filter } from 'rxjs';
 import { Regalo } from '../../components/regalo/regalo';
 import { Usuario } from '../../interfaces/Usuario';
+import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalStoreService/usuario-global-store-service';
 
 @Component({
   selector: 'app-nav-lateral',
@@ -15,8 +16,8 @@ import { Usuario } from '../../interfaces/Usuario';
 export class NavLateral {
   private usuarioService = inject(UsuarioService)
   private router = inject(Router);
-
-  usuario: Signal<Usuario> = this.usuarioService.usuario
+  private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
+  usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
   fotoUsuario = this.usuario()?.fotoURL;
   ventanaRegaloAbierta: boolean = false;
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, Signal } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/AuthService/auth-service';
@@ -7,6 +7,8 @@ import { UsuarioService } from '../../services/UsuarioService/usuario-service';
 import { Usuario } from '../../interfaces/Usuario';
 import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
 import { map, Observable } from 'rxjs';
+import { JwtGlobalStoreService } from '../../services/Global/JWTGlobalStoreService/jwt-global-store-service';
+import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalStoreService/usuario-global-store-service';
 @Component({
   selector: 'app-login',
   imports: [RouterLink, ReactiveFormsModule, CommonModule],
@@ -16,13 +18,17 @@ import { map, Observable } from 'rxjs';
 export class Login {
 
   private usuarioService = inject(UsuarioService)
+  private jwtStoreServie: JwtGlobalStoreService = inject(JwtGlobalStoreService)
+  private JWToken = this.jwtStoreServie.token
+  private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
+  usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
 
   constructor(private router: Router, private authService: AuthService) { }
-  usuarioSignal = this.usuarioService.usuario
-  tokenSignal = this.usuarioService.token
+
+
 
   ngOnInit(){
-    if(this.usuarioSignal() && this.tokenSignal()){
+    if(this.usuario() && this.JWToken()){
       this.usuarioService.clearUsuario();
     }
   }
@@ -56,16 +62,10 @@ export class Login {
   }
 
   establecerUsuarioYjwt(usuario: Usuario, token: string): void {
-    this.usuarioService.setUsuarioSignal(usuario);
-    this.usuarioService.setTokenSignal(token)
+    this.usuarioStoreService.setUsuarioSignal(usuario);
+    this.jwtStoreServie.setTokenSignal(token)
   }
 
-  // iniciarSesion(usuario: Usuario) {
-  //   this.router.navigate(['/dummy'], { skipLocationChange: true }).then(() => {
-  //     this.router.navigate(['/jugar']);
-  //   });
-  //   this.usuarioSignal.set(usuario);
-  // }
 
 
 }

@@ -5,6 +5,7 @@ import { RegaloInterface } from '../../interfaces/RegaloInterface';
 import { Item } from '../item/item';
 import { RegaloService } from '../../services/RegaloService/regalo-service';
 import { Usuario } from '../../interfaces/Usuario';
+import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalStoreService/usuario-global-store-service';
 
 @Component({
   selector: 'app-regalo',
@@ -15,12 +16,13 @@ import { Usuario } from '../../interfaces/Usuario';
 export class Regalo {
   private usuarioService = inject(UsuarioService);
   private regaloService = inject(RegaloService)
+  private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
+  usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
 
   @Output() cancelar = new EventEmitter<void>();
 
   constructor() { }
 
-  usuario: Signal<Usuario> = this.usuarioService.usuario;
   itemObtenido = signal<"estrellas" | "monedas" | "vidas" | undefined>(undefined);
   cantidadItemObtenido = signal<number>(0);
   vectorRegaloVisible = signal<boolean>(true);
@@ -51,8 +53,8 @@ export class Regalo {
     const valorActual: number | undefined = this.usuario()[itemClave];
     const nuevoValor = Number(valorActual || 0) + Number(regaloObtenido.cantidad);
 
-    this.usuarioService.updateUsuarioSignal(itemClave, nuevoValor);
-    this.usuarioService.updateUsuarioSignal("regaloDisponible", false);
+    this.usuarioStoreService.updateUsuarioSignal(itemClave, nuevoValor);
+    this.usuarioStoreService.updateUsuarioSignal("regaloDisponible", false);
   }
 
 }

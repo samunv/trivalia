@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { CategoriaService } from '../../services/CategoriaService/categoria-service';
 import { Categoria } from '../../interfaces/Categoria';
 import { Item } from '../../components/item/item';
+import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalStoreService/usuario-global-store-service';
 
 @Component({
   selector: 'app-fin-partida',
@@ -16,11 +17,10 @@ import { Item } from '../../components/item/item';
   styleUrl: './fin-partida.css'
 })
 export class FinPartida {
-  private usuarioService: UsuarioService = inject(UsuarioService);
   private router: Router = inject(Router);
   private categoriaService: CategoriaService = inject(CategoriaService);
-
-  usuario: Signal<Usuario> = this.usuarioService.usuario;
+  private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
+  usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
   nombreUsuario?: string = this.usuario()?.nombre;
 
   categoria: Signal<Categoria> = this.categoriaService.categoria

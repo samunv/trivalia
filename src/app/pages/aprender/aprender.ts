@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, Signal, signal } from '@angular/core';
 import { NavLateral } from '../../layout/nav-lateral/nav-lateral';
 import { MainLayout } from '../../layout/main-layout/main-layout';
 import { TextoH1 } from '../../components/texto-h1/texto-h1';
@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { Categoria } from '../../interfaces/Categoria';
 import { FormsModule, NgModel } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalStoreService/usuario-global-store-service';
 
 @Component({
   selector: 'app-aprender',
@@ -23,11 +24,12 @@ export class Aprender {
   private usuarioService = inject(UsuarioService);
   private categoriaService = inject(CategoriaService);
   private router = inject(Router);
+  private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
+  usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
 
   constructor() { }
 
   inputBuscadorActivo = false;
-  usuario = computed(() => this.usuarioService.usuario());
   categorias = signal<Categoria[]>([]);
   valorBusqueda = signal<string>("");
 

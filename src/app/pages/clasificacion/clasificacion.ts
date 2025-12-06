@@ -7,6 +7,7 @@ import { Usuario } from '../../interfaces/Usuario';
 import { Subscribable } from 'rxjs';
 import { Item } from '../../components/item/item';
 import { CommonModule } from '@angular/common';
+import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalStoreService/usuario-global-store-service';
 
 @Component({
   selector: 'app-clasificacion',
@@ -17,6 +18,8 @@ import { CommonModule } from '@angular/common';
 export class Clasificacion {
 
   private usuarioService: UsuarioService = inject(UsuarioService);
+  private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
+  usuarioActual: Signal<Usuario> = this.usuarioStoreService.usuario;
 
   constructor() {
     effect(() => {
@@ -29,7 +32,6 @@ export class Clasificacion {
   usuarios: WritableSignal<Usuario[]> = signal<Usuario[]>([]);
   usuariosOrdenados: WritableSignal<Usuario[]> = signal<Usuario[]>([]);
   filtroSeleccionado: WritableSignal<string> = signal<string>("estrellas");
-  usuarioActual: Signal<Usuario> = this.usuarioService.usuario;
 
   ngOnInit() {
     this.obtenerUsuarios();

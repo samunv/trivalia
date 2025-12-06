@@ -3,13 +3,14 @@
 
   @if(!partidaComenzada()) {
   <div
-    class="!mt-[20px] !p-[30px] border border-[var(--color-bordes)] rounded-[20px] bg-[var(--color-principal)] flex flex-row gap-6 items-center justify-between">
-    <img src="/img/cartoon-style-robot-vectorart.png" class="!w-[150px] robot-float" />
+    class="!mt-[20px] !p-[30px] border border-[var(--color-bordes)] rounded-[20px] bg-[var(--color-principal)] flex flex-row gap-4 items-center justify-between">
+    <img src="/img/cartoon-style-robot-vectorart.png" class="!w-[120px] robot-float" />
     <div class="flex flex-row items-center gap-2">
 
       <div>
         <h2>Hola, {{usuario().nombre}}</h2>
-        <p>¿Te atreves a responder una pregunta de cultura general hecha por <strong>Trival-IA</strong>?</p>
+        <p class="">¿Te atreves a responder una pregunta de cultura general hecha por
+          <strong>Trival-IA</strong>?</p>
 
       </div>
 
@@ -21,22 +22,58 @@
       <espacio [ancho]="10"></espacio>
 
       <div class="">
-        <app-boton-general [texto]="'Jugar ' + '('+ calcularCostoSegunMonedasUsuario()+' monedas)'" [tipo]="'destacado'"
+        <app-boton-general [texto]="'Jugar '+ calcularCostoSegunMonedasUsuario()+' monedas'" [tipo]="'destacado'"
           (click)="jugarIA(usuario().uid)"></app-boton-general>
+      </div>
+
+    </div>
+
+    <div class="!w-[200px] flex flex-col items-end gap-2 bg-[var(--azul-oscuro)] !p-5 rounded-xl">
+      <div class="flex flex-row items-center justify-between">
+        +<item item="monedas" [cantidad]="calcularRecompensaSegunMonedasUsuario()" [cssFlexRow]="'reverse'"
+          [cssIconDimension]="27" [cssAnimation]="'saltar'"></item>
+      </div>
+      <div class="flex flex-row items-center justify-between">
+        +<item item="regalo" [cantidad]="1" [cssFlexRow]="'reverse'" [cssIconDimension]="27"></item>
+
+      </div>
+      <div class="flex flex-row items-center justify-between">
+        +<item item="estrellas" [cantidad]="30" [cssFlexRow]="'reverse'" [cssIconDimension]="25"></item>
+
       </div>
 
     </div>
 
   </div>
 
-  <espacio [altura]="30"></espacio>
+  <!-- <espacio [altura]="30"></espacio>
 
   <app-texto-h1 texto="Recompensas"></app-texto-h1>
   <div
     class="flex flex-row items-center gap-7 !mt-5 !p-[30px] border border-[var(--color-bordes)] rounded-[20px] bg-[var(--color-principal)]">
-    <item item="monedas" [cantidad]="calcularRecompensaSegunMonedasUsuario()" [cssFlexRow]="'reverse'" [cssIconDimension]="27"></item>
+    <item item="monedas" [cantidad]="calcularRecompensaSegunMonedasUsuario()" [cssFlexRow]="'reverse'"
+      [cssIconDimension]="27" [cssAnimation]="'saltar'"></item>
     <item item="regalo" [cantidad]="1" [cssFlexRow]="'reverse'" [cssIconDimension]="27"></item>
     <item item="estrellas" [cantidad]="30" [cssFlexRow]="'reverse'" [cssIconDimension]="25"></item>
+  </div> -->
+
+  <espacio [altura]="40"></espacio>
+
+  <app-texto-h1 texto="¿Qué es Trival-IA?"></app-texto-h1>
+  <div
+    class="relative flex flex-col gap-7 !mt-5 !p-[30px] border border-[var(--color-bordes)] rounded-[20px] bg-[var(--color-principal)]">
+    <p class="!w-[calc(100%-250px)]">Es un bot que hace preguntas de cultura
+      general de cualquier área del
+      mundo. Tendrás 20 segundos para
+      contestar. No perderás vidas al fallar, pero no recuperarás tus monedas gastadas.</p>
+    <p
+      class="!text-[var(--color-principal)] !font-[inter-bold]  flex flex-row items-center gap-2 bg-[var(--color-secundario)] !max-w-[220px] rounded-xl !p-2">
+      Potenciado por Gemini<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 424 432">
+        <path fill="var(--color-principal)"
+          d="M214 186v-1h201q3 12 3 36q0 93-56.5 150.5T213 429q-88 0-150.5-62T0 216T62 65T213 3q87 0 144 57l-57 56q-33-33-86-33q-54 0-92.5 39.5t-38.5 95t38.5 94.5t92.5 39q31 0 55-9.5t37.5-24.5t20.5-29.5t10-27.5H214v-74z" />
+      </svg></p>
+    <img src="/img/Gemini_Generated_Image_bmsc5hbmsc5hbmsc-removebg-preview.png" alt=""
+      class="absolute !w-[270px] right-0 top-1/2 transform -translate-y-1/2 animate-slide-in-bottom">
   </div>
 
   }
@@ -63,6 +100,8 @@
           }
         </div>
 
+
+
         @if (mensaje()) {
         <div [ngStyle]="{ 'background-color': esCorrecta() ? '#00B241' : 'red' }"
           class="animate-rubber-band !p-3 rounded-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border-4 z-100">
@@ -71,7 +110,11 @@
         }
       </div>
     </div>
+
   </div>
+  <espacio [altura]="30"> </espacio>
+  <app-temporizador-component [pausar]="pausarTemporizador()"
+    (temporizadorTerminado)="onTemporizadorTerminado($event)"></app-temporizador-component>
 
   } @else{
   <div class="!mt-[20px] flex flex-col items-center gap-5 justify-center !w-full !h-[100%]">
@@ -90,7 +133,10 @@
 
     </p>
     <div class="flex flex-row items-center gap-4 !mt-3">
+
       <item [item]="'estrellas'" [cantidad]="30" [cssFlexRow]="'reverse'"></item>
+
+
       <item [item]="'monedas'" [cantidad]="calcularRecompensaSegunMonedasUsuario()" [cssFlexRow]="'reverse'"></item>
       <item [item]="'regalo'" [cantidad]="1" [cssFlexRow]="'reverse'"></item>
     </div>
@@ -100,6 +146,7 @@
   <app-modal [titulo]="'¡Vaya, ' + usuario().nombre + '!😞'" btn1="Salir" (click1)="salir()"
     [btn2]="'Volver a intentar' +' ('+ calcularCostoSegunMonedasUsuario()+' monedas)'" (click2)="intentarDeNuevo()">
     <p>Has respondido incorrectamente la pregunta de Trival-IA. ¡Inténtalo de nuevo!</p>
+    <p>No has perdido ninguna vida, pero no recuperarás las monedas que te han costado la partida.</p>
   </app-modal>
   }
   }

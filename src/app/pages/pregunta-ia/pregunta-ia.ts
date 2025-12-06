@@ -15,19 +15,23 @@ import { PartidaService } from '../../services/PartidaService/partida-service';
 import { map, Observable } from 'rxjs';
 import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
 import { TextoH1 } from '../../components/texto-h1/texto-h1';
+import { RespuestaUsuario } from '../../interfaces/RespuestaUsuario';
+import { TemporizadorComponent } from '../../components/temporizador-component/temporizador-component';
+import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalStoreService/usuario-global-store-service';
 
 @Component({
   selector: 'app-pregunta-ia',
-  imports: [Header, MainLayout, Item, Espacio, BotonGeneral, CommonModule, Modal, TextoH1],
+  imports: [Header, MainLayout, Item, Espacio, BotonGeneral, CommonModule, Modal, TextoH1, TemporizadorComponent],
   templateUrl: './pregunta-ia.html',
   styleUrl: './pregunta-ia.css'
 })
 export class PreguntaIa {
 
   private preguntaService: PreguntaService = inject(PreguntaService);
-  private usuarioService: UsuarioService = inject(UsuarioService);
   private partidaService: PartidaService = inject(PartidaService);
   private router: Router = inject(Router);
+  private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
+  usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
 
   constructor() { }
 
@@ -38,7 +42,8 @@ export class PreguntaIa {
   esCorrecta: WritableSignal<boolean> = signal<boolean>(false);
   partidaComenzada: WritableSignal<boolean> = signal<boolean>(false);
   finPartida: WritableSignal<boolean> = signal<boolean>(false);
-  usuario: Signal<Usuario> = this.usuarioService.usuario;
+  temporizadorFinalizado: WritableSignal<boolean> = signal<boolean>(false);
+  pausarTemporizador: WritableSignal<boolean> = signal<boolean>(false);
 
   private obtenerPreguntaIA() {
     this.partidaComenzada.set(true);
@@ -66,35 +71,40 @@ export class PreguntaIa {
 
   verificarRespuesta(opcionSeleccionada: string) {
     this.respuestaSeleccionada.set(true);
-    if (String(this.pregunta()?.respuesta_correcta) === opcionSeleccionada) {
-      this.ganar()
-    } else {
-      this.mensaje.set("Incorrecto, respuesta correcta: " + this.pregunta()?.respuesta_correcta)
-      this.esCorrecta.set(false)
-    }
-    setTimeout(() => {
-      this.finPartida.set(true);
-      this.mensaje.set("");
-    }, 1500);
-
-  }
-
-  ganar() {
-    this.mensaje.set("¡Correcto!");
-    this.esCorrecta.set(true);
-    this.partidaService.ganarPartidaIA(String(this.usuario().uid)).subscribe(
-      (resultado: RespuestaServidor) => {
-        if (resultado.resultado == true) {
-          setTimeout(() => {
-            this.usuarioService.updateUsuarioSignal("monedas", Number(this.usuario().monedas) + this.calcularRecompensaSegunMonedasUsuario());
-            this.usuarioService.updateUsuarioSignal("estrellas", Number(this.usuario().estrellas) + 30);
-            this.usuarioService.updateUsuarioSignal("regaloDisponible", true);
-          }, 1500)
+    this.pausarTemporizador.set(true)
+    const respuestaUsuario: RespuestaUsuario = { idPregunta: this.pregunta()?.idPregunta, respuestaSeleccionada: opcionSeleccionada }
+    this.partidaService.responderIA(String(this.usuario().uid), respuestaUsuario).subscribe(
+      (respuesta: RespuestaServidor) => {
+        if (respuesta.resultado == true) {
+          this.ganar()
+        } else {
+          this.mensaje.set("Incorrecto")
+          this.esCorrecta.set(false)
         }
+        setTimeout(() => {
+          this.finPartida.set(true);
+          this.mensaje.set("");
+        }, 1500);
       }
     )
+  }
 
+  onTemporizadorTerminado(temporizadorTerminado: boolean) {
+    if (temporizadorTerminado == true) {
+      this.esCorrecta.set(false);
+      this.mensaje.set("¡Has perdido por tiempo!")
+      setTimeout(() => {this.finPartida.set(true);this.mensaje.set("")}, 1500)
+    }
+  }
 
+  private ganar() {
+    this.mensaje.set("¡Correcto!");
+    this.esCorrecta.set(true);
+    setTimeout(() => {
+      this.usuarioStoreService.updateUsuarioSignal("monedas", Number(this.usuario().monedas) + this.calcularRecompensaSegunMonedasUsuario());
+      this.usuarioStoreService.updateUsuarioSignal("estrellas", Number(this.usuario().estrellas) + 30);
+      this.usuarioStoreService.updateUsuarioSignal("regaloDisponible", true);
+    }, 1500)
   }
 
 
@@ -113,7 +123,7 @@ export class PreguntaIa {
   }
 
   restarMonedasUsuario(cantidadMonedas: number): void {
-    this.usuarioService.updateUsuarioSignal("monedas", Number(this.usuario().monedas) - cantidadMonedas)
+    this.usuarioStoreService.updateUsuarioSignal("monedas", Number(this.usuario().monedas) - cantidadMonedas)
   }
 
 
@@ -121,7 +131,7 @@ export class PreguntaIa {
     if (this.usuario().monedas as number < 1000) {
       return 300;
     }
-    if (this.usuario().monedas as number >= 1000 && this.usuario().monedas as number <= 4000) {
+    if (this.usuario().monedas as number >= 1000 && this.usuario().monedas as number <= 5000) {
       return 650;
     }
     if (this.usuario().monedas as number >= 5000) {
@@ -134,11 +144,11 @@ export class PreguntaIa {
     if (this.usuario().monedas as number < 1000) {
       return 400;
     }
-    if (this.usuario().monedas as number >= 1000 && this.usuario().monedas as number <= 4000) {
+    if (this.usuario().monedas as number >= 1000 && this.usuario().monedas as number <= 5000) {
       return 750;
     }
     if (this.usuario().monedas as number >= 5000) {
-      return Math.round((this.usuario().monedas as number) / 4)+500;
+      return Math.round((this.usuario().monedas as number) / 4) + 500;
     }
     return 0;
   }

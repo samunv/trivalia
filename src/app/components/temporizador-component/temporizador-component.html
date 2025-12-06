@@ -1,12 +1,17 @@
 <div class="flex flex-row items-center !w-full gap-5">
 
   <div
-    class="!h-max border-2 border-[white] rounded-4xl overflow-hidden bg-[var(--color-principal)] flex-1" [ngClass]="{'!border-[red]' : tiempo()<=3}">
+    class="relative !h-max border-2 border-[white] rounded-4xl overflow-hidden bg-[var(--color-principal)] flex-1" [ngClass]="{'!border-[red]' : tiempo()<=3}">
 
-    <div class="bg-gradient-to-r from-blue-600 to-purple-500 !h-max !p-3 rounded-3xl animacion-progreso flex flex-row items-center gap-2"
+    <div class="bg-gradient-to-r from-blue-600 to-purple-500 !p-5 !h-max rounded-3xl animacion-progreso flex flex-row items-center gap-2"
       [style.width.%]="tiempo() * 10/2" [ngStyle]="{ 'background-color': tiempo() <= 3 ? 'red' : '' }">
+      <div class="absolute flex flex-row items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 0a256 256 0 1 1 0 512a256 256 0 1 1 0-512zm-24 120v136c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/></svg>
+
       <p class="text-[white] !font-[inter-bold]">{{ tiempo() }}</p>
-    </div>
+      </div>
+
+      </div>
   </div>
 
 </div>

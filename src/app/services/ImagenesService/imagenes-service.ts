@@ -3,6 +3,7 @@ import { computed, inject, Injectable } from '@angular/core';
 import { map, Observable, switchMap } from 'rxjs';
 import { UsuarioService } from '../UsuarioService/usuario-service';
 import { url_servidor } from '../../urlServidor';
+import { JwtGlobalStoreService } from '../Global/JWTGlobalStoreService/jwt-global-store-service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,15 +11,16 @@ import { url_servidor } from '../../urlServidor';
 export class ImagenesService {
 
   private usuarioService = inject(UsuarioService);
+  private jwtStoreServie: JwtGlobalStoreService = inject(JwtGlobalStoreService)
+  private JWToken = this.jwtStoreServie.token
 
   constructor(private http: HttpClient) { }
 
-  token = computed(() => this.usuarioService.token())
 
   obtenerImgApiKey(): Observable<string> {
 
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.token()}`
+      'Authorization': `Bearer ${this.JWToken()}`
     });
     return this.http.get<{ api_key: string }>(url_servidor + "/api/imagenes/img-api-key", { headers })
       .pipe(

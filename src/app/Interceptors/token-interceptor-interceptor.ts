@@ -13,7 +13,9 @@ export const tokenInterceptorInterceptor: HttpInterceptorFn = (req, next) => {
   const JWToken = jwtStoreServie.token
 
   const accessJWToken = JWToken()
-  let authReq = req;
+  let authReq = req.clone({
+    withCredentials: true
+  });
 
   if (accessJWToken) {
     authReq = req.clone({

@@ -53,24 +53,26 @@ export class AuthService {
   }
 
   crearUsuarioEnServidor(usuario: Usuario): Observable<Usuario> {
-      // No necesita JWT porque es una operación pública
-      return this.http.post<Usuario>(url_servidor + "/api/usuarios/crear", usuario,
-      );
-    }
+    // No necesita JWT porque es una operación pública
+    return this.http.post<Usuario>(url_servidor + "/api/usuarios/crear", usuario,
+    );
+  }
 
 
 
   autenticarFirebaseToken(firebaseToken: string | any): Observable<RespuestaServidor> {
-    return this.http.post<RespuestaServidor>(url_servidor + "/auth/login", { firebaseToken: firebaseToken })
+    return this.http.post<RespuestaServidor>(url_servidor + "/auth/login",
+      { firebaseToken: firebaseToken },
+      { withCredentials: true })
   }
 
 
- logout(): Observable<void> {
+  logout(): Observable<void> {
     return this.logoutEnServidor(this.usuario().uid as string).pipe(
-        switchMap(() => from(signOut(this.auth))),
-        map(() => undefined as void)
+      switchMap(() => from(signOut(this.auth))),
+      map(() => undefined as void)
     );
-}
+  }
 
   private logoutEnServidor(uid: string): Observable<void> {
     return this.http.post<any>(url_servidor + "/auth/logout/" + uid, {})

@@ -28,14 +28,10 @@ export class RefreshTokenService {
 
       return this.refrescarTokenEnServidor().pipe(
         switchMap((response: { token: string }) => {
-          console.log("Accediendo a >> refrescarTokenEnServidor()")
+          console.log("Accediendo a servidor para refrescar token.")
           const nuevoToken = response.token;
-          console.log("Nuevo JWT: "+ nuevoToken)
           this.jwtStoreServie.setTokenSignal(nuevoToken);
-
-
           this.refreshTokenSubject.next(nuevoToken);
-          console.log("RefreshTokenSubject >> : " + this.refreshTokenSubject.getValue())
           return next(this.realizarPeticionConNuevoToken(request, nuevoToken));
         }),
         catchError((err: any) => {

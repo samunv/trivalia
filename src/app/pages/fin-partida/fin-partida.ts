@@ -8,6 +8,7 @@ import { CategoriaService } from '../../services/CategoriaService/categoria-serv
 import { Categoria } from '../../interfaces/Categoria';
 import { Item } from '../../components/item/item';
 import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalStoreService/usuario-global-store-service';
+import { CategoriaGlobalStoreService } from '../../services/Global/CategoriaGlobalStoreService/categoria-global-store-service';
 
 @Component({
   selector: 'app-fin-partida',
@@ -18,12 +19,12 @@ import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalSt
 })
 export class FinPartida {
   private router: Router = inject(Router);
-  private categoriaService: CategoriaService = inject(CategoriaService);
+  private categoriaStoreService: CategoriaGlobalStoreService = inject(CategoriaGlobalStoreService);
   private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
   usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
   nombreUsuario?: string = this.usuario()?.nombre;
 
-  categoria: Signal<Categoria> = this.categoriaService.categoria
+  categoria: Signal<Categoria> = this.categoriaStoreService.categoria
 
   monedasRecompensa: number = 100;
 

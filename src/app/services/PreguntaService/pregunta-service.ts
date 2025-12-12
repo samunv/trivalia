@@ -7,7 +7,6 @@ import { Observable, switchMap } from 'rxjs';
 import { url_servidor } from '../../urlServidor';
 import { ResultadoRespuestaRespondida } from '../../interfaces/ResultadoRespuestaRespondida';
 import { RespuestaUsuario } from '../../interfaces/RespuestaUsuario';
-import { JwtGlobalStoreService } from '../Global/JWTGlobalStoreService/jwt-global-store-service';
 import { UsuarioGlobalStoreService } from '../Global/UsuarioGlobalStoreService/usuario-global-store-service';
 
 @Injectable({
@@ -17,56 +16,37 @@ export class PreguntaService {
 
   private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
   private usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
-  private jwtStoreServie: JwtGlobalStoreService = inject(JwtGlobalStoreService)
-  private JWToken = this.jwtStoreServie.token
 
   constructor(private http: HttpClient) { }
 
 
-  headers = new HttpHeaders({
-    "Authorization": `Bearer ${this.JWToken()}`
-  })
-
-
   obtenerPreguntas(idCategoria: number | any): Observable<Pregunta[] | any> {
 
-    const headers = new HttpHeaders({
-      "Authorization": `Bearer ${this.JWToken()}`
-    })
-    return this.http.get<Pregunta[] | any>(url_servidor + "/api/preguntas/obtener/" + idCategoria + "/" + 15, { headers })
+
+    return this.http.get<Pregunta[] | any>(url_servidor + "/api/preguntas/obtener/" + idCategoria + "/" + 15)
 
   }
 
 
   obtenerPreguntasDificiles(arrayIdPreguntas: number[] | any[]): Observable<Pregunta[] | any> {
 
-    const headers = new HttpHeaders({
-      "Authorization": `Bearer ${this.JWToken()}`
-    })
+
     return this.http.post<Pregunta[] | any[]>(
       url_servidor + "/api/preguntas/obtener-dificiles",
-      arrayIdPreguntas,
-      { headers }
+      arrayIdPreguntas
 
     )
   }
 
-  obtenerPreguntaGeneradaPorIA(): Observable<Pregunta> {
-    const headers = new HttpHeaders({
-      "Authorization": `Bearer ${this.JWToken()}`
-    })
-    return this.http.get<Pregunta>(url_servidor + "/api/preguntas/obtener-pregunta-ia", { headers })
+  obtenerPreguntaGeneradaPorIA(dificultad: "DIFICIL" | "FACIL" | "MEDIO"): Observable<Pregunta> {
+
+    return this.http.post<Pregunta>(url_servidor + "/api/preguntas/obtener-pregunta-ia", { "dificultad": dificultad })
   }
 
   responderPregunta(respuestaUsuario: RespuestaUsuario): Observable<ResultadoRespuestaRespondida> {
-    console.log("Respuesta usuario >>"+respuestaUsuario.respuestaSeleccionada)
+    console.log("Respuesta usuario >>" + respuestaUsuario.respuestaSeleccionada)
     return this.http.post<ResultadoRespuestaRespondida>(url_servidor + "/api/preguntas/responder/" + this.usuario().uid,
-      respuestaUsuario ,
-      {
-        headers: {
-          "Authorization": "Bearer " + this.JWToken()
-        }
-      })
+      respuestaUsuario)
   }
 
 }

@@ -5,8 +5,8 @@
     @if (preguntaActual()) {
     <div
       class="bg-[var(--color-principal)] rounded-[20px] border border-[var(--color-bordes)] !p-[30px] !mt-[20px] relative">
-      <p class="!font-[nunito] text-center">
-        {{preguntaIndex() + "/x"}}
+      <p class="!font-[nunito] text-center text-[18px]">
+        {{preguntaIndex() + "/"+cantidadPreguntas()}}
       </p>
       <div class="flex flex-row items-center gap-5">
         <img [src]="preguntaActual()?.imagenURL" alt=""

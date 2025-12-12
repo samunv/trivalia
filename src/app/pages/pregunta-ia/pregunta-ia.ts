@@ -8,11 +8,9 @@ import { Pregunta } from '../../interfaces/Pregunta';
 import { BotonGeneral } from '../../components/boton-general/boton-general';
 import { CommonModule } from '@angular/common';
 import { Modal } from '../../components/modal/modal';
-import { UsuarioService } from '../../services/UsuarioService/usuario-service';
 import { Usuario } from '../../interfaces/Usuario';
 import { Router } from '@angular/router';
 import { PartidaService } from '../../services/PartidaService/partida-service';
-import { map, Observable } from 'rxjs';
 import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
 import { TextoH1 } from '../../components/texto-h1/texto-h1';
 import { RespuestaUsuario } from '../../interfaces/RespuestaUsuario';
@@ -44,16 +42,22 @@ export class PreguntaIa {
   finPartida: WritableSignal<boolean> = signal<boolean>(false);
   temporizadorFinalizado: WritableSignal<boolean> = signal<boolean>(false);
   pausarTemporizador: WritableSignal<boolean> = signal<boolean>(false);
+  dificultadesArray : string[] = ["MEDIO", "FACIL", "DIFICIL"];
+  dificultadSeleccionada: WritableSignal<string> = signal<string>("MEDIO");
 
   private obtenerPreguntaIA() {
     this.partidaComenzada.set(true);
-    this.preguntaService.obtenerPreguntaGeneradaPorIA().subscribe((pregunta: Pregunta) => {
+    this.preguntaService.obtenerPreguntaGeneradaPorIA(this.dificultadSeleccionada() as "DIFICIL" | "FACIL" | "MEDIO").subscribe((pregunta: Pregunta) => {
       this.pregunta.set(pregunta);
       const opciones: string[] = [];
       opciones.push(String(pregunta.opcion_a), String(pregunta.opcion_b), String(pregunta.opcion_c));
       this.opcionesPregunta.set(opciones);
     })
 
+  }
+
+  handleSeleccionarDificultad(event: any) {
+    this.dificultadSeleccionada.set(event.target.value);
   }
 
   jugarIA(uid: string | any): void {
@@ -75,12 +79,15 @@ export class PreguntaIa {
     const respuestaUsuario: RespuestaUsuario = { idPregunta: this.pregunta()?.idPregunta, respuestaSeleccionada: opcionSeleccionada }
     this.partidaService.responderIA(String(this.usuario().uid), respuestaUsuario).subscribe(
       (respuesta: RespuestaServidor) => {
-        if (respuesta.resultado == true) {
-          this.ganar()
-        } else {
-          this.mensaje.set("Incorrecto")
-          this.esCorrecta.set(false)
+        if (respuesta.resultado !== null || respuesta.resultado !== "null") {
+          if (respuesta.resultado === opcionSeleccionada) {
+            this.ganar()
+          } else {
+            this.mensaje.set("Incorrecto. Respuesta correcta: " + respuesta.resultado)
+            this.esCorrecta.set(false)
+          }
         }
+
         setTimeout(() => {
           this.finPartida.set(true);
           this.mensaje.set("");
@@ -93,7 +100,7 @@ export class PreguntaIa {
     if (temporizadorTerminado == true) {
       this.esCorrecta.set(false);
       this.mensaje.set("¡Has perdido por tiempo!")
-      setTimeout(() => {this.finPartida.set(true);this.mensaje.set("")}, 1500)
+      setTimeout(() => { this.finPartida.set(true); this.mensaje.set("") }, 1500)
     }
   }
 
@@ -112,15 +119,6 @@ export class PreguntaIa {
     this.router.navigate(['/jugar']);
   }
 
-  intentarDeNuevo() {
-    this.pregunta.set(null);
-    this.obtenerPreguntaIA()
-    this.finPartida.set(false);
-    this.mensaje.set("");
-    this.respuestaSeleccionada.set(false);
-    this.esCorrecta.set(false);
-    this.jugarIA(String(this.usuario().uid))
-  }
 
   restarMonedasUsuario(cantidadMonedas: number): void {
     this.usuarioStoreService.updateUsuarioSignal("monedas", Number(this.usuario().monedas) - cantidadMonedas)

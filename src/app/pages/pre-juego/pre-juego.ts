@@ -17,10 +17,10 @@ import { MensajeAlerta } from '../../components/mensaje-alerta/mensaje-alerta';
 import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
 import { PartidaService } from '../../services/PartidaService/partida-service';
 import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalStoreService/usuario-global-store-service';
+import { CategoriaGlobalStoreService } from '../../services/Global/CategoriaGlobalStoreService/categoria-global-store-service';
 @Component({
   selector: 'app-pre-juego',
   imports: [MainLayout, Header, TextoH1, BotonGeneral, RouterLink, CommonModule, Espacio, MensajeAlerta],
-
   templateUrl: './pre-juego.html',
   styleUrl: './pre-juego.css'
 })
@@ -28,6 +28,7 @@ export class PreJuego {
 
 
   private partidaService: PartidaService = inject(PartidaService);
+  private categoriaStoreService: CategoriaGlobalStoreService = inject(CategoriaGlobalStoreService)
   private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
   usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
 
@@ -39,7 +40,7 @@ export class PreJuego {
 
   categoria = signal<Categoria | any>(null);
   preguntas = signal<Pregunta[] | any>([]);
-  cantidadPreguntas = signal<number>(0);
+  cantidadPreguntas = this.categoriaStoreService.cantidadPreguntas
   alerta = signal<boolean>(false);
 
   ngOnInit() {
@@ -64,13 +65,11 @@ export class PreJuego {
   }
 
   obtenerVistaPreviaPreguntas(idCategoria: number) {
-    // Suscribirse al observable de preguntas
-
     this.preguntaService.obtenerPreguntas(idCategoria)
       .subscribe({
         next: (preguntas: Pregunta[]) => {
           this.preguntas.set(preguntas)
-          this.cantidadPreguntas.set(preguntas.length)
+          this.categoriaStoreService.setCantidadPreguntas(preguntas.length)
         },
         error: (err) => {
           console.error('Error al cargar preguntas', err);
@@ -100,7 +99,7 @@ export class PreJuego {
   }
 
   establecerCategoria(categoria: Categoria) {
-    this.categoriaService.setCategoria(categoria);
+    this.categoriaStoreService.setCategoria(categoria);
   }
 
   verificarVidas(): Observable<boolean> {

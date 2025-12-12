@@ -3,59 +3,59 @@
 
   @if(!partidaComenzada()) {
   <div
-    class="!mt-[20px] !p-[30px] border border-[var(--color-bordes)] rounded-[20px] bg-[var(--color-principal)] flex flex-row gap-4 items-center justify-between">
-    <img src="/img/cartoon-style-robot-vectorart.png" class="!w-[120px] robot-float" />
-    <div class="flex flex-row items-center gap-2">
+    class="!mt-[20px] !p-[30px] border border-[var(--color-bordes)] rounded-[20px] bg-[var(--color-principal)] flex flex-row gap-2 items-center justify-between">
 
+    <div class="flex flex-row items-center gap-5">
+      <img src="/img/cartoon-style-robot-vectorart.png" class="!w-[120px] robot-float" />
       <div>
-        <h2>Hola, {{usuario().nombre}}</h2>
-        <p class="">¿Te atreves a responder una pregunta de cultura general hecha por
-          <strong>Trival-IA</strong>?</p>
+        <h2>Qué tal, {{usuario().nombre?.split(" ")?.[0]}}.</h2>
+        <!-- <p class="">¿Te atreves a responder una pregunta de cultura general hecha por
+          <strong>Trival-IA</strong>?
+        </p> -->
+        <div class="flex flex-col gap-1 !mt-1">
+          <span class="text-[14px] text-[var(--color-secundario)] ">Dificultad</span>
+          <select name="" id="dificultad" (change)="handleSeleccionarDificultad($event)"
+            class="bg-[var(--color-principal)] selection:bg-amber-300 focus:outline-none border border-[var(--color-secundario)] rounded-lg !p-2 cursor-pointer !w-[100px]">
+            @for(dificultad of dificultadesArray; track $index) {
+            <option value="{{dificultad}}" class="hover:bg-amber-300">{{dificultad}}</option>
+            }
+          </select>
+        </div>
+
 
       </div>
 
     </div>
 
-
-
-    <div class="flex flex-row items-center gap-4">
-      <espacio [ancho]="10"></espacio>
-
+    <div class="flex flex-row items-center gap-5">
       <div class="">
         <app-boton-general [texto]="'Jugar '+ calcularCostoSegunMonedasUsuario()+' monedas'" [tipo]="'destacado'"
           (click)="jugarIA(usuario().uid)"></app-boton-general>
       </div>
+      <div class="relative !w-[120px] flex flex-col items-end gap-2 bg-[var(--azul-oscuro)] !p-5 rounded-xl">
+        <div class="rounded-lg text-[14px] absolute -top-2 left-1/2 -translate-x-1/2 text-[var(--color-secundario)]">
+          <p class="!font-[inter-bold]">Recompensas</p>
+        </div>
+        <div class="flex flex-row items-center justify-between">
+          +<item item="monedas" [cantidad]="calcularRecompensaSegunMonedasUsuario()" [cssFlexRow]="'reverse'"
+            [cssIconDimension]="27" [cssAnimation]="'saltar'"></item>
+        </div>
+        <div class="flex flex-row items-center justify-between">
+          +<item item="regalo" [cantidad]="1" [cssFlexRow]="'reverse'" [cssIconDimension]="27"></item>
 
+        </div>
+        <div class="flex flex-row items-center justify-between">
+          +<item item="estrellas" [cantidad]="30" [cssFlexRow]="'reverse'" [cssIconDimension]="25"></item>
+
+        </div>
+
+      </div>
     </div>
 
-    <div class="!w-[200px] flex flex-col items-end gap-2 bg-[var(--azul-oscuro)] !p-5 rounded-xl">
-      <div class="flex flex-row items-center justify-between">
-        +<item item="monedas" [cantidad]="calcularRecompensaSegunMonedasUsuario()" [cssFlexRow]="'reverse'"
-          [cssIconDimension]="27" [cssAnimation]="'saltar'"></item>
-      </div>
-      <div class="flex flex-row items-center justify-between">
-        +<item item="regalo" [cantidad]="1" [cssFlexRow]="'reverse'" [cssIconDimension]="27"></item>
 
-      </div>
-      <div class="flex flex-row items-center justify-between">
-        +<item item="estrellas" [cantidad]="30" [cssFlexRow]="'reverse'" [cssIconDimension]="25"></item>
-
-      </div>
-
-    </div>
 
   </div>
 
-  <!-- <espacio [altura]="30"></espacio>
-
-  <app-texto-h1 texto="Recompensas"></app-texto-h1>
-  <div
-    class="flex flex-row items-center gap-7 !mt-5 !p-[30px] border border-[var(--color-bordes)] rounded-[20px] bg-[var(--color-principal)]">
-    <item item="monedas" [cantidad]="calcularRecompensaSegunMonedasUsuario()" [cssFlexRow]="'reverse'"
-      [cssIconDimension]="27" [cssAnimation]="'saltar'"></item>
-    <item item="regalo" [cantidad]="1" [cssFlexRow]="'reverse'" [cssIconDimension]="27"></item>
-    <item item="estrellas" [cantidad]="30" [cssFlexRow]="'reverse'" [cssIconDimension]="25"></item>
-  </div> -->
 
   <espacio [altura]="40"></espacio>
 
@@ -143,8 +143,7 @@
 
   </app-modal>
   } @else {
-  <app-modal [titulo]="'¡Vaya, ' + usuario().nombre + '!😞'" btn1="Salir" (click1)="salir()"
-    [btn2]="'Volver a intentar' +' ('+ calcularCostoSegunMonedasUsuario()+' monedas)'" (click2)="intentarDeNuevo()">
+  <app-modal [titulo]="'¡Vaya, ' + usuario().nombre + '!😞'" btn1="Salir" (click1)="salir()" [btn2Activo]="false">
     <p>Has respondido incorrectamente la pregunta de Trival-IA. ¡Inténtalo de nuevo!</p>
     <p>No has perdido ninguna vida, pero no recuperarás las monedas que te han costado la partida.</p>
   </app-modal>

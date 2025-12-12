@@ -9,7 +9,6 @@ import { HttpClient, HttpEvent, HttpHandler, HttpHandlerFn, HttpRequest } from '
 import { url_servidor } from '../../urlServidor';
 import { UsuarioService } from '../UsuarioService/usuario-service';
 import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
-import { JwtGlobalStoreService } from '../Global/JWTGlobalStoreService/jwt-global-store-service';
 import { UsuarioGlobalStoreService } from '../Global/UsuarioGlobalStoreService/usuario-global-store-service';
 
 @Injectable({
@@ -18,8 +17,6 @@ import { UsuarioGlobalStoreService } from '../Global/UsuarioGlobalStoreService/u
 export class AuthService {
 
   private http = inject(HttpClient);
-  private jwtStoreServie: JwtGlobalStoreService = inject(JwtGlobalStoreService)
-  private JWToken = this.jwtStoreServie.token
   private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
   private usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
 
@@ -68,6 +65,7 @@ export class AuthService {
 
 
   logout(): Observable<void> {
+    
     return this.logoutEnServidor(this.usuario().uid as string).pipe(
       switchMap(() => from(signOut(this.auth))),
       map(() => undefined as void)

@@ -10,31 +10,13 @@ export const authGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   //const usuarioService: UsuarioService = inject(UsuarioService);
 
-  if (localStorage.getItem("usuario") && localStorage.getItem("tokenJWT")
+  if (localStorage.getItem("usuario")
   ) {
-    // return verificarJWT(authService).pipe(
-    //   map((jwtValido: boolean) => {
-    //     if (jwtValido) {
-    //       return true; // permite acceso
-    //     } else {
-    //       return router.createUrlTree(['/']); // bloquea y redirige a '/': "Login"
-    //     }
-    //   })
-    // );
+
     return true;
   } else {
     return router.createUrlTree(['/']);
   }
 
 };
-
-// function verificarJWT(authService: AuthService): Observable<boolean> {
-//   return authService.verificarJWTenServidor().pipe(
-//     map((res: RespuestaServidor) => res.exito != undefined),
-//     catchError(err => {
-//       console.error('Error HTTP:', err);
-//       return of(false); // en caso de error
-//     })
-//   );
-// }
 

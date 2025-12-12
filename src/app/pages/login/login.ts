@@ -7,7 +7,6 @@ import { UsuarioService } from '../../services/UsuarioService/usuario-service';
 import { Usuario } from '../../interfaces/Usuario';
 import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
 import { map, Observable } from 'rxjs';
-import { JwtGlobalStoreService } from '../../services/Global/JWTGlobalStoreService/jwt-global-store-service';
 import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalStoreService/usuario-global-store-service';
 @Component({
   selector: 'app-login',
@@ -18,8 +17,6 @@ import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalSt
 export class Login {
 
   private usuarioService = inject(UsuarioService)
-  private jwtStoreServie: JwtGlobalStoreService = inject(JwtGlobalStoreService)
-  private JWToken = this.jwtStoreServie.token
   private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
   usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
 
@@ -27,8 +24,8 @@ export class Login {
 
 
 
-  ngOnInit(){
-    if(this.usuario() && this.JWToken()){
+  ngOnInit() {
+    if (this.usuario()) {
       this.usuarioService.clearUsuario();
     }
   }
@@ -36,9 +33,11 @@ export class Login {
   loginConGoogle() {
     this.authService.login().subscribe({
       next: (res) => {
-        this.obtenerJWT(res.firebaseToken).subscribe((jwt: string) => {
-          this.establecerUsuarioYjwt(res.usuario, jwt);
-          this.router.navigate(["/jugar"])
+        this.autenticar(res.firebaseToken).subscribe((resultado: boolean) => {
+          if (resultado === true) {
+            this.establecerUsuario(res.usuario)
+            this.router.navigate(["/jugar"])
+          }
         })
       },
       error: (err) => {
@@ -48,22 +47,21 @@ export class Login {
     });
   }
 
-  obtenerJWT(firebaseToken: string): Observable<string> {
+  autenticar(firebaseToken: string): Observable<boolean> {
     return this.authService.autenticarFirebaseToken(firebaseToken).pipe(
       map((respuestaServidor: RespuestaServidor) => {
-        if (respuestaServidor.token) {
-          return respuestaServidor.token;
+        if (respuestaServidor.resultado) {
+          return respuestaServidor.resultado as boolean;
         } else {
-          console.error("Error al autenticar: ", respuestaServidor.error);
+          console.error("Error al autenticar");
           alert("Error al autenticar con el servidor.");
           throw new Error("Token Firebase inválido")
         }
       }))
   }
 
-  establecerUsuarioYjwt(usuario: Usuario, token: string): void {
+  establecerUsuario(usuario: Usuario): void {
     this.usuarioStoreService.setUsuarioSignal(usuario);
-    this.jwtStoreServie.setTokenSignal(token)
   }
 
 

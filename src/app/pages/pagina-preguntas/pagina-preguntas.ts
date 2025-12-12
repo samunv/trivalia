@@ -23,6 +23,7 @@ import { Categoria } from '../../interfaces/Categoria';
 import { Usuario } from '../../interfaces/Usuario';
 import { PartidaService } from '../../services/PartidaService/partida-service';
 import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalStoreService/usuario-global-store-service';
+import { CategoriaGlobalStoreService } from '../../services/Global/CategoriaGlobalStoreService/categoria-global-store-service';
 
 
 @Component({
@@ -45,9 +46,9 @@ import { UsuarioGlobalStoreService } from '../../services/Global/UsuarioGlobalSt
   templateUrl: './pagina-preguntas.html'
 })
 export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
-  private categoriaService = inject(CategoriaService);
+
+  private categoriaStoreService: CategoriaGlobalStoreService = inject(CategoriaGlobalStoreService)
   private router = inject(Router);
-  private usuarioService = inject(UsuarioService);
   private partidaService: PartidaService = inject(PartidaService);
   private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
   usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
@@ -55,7 +56,7 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
   preguntas = signal<Pregunta[]>([]);
   preguntaIndex = signal(0);
   categoriaTitulo = signal('');
-  categoria: Signal<Categoria> = this.categoriaService.categoria;
+  categoria: Signal<Categoria> = this.categoriaStoreService.categoria;
 
   respuestaSeleccionada = signal('');
   respuestaCorrecta = signal('');
@@ -69,8 +70,8 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
   temporizadorFinalizado = signal<boolean>(false);
   temporizadorPausado = signal<boolean>(false);
   permitirContinuar = signal<boolean | undefined>(false);
+  cantidadPreguntas = this.categoriaStoreService.cantidadPreguntas
 
-  // ==================== COMPUTED ====================
   preguntaActual: WritableSignal<Pregunta | undefined> = signal<Pregunta | undefined>(undefined)
 
   opcionesPregunta = computed(() => {
@@ -89,7 +90,6 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('inputEscribir') inputEscribir!: ElementRef<HTMLInputElement>;
   inputFocusActivado = signal<boolean>(false);
 
-  // ==================== EFFECTS ====================
   constructor() {
     // Mostrar mensaje si se quedan sin vidas
     effect(() => {
@@ -109,11 +109,12 @@ export class PaginaPreguntas implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngOnDestroy() {
-    this.categoriaService.setCategoria(null);
+    this.categoriaStoreService.setCategoria(null);
+    this.categoriaStoreService.setCantidadPreguntas(null)
   }
 
   private inicializarJuego() {
-    if (!this.categoriaService.categoria()) {
+    if (!this.categoriaStoreService.categoria()) {
       console.log("No hay categoría seleccionada");
       this.navegar("/jugar");
       return;

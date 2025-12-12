@@ -6,7 +6,6 @@ import { getAuth, onAuthStateChanged, onIdTokenChanged } from '@angular/fire/aut
 import { HttpClient } from '@angular/common/http';
 import { url_servidor } from '../../urlServidor';
 import { RespuestaServidor } from '../../interfaces/RespuestaServidor';
-import { JwtGlobalStoreService } from '../Global/JWTGlobalStoreService/jwt-global-store-service';
 import { UsuarioGlobalStoreService } from '../Global/UsuarioGlobalStoreService/usuario-global-store-service';
 
 @Injectable({
@@ -14,10 +13,7 @@ import { UsuarioGlobalStoreService } from '../Global/UsuarioGlobalStoreService/u
 })
 export class UsuarioService {
 
-  private http = inject(HttpClient); 
-
-  private jwtStoreService: JwtGlobalStoreService = inject(JwtGlobalStoreService);
-  private JWToken: Signal<string> = this.jwtStoreService.token
+  private http = inject(HttpClient);
 
   private usuarioStoreService: UsuarioGlobalStoreService = inject(UsuarioGlobalStoreService);
   private usuario: Signal<Usuario> = this.usuarioStoreService.usuario;
@@ -40,28 +36,17 @@ export class UsuarioService {
     localStorage.removeItem('tokenJWT');
     localStorage.removeItem("token")
     this.usuarioStoreService.setUsuarioSignal(null)
-    this.jwtStoreService.setTokenSignal(null)
   }
 
   actualizarNombreYfotoUsuario(nombre: string, foto: string, uid: string): Observable<Usuario> {
     const usuarioActualizar: Usuario = { nombre: nombre, fotoURL: foto };
-    const jwtCliente = this.JWToken();
-    return this.http.patch<Usuario>(url_servidor + "/api/usuarios/actualizar-nombre-foto/" + uid, usuarioActualizar, {
-      headers: {
-        "Authorization": "Bearer " + jwtCliente
-      }
-    })
+    return this.http.patch<Usuario>(url_servidor + "/api/usuarios/actualizar-nombre-foto/" + uid, usuarioActualizar)
 
   }
 
 
   obtenerUsuarios(limite: number): Observable<Usuario[]> {
-    const jwtCliente = this.JWToken();;
-    return this.http.get<Usuario[]>(url_servidor + "/api/usuarios/listar/" + limite, {
-      headers: {
-        "Authorization": "Bearer " + jwtCliente
-      }
-    })
+    return this.http.get<Usuario[]>(url_servidor + "/api/usuarios/listar/" + limite)
 
   }
 
@@ -72,10 +57,7 @@ export class UsuarioService {
   }
 
   obtenerUsuario(uid: string): Observable<Usuario> {
-    const jwtCliente = this.JWToken();;
-    return this.http.get<Usuario | any>(url_servidor + "/api/usuarios/obtener/" + uid, {
-      headers: { "Authorization": "Bearer " + jwtCliente }
-    })
+    return this.http.get<Usuario | any>(url_servidor + "/api/usuarios/obtener/" + uid)
   }
 
 }

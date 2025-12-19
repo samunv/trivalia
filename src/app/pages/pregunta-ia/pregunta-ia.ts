@@ -67,7 +67,7 @@ export class PreguntaIa {
           this.obtenerPreguntaIA()
           this.restarMonedasUsuario(this.calcularCostoSegunMonedasUsuario())
         } else {
-          alert("No tienes monedas suficientes para jugar.")
+          alert("No tienes monedas suficientes para jugar, o has gastado tu cuoata diaria de 5 jugadas. En ese caso deberás esperar 24h.")
         }
       }
     )

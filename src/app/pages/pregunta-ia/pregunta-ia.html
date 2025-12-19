@@ -13,11 +13,11 @@
           <strong>Trival-IA</strong>?
         </p> -->
         <div class="flex flex-col gap-1 !mt-1">
-          <span class="text-[14px] text-[var(--color-secundario)] ">Dificultad</span>
+          <span class="text-[14px] text-[var(--color-secundario)] font-[inter-bold] ">Dificultad</span>
           <select name="" id="dificultad" (change)="handleSeleccionarDificultad($event)"
             class="bg-[var(--color-principal)] selection:bg-amber-300 focus:outline-none border border-[var(--color-secundario)] rounded-lg !p-2 cursor-pointer !w-[100px]">
             @for(dificultad of dificultadesArray; track $index) {
-            <option value="{{dificultad}}" class="hover:bg-amber-300">{{dificultad}}</option>
+            <option value="{{dificultad}}" class="hover:bg-amber-300">{{dificultad.toLocaleLowerCase().charAt(0).toUpperCase() + dificultad.toLocaleLowerCase().slice(1)}}</option>
             }
           </select>
         </div>
@@ -33,7 +33,7 @@
           (click)="jugarIA(usuario().uid)"></app-boton-general>
       </div>
       <div class="relative !w-[120px] flex flex-col items-end gap-2 bg-[var(--azul-oscuro)] !p-5 rounded-xl">
-        <div class="rounded-lg text-[14px] absolute -top-2 left-1/2 -translate-x-1/2 text-[var(--color-secundario)]">
+        <div class="rounded-lg text-[14px] absolute -top-3 left-1/2 -translate-x-1/2 text-[var(--color-secundario)]">
           <p class="!font-[inter-bold]">Recompensas</p>
         </div>
         <div class="flex flex-row items-center justify-between">
@@ -62,12 +62,12 @@
   <app-texto-h1 texto="¿Qué es Trival-IA?"></app-texto-h1>
   <div
     class="relative flex flex-col gap-7 !mt-5 !p-[30px] border border-[var(--color-bordes)] rounded-[20px] bg-[var(--color-principal)]">
-    <p class="!w-[calc(100%-250px)]">Es un bot que hace preguntas de cultura
+    <p class="!w-[calc(100%-250px)]">Es un bot basado en IA que hace preguntas de cultura
       general de cualquier área del
       mundo. Tendrás 20 segundos para
       contestar. No perderás vidas al fallar, pero no recuperarás tus monedas gastadas.</p>
     <p
-      class="!text-[var(--color-principal)] !font-[inter-bold]  flex flex-row items-center gap-2 bg-[var(--color-secundario)] !max-w-[220px] rounded-xl !p-2">
+      class="!text-[var(--color-principal)] !font-[inter-bold]  flex flex-row items-center gap-2 bg-[var(--color-secundario)] !max-w-[220px] rounded-lg !p-2">
       Potenciado por Gemini<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 424 432">
         <path fill="var(--color-principal)"
           d="M214 186v-1h201q3 12 3 36q0 93-56.5 150.5T213 429q-88 0-150.5-62T0 216T62 65T213 3q87 0 144 57l-57 56q-33-33-86-33q-54 0-92.5 39.5t-38.5 95t38.5 94.5t92.5 39q31 0 55-9.5t37.5-24.5t20.5-29.5t10-27.5H214v-74z" />
